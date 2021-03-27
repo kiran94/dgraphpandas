@@ -1,6 +1,7 @@
 import logging
 import re
 from typing import Dict, List, Callable, Pattern, Tuple, Union
+import numpy as np
 
 import pandas as pd
 
@@ -32,6 +33,7 @@ def horizontal_transform(
     predicate_field: str = kwargs.get('predicate_field', 'predicate')
     object_field: str = kwargs.get('object_field', 'object')
     key_seperator: str = kwargs.get('key_seperator', '_')
+    add_dgraph_type_records: bool = bool(kwargs.get('add_dgraph_type_records', True))
 
     potential_callables: Dict[str, Union[List[str], Callable]] = {
         'subject_fields': subject_fields,
@@ -52,23 +54,30 @@ def horizontal_transform(
 
     key = potential_callables["subject_fields"]
     edges = potential_callables['edge_fields']
+    type = potential_callables['dgraph_type']
+
     logger.debug(f'Melting frame with subject: {key}')
     frame = frame.melt(
         id_vars=key,
         var_name=predicate_field,
         value_name=object_field)
 
-    logger.debug(
-        f'Joining Key fields {potential_callables["subject_fields"]} to subject')
-    frame['subject'] = frame[key].apply(
-        lambda row: key_seperator.join(row.values.astype(str)), axis=1)
+    logger.debug(f'Joining Key fields {potential_callables["subject_fields"]} to subject')
+    frame['subject'] = frame[key].apply(lambda row: key_seperator.join(row.values.astype(str)), axis=1)
+    frame['subject'] = type + key_seperator + frame['subject']
 
     logger.debug('Dropping keys in favour of subject')
     frame = frame.drop(labels=key, axis=1)
 
+    if add_dgraph_type_records:
+        logger.debug('Adding dgraph.type fields')
+        add_type_frame = frame.copy()
+        add_type_frame['object'] = type
+        add_type_frame['predicate'] = 'dgraph.type'
+        frame = pd.concat([frame, add_type_frame])
+
     if edges:
-        logger.debug(
-            f'Splitting into Intrinsic and edges based on edges {edges}')
+        logger.debug(f'Splitting into Intrinsic and edges based on edges {edges}')
         intrinsic = frame.loc[~frame['predicate'].isin(edges)]
         edges = frame.loc[frame['predicate'].isin(edges)]
     else:
@@ -79,7 +88,7 @@ def horizontal_transform(
 
     logger.debug('Applying Types')
     intrinsic['type'] = intrinsic['predicate'].map(types)
-    edges['type'] = None
+    edges['type'] = np.nan
 
     logger.debug('Filtering Illegal Characters %s', illegal_characters)
     if isinstance(illegal_characters, list):
