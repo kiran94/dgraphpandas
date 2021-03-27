@@ -157,6 +157,7 @@ Thumbs.db #thumbnail cache on Windows
 data/
 output/
 samples/**/input/*.csv
+samples/**/output/*.gz
+samples/**/xidmap/*
 
 .vscode/settings.json
-
