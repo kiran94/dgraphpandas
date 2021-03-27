@@ -158,4 +158,5 @@ data/
 output/
 samples/**/input/*.csv
 
+.vscode/settings.json
 
