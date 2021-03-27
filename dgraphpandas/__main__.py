@@ -19,12 +19,6 @@ except ImportError as e:
 
 
 if __name__ == '__main__':
-
-    path = 'data/pokemon_horizontal.zip'
-    type = 'pokemon'
-    subject_fields = ['No', 'Name']
-    edges = ['Type', 'Generation']
-
     parser = argparse.ArgumentParser()
     parser.add_argument('-f', '--file')
     parser.add_argument('-s', '--subject', nargs='+', required=True)
