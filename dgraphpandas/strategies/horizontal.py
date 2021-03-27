@@ -8,13 +8,14 @@ from dgraphpandas.types import find_rdf_types
 
 logger = logging.getLogger(__name__)
 
+
 def horizontal_transform(
         frame: pd.DataFrame,
         subject_fields: Union[List[str], Callable[..., List[str]]],
         edge_fields: Union[List[str], Callable[..., List[str]]],
         dgraph_type: Union[str, Callable[..., List[str]]],
         types: Dict[str, str] = None,
-        illegal_characters: Union[List[str], Pattern] = ['%', '\.'],
+        illegal_characters: Union[List[str], Pattern] = ['%', r'\.'],
         **kwargs) -> Tuple[pd.DataFrame, pd.DataFrame]:
     '''
     Transform an incoming DataFrame (in horizontal format) into
@@ -57,20 +58,24 @@ def horizontal_transform(
         var_name=predicate_field,
         value_name=object_field)
 
-    logger.debug(f'Joining Key fields {potential_callables["subject_fields"]} to subject')
-    frame['subject'] = frame[key].apply(lambda row: key_seperator.join(row.values.astype(str)), axis=1)
+    logger.debug(
+        f'Joining Key fields {potential_callables["subject_fields"]} to subject')
+    frame['subject'] = frame[key].apply(
+        lambda row: key_seperator.join(row.values.astype(str)), axis=1)
 
     logger.debug('Dropping keys in favour of subject')
     frame = frame.drop(labels=key, axis=1)
 
     if edges:
-        logger.debug(f'Splitting into Intrinsic and edges based on edges {edges}')
+        logger.debug(
+            f'Splitting into Intrinsic and edges based on edges {edges}')
         intrinsic = frame.loc[~frame['predicate'].isin(edges)]
         edges = frame.loc[frame['predicate'].isin(edges)]
     else:
         logger.debug('No Edges defined, Skipping.')
         intrinsic = frame
-        edges = pd.DataFrame(columns=['subject', 'predicate', 'object', 'type'])
+        edges = pd.DataFrame(
+            columns=['subject', 'predicate', 'object', 'type'])
 
     logger.debug('Applying Types')
     intrinsic['type'] = intrinsic['predicate'].map(types)
@@ -81,10 +86,12 @@ def horizontal_transform(
         logger.debug('Resolving illegal_characters')
         illegal_characters: Pattern = re.compile('|'.join(illegal_characters))
 
-    intrinsic.loc[:, 'subject'] = intrinsic['subject'].replace(illegal_characters, '')
+    intrinsic.loc[:, 'subject'] = intrinsic['subject'].replace(
+        illegal_characters, '')
     edges['subject'] = edges['subject'].replace(illegal_characters, '')
 
-    edges['object'] = edges['predicate'].astype(str) + key_seperator + edges['object'].astype(str)
+    edges['object'] = edges['predicate'].astype(
+        str) + key_seperator + edges['object'].astype(str)
 
     intrinsic = intrinsic[['subject', 'predicate', 'object', 'type']]
     edges = edges[['subject', 'predicate', 'object', 'type']]

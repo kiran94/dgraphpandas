@@ -32,7 +32,8 @@ if __name__ == '__main__':
     frame = pd.read_csv(args.file, compression='infer')
     print(frame)
 
-    intrinsic, edges = horizontal_transform(frame,args.subject, args.edges, args.type)
+    intrinsic, edges = horizontal_transform(
+        frame, args.subject, args.edges, args.type)
     print(intrinsic)
     print(edges)
 

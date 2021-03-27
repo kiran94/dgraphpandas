@@ -1,2 +1,4 @@
 pandas
 coloredlogs
+flake8
+autopep8

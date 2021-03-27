@@ -18,14 +18,16 @@ numpy_to_rdf_types = {
     np.dtype('datetime64'): '<xs:float>'
 }
 
+
 def find_rdf_types(
-    frame: pd.DataFrame,
-    overrides: Dict[str, str] = None) -> Dict[str, str]:
+        frame: pd.DataFrame,
+        overrides: Dict[str, str] = None) -> Dict[str, str]:
     '''
     For the columns in the given DataFrame, build a dictionary of column -> rdf type.
     '''
     derived_types = frame.dtypes.to_dict()
-    derived_types = {key:numpy_to_rdf_types.get(value, default_rdf_type) for key, value in derived_types.items()}
+    derived_types = {key: numpy_to_rdf_types.get(
+        value, default_rdf_type) for key, value in derived_types.items()}
 
     if overrides is not None:
         logger.info(f'Overriding rdf types with {overrides}')
