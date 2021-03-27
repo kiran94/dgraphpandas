@@ -1,7 +1,8 @@
+import io
 import logging
 import argparse
 import os
-import zipfile
+import gzip
 from typing import List
 
 import pandas as pd
@@ -17,6 +18,8 @@ try:
 except ImportError as e:
     logger.warning(e)
 
+pd.set_option('mode.chained_assignment', None)
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
@@ -29,6 +32,7 @@ if __name__ == '__main__':
     parser.add_argument('--console', action='store_true', default=False)
     parser.add_argument('--pre_csv', action='store_true', default=False)
     parser.add_argument('--generate_upsert', action='store_true', default=False)
+    parser.add_argument('--encoding', default='utf-8')
 
     args = parser.parse_args()
 
@@ -72,15 +76,19 @@ if __name__ == '__main__':
         intrinsic_upserts, edges_upserts = generate_upserts(intrinsic, edges)
 
         os.makedirs(args.output_dir, exist_ok=True)
-        intrinsic_path = os.path.join(args.output_dir, args.type + '_intrinsic.zip')
-        edges_path = os.path.join(args.output_dir, args.type + '_edges.zip')
+        intrinsic_path = os.path.join(args.output_dir, args.type + '_intrinsic.gz')
+        edges_path = os.path.join(args.output_dir, args.type + '_edges.gz')
 
         logger.info(f'Writing to {intrinsic_path}')
-        with zipfile.ZipFile(intrinsic_path, mode='w', compression=zipfile.ZIP_DEFLATED) as zip:
-            zip.writestr('intrinsic.rdf', '\n'.join(intrinsic_upserts))
+        with gzip.open(intrinsic_path, mode='wb', compresslevel=9) as zip:
+            s = '\n'.join(intrinsic_upserts)
+            s = s.encode(encoding=args.encoding)
+            zip.write(s)
 
         logger.info(f'Writing to {edges_path}')
-        with zipfile.ZipFile(edges_path, mode='w', compression=zipfile.ZIP_DEFLATED) as zip:
-            zip.writestr('edges.rdf', '\n'.join(edges_upserts))
+        with gzip.open(edges_path, mode='wb', compresslevel=9) as zip:
+            s = '\n'.join(edges_upserts)
+            s = s.encode(encoding=args.encoding)
+            zip.write(s)
     else:
         logger.warning('generate_upsert not set, skipping')
