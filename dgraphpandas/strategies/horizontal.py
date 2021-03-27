@@ -34,6 +34,7 @@ def horizontal_transform(
     object_field: str = kwargs.get('object_field', 'object')
     key_seperator: str = kwargs.get('key_seperator', '_')
     add_dgraph_type_records: bool = bool(kwargs.get('add_dgraph_type_records', True))
+    strip_id_from_edge_names: bool = bool(kwargs.get('strip_id_from_edge_names', True))
 
     potential_callables: Dict[str, Union[List[str], Callable]] = {
         'subject_fields': subject_fields,
@@ -80,6 +81,9 @@ def horizontal_transform(
         logger.debug(f'Splitting into Intrinsic and edges based on edges {edges}')
         intrinsic = frame.loc[~frame['predicate'].isin(edges)]
         edges = frame.loc[frame['predicate'].isin(edges)]
+        if strip_id_from_edge_names:
+            edges['predicate'] = edges['predicate'].str.replace('_id', '')
+
     else:
         logger.debug('No Edges defined, Skipping.')
         intrinsic = frame
