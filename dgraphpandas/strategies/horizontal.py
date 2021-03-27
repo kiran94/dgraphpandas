@@ -16,7 +16,7 @@ def horizontal_transform(
         edge_fields: Union[List[str], Callable[..., List[str]]],
         dgraph_type: Union[str, Callable[..., List[str]]],
         types: Dict[str, str] = None,
-        illegal_characters: Union[List[str], Pattern] = ['%', r'\.'],
+        illegal_characters: Union[List[str], Pattern] = ['%', '\.'],
         **kwargs) -> Tuple[pd.DataFrame, pd.DataFrame]:
     '''
     Transform an incoming DataFrame (in horizontal format) into
@@ -99,12 +99,10 @@ def horizontal_transform(
         logger.debug('Resolving illegal_characters')
         illegal_characters: Pattern = re.compile('|'.join(illegal_characters))
 
-    intrinsic.loc[:, 'subject'] = intrinsic['subject'].replace(
-        illegal_characters, '')
+    intrinsic.loc[:, 'subject'] = intrinsic['subject'].replace(illegal_characters, '')
     edges['subject'] = edges['subject'].replace(illegal_characters, '')
-
-    edges['object'] = edges['predicate'].astype(
-        str) + key_seperator + edges['object'].astype(str)
+    edges['object'] = edges['object'].replace(illegal_characters, '')
+    edges['object'] = edges['predicate'].astype(str) + key_seperator + edges['object'].astype(str)
 
     intrinsic = intrinsic[['subject', 'predicate', 'object', 'type']]
     edges = edges[['subject', 'predicate', 'object', 'type']]
