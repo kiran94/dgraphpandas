@@ -10,6 +10,7 @@ files=(
    "https://raw.githubusercontent.com/veekun/pokedex/master/pokedex/data/csv/versions.csv"
    "https://raw.githubusercontent.com/veekun/pokedex/master/pokedex/data/csv/generations.csv"
    "https://raw.githubusercontent.com/veekun/pokedex/master/pokedex/data/csv/abilities.csv"
+   "https://raw.githubusercontent.com/veekun/pokedex/master/pokedex/data/csv/regions.csv"
 )
 
 for file in "${files[@]}"
