@@ -160,4 +160,4 @@ samples/**/input/*.csv
 samples/**/output/*.gz
 samples/**/xidmap/*
 
-.vscode/settings.json
+settings.json
