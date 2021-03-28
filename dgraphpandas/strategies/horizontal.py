@@ -96,6 +96,8 @@ def horizontal_transform(
     rdf_types: str = get_from_config('rdf_types', file_config, None, **(kwargs))
     ignore_fields: List[str] = get_from_config('ignore_fields', file_config, [], **(kwargs))
 
+    override_edge_name: Dict[str, Any] = get_from_config('override_edge_name', file_config, {}, **(kwargs))
+
     '''
     For any fields which we don't care about, filter them from the frame.
     '''
@@ -211,8 +213,24 @@ def horizontal_transform(
     currently operating on the student then we might have
     <student_45> <school> <1> but we really want <student_45> <school> <school_1>
     because school_1 would be found whenever we are loading our school data.
+
+    If override_edge_name has been specified then do some extra work
+    to make the predicate and target object type different.
     '''
-    edges['object'] = edges['predicate'].astype(str) + key_seperator + edges['object'].astype(str)
+    def override_edge_name_apply(row: pd.Series, override_edge_name: Dict[str, Any], key_seperator: str):
+        if row['predicate'] not in override_edge_name:
+            row['object'] = row['predicate'] + key_seperator + str(row['object'])
+        else:
+            current_override = override_edge_name[row['predicate']]
+            row['predicate'] = current_override['predicate']
+            row['object'] = current_override['target_node_type'] + key_seperator + str(row['object'])
+
+        return row
+
+    if any(override_edge_name):
+        edges = edges.apply(override_edge_name_apply, axis='columns', args=(override_edge_name, key_seperator))
+    else:
+        edges['object'] = edges['predicate'].astype(str) + key_seperator + edges['object'].astype(str)
 
     '''
     Just re-ordering so they are in their natural order

@@ -55,7 +55,13 @@
                 "is_baby": "bool"
             },
             "edge_fields": ["generation_id", "evolves_from_species_id", "evolution_chain_id", "color_id", "shape_id", "habitat_id", "growth_rate_id"],
-            "ignore_fields": ["conquest_order", "order"]
+            "ignore_fields": ["conquest_order", "order"],
+            "override_edge_name": {
+                "evolves_from_species": {
+                    "predicate": "evolves_from",
+                    "target_node_type": "pokemon"
+                }
+            }
         }
     }
 }
