@@ -36,7 +36,7 @@ def generate_upserts(
         edges: pd.DataFrame, drop_na_objects=True) -> Tuple[List[str], List[str]]:
 
     if drop_na_objects:
-        logger.info('Dropping NA Objects from intrinsic')
+        logger.debug('Dropping NA Objects from intrinsic')
         intrinsic.dropna(subset=['object'], inplace=True)
 
     intrinsic_upserts = generate_intrinsic(intrinsic)
