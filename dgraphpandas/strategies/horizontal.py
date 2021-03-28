@@ -92,7 +92,10 @@ def horizontal_transform(
     drop_na_edge_objects: bool = get_from_config('drop_na_edge_objects', config, True, **(kwargs))
     predicate_field: str = get_from_config('predicate_field', config, 'predicate', **(kwargs))
     object_field: str = get_from_config('object_field', config, 'object', **(kwargs))
-    illegal_characters: str = get_from_config('illegal_characters', config, ['%', '\\.'], **(kwargs))
+    illegal_characters: str = get_from_config('illegal_characters', config, ['%', '\\.', '\\s', '\"'], **(kwargs))
+    illegal_characters_intrinsic_subject: str = get_from_config('illegal_characters_intrinsic_subject', config, ['\"'], **(kwargs))
+
+
     rdf_types: str = get_from_config('rdf_types', file_config, None, **(kwargs))
     ignore_fields: List[str] = get_from_config('ignore_fields', file_config, [], **(kwargs))
 
@@ -189,15 +192,25 @@ def horizontal_transform(
     '''
     Some characters are illegal in an RDF export and DGraph will not accept them.
     So make sure we filter out any of those characters from our Frame.
+
+    There is a differentiation between illegal characters in rdf in general and the values
+    which can be inside the subject fields for intrinsic values since these are quoted and are 
+    actual data items which may be visible to clients.
     '''
-    logger.debug('Filtering Illegal Characters %s', illegal_characters)
+    logger.debug('Compiling Illegal Characters %s', illegal_characters)
     if isinstance(illegal_characters, list):
         logger.debug('Resolving illegal_characters')
         illegal_characters: Pattern = re.compile('|'.join(illegal_characters))
 
+    logger.debug('Compiling Illegal Characters %s', illegal_characters_intrinsic_subject)
+    if isinstance(illegal_characters_intrinsic_subject, list):
+        logger.debug('Resolving illegal_characters')
+        illegal_characters_intrinsic_subject: Pattern = re.compile('|'.join(illegal_characters_intrinsic_subject))
+
     intrinsic.loc[:, 'subject'] = intrinsic['subject'].replace(illegal_characters, '')
     edges['subject'] = edges['subject'].replace(illegal_characters, '')
     edges['object'] = edges['object'].replace(illegal_characters, '')
+    intrinsic['object'] = intrinsic['object'].replace(illegal_characters_intrinsic_subject, '')
 
     '''
     If the object is NA/Null then the predicate does not exist from this node
