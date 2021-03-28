@@ -1,11 +1,10 @@
-import io
 import logging
 import argparse
 import os
 import gzip
 import json
-from typing import Any, Callable, Dict, List
-from pprint import pprint, pformat
+from typing import Any, Dict, List
+from pprint import pformat
 
 import pandas as pd
 

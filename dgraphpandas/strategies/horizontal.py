@@ -92,7 +92,7 @@ def horizontal_transform(
     drop_na_edge_objects: bool = get_from_config('drop_na_edge_objects', config, True, **(kwargs))
     predicate_field: str = get_from_config('predicate_field', config, 'predicate', **(kwargs))
     object_field: str = get_from_config('object_field', config, 'object', **(kwargs))
-    illegal_characters: str = get_from_config('illegal_characters', config, ['%', '\.'], **(kwargs))
+    illegal_characters: str = get_from_config('illegal_characters', config, ['%', '\\.'], **(kwargs))
     rdf_types: str = get_from_config('rdf_types', file_config, None, **(kwargs))
     ignore_fields: List[str] = get_from_config('ignore_fields', file_config, [], **(kwargs))
 
