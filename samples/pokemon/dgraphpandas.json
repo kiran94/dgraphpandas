@@ -1,0 +1,61 @@
+{
+    "transform": "horizontal",
+    "illegal_characters": ["%", "\\."],
+    "strip_id_from_edge_names": true,
+    "add_dgraph_type_records": true,
+    "key_separator": "_",
+    "predicate_field": "predicate",
+    "object_field": "object",
+    "encoding": "utf-8",
+    "files": {
+        "generations": {
+            "subject_fields": ["id"],
+            "dgraph_type": "generation",
+            "edge_fields": ["region_id"],
+            "pre_rename": {
+                "main_region_id": "region_id"
+            },
+            "type_overrides": {
+                "id": "int32",
+                "region_id": "int32"
+            }
+        },
+        "types": {
+            "subject_fields": ["id"],
+            "dgraph_type": "type",
+            "edge_fields": ["generation_id", "damage_class_id"],
+            "type_overrides": {
+                "id": "Int32",
+                "generation_id": "Int32",
+                "damage_class_id": "Int32"
+            }
+        },
+        "pokemon_species": {
+            "subject_fields": ["id"],
+            "dgraph_type": "pokemon",
+            "type_overrides": {
+                "id": "string",
+                "generation_id": "Int32",
+                "evolves_from_species_id": "Int32",
+                "evolution_chain_id": "Int32",
+                "color_id": "Int32",
+                "shape_id": "Int32",
+                "habitat_id": "Int32",
+                "gender_rate": "Float32",
+                "capture_rate": "Float32",
+                "base_happiness": "Float32",
+                "hatch_counter": "Int32",
+                "has_gender_differences": "bool",
+                "growth_rate_id": "Int32",
+                "forms_switchable": "bool",
+                "is_legendary": "bool",
+                "is_mythical": "bool",
+                "order": "Int32",
+                "conquest_order": "Int32",
+                "is_baby": "bool"
+            },
+            "edge_fields": ["generation_id", "evolves_from_species_id", "evolution_chain_id", "color_id", "shape_id", "habitat_id", "growth_rate_id"],
+            "ignore_fields": ["conquest_order", "order"]
+        }
+    }
+}
