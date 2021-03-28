@@ -89,13 +89,13 @@ if __name__ == '__main__':
         intrinsic_path = os.path.join(args.output_dir, os.path.basename(args.file).split('.')[0] + '_intrinsic.gz')
         edges_path = os.path.join(args.output_dir, os.path.basename(args.file).split('.')[0] + '_edges.gz')
 
-        logger.info(f'Writing to {intrinsic_path}')
+        logger.info(f'Writing to {len(intrinsic_upserts)} upserts to {intrinsic_path}')
         with gzip.open(intrinsic_path, mode='wb', compresslevel=9) as zip:
             s = '\n'.join(intrinsic_upserts)
             s = s.encode(encoding=args.encoding)
             zip.write(s)
 
-        logger.info(f'Writing to {edges_path}')
+        logger.info(f'Writing to {len(edges_upserts)} upserts to {edges_path}')
         with gzip.open(edges_path, mode='wb', compresslevel=9) as zip:
             s = '\n'.join(edges_upserts)
             s = s.encode(encoding=args.encoding)
