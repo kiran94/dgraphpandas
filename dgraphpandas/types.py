@@ -13,9 +13,14 @@ numpy_to_rdf_types = {
     np.dtype('O'): '<xs:string>',
     np.dtype('int32'): '<xs:integer>',
     np.dtype('int64'): '<xs:integer>',
+    np.dtype('Int32'): '<xs:integer>',
+    np.dtype('Int64'): '<xs:integer>',
     np.dtype('float32'): '<xs:float>',
     np.dtype('float64'): '<xs:float>',
-    np.dtype('datetime64'): '<xs:float>'
+    np.dtype('Float32'): '<xs:float>',
+    np.dtype('Float64'): '<xs:float>',
+    np.dtype('datetime64'): '<xs:datetime>',
+    np.dtype('bool'): '<xs:boolean>'
 }
 
 

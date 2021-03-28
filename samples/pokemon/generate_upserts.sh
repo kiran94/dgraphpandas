@@ -64,8 +64,12 @@ python -m dgraphpandas \
     --output_dir $OUTPUT_DIR \
     --generate_upsert
 
-
-
-# python -m dgraphpandas -f samples/pokemon/input/pokemon.csv -s id -t pokemon --output_dir samples/pokemon/output
-# python -m dgraphpandas -f samples/pokemon/input/types.csv -s id -t types --edges generation_id damage_class_id --output_dir samples/pokemon/output
-# python -m dgraphpandas -f samples/pokemon/input/moves.csv -s id -t moves -e generation_id type_id target_id damage_class_id effect_id contest_type_id contest_effect_id super_contest_effect_id --output_dir samples/pokemon/output
+###########################
+echo Generating Pokemon
+python -m dgraphpandas \
+    --file $INPUT_DIR/pokemon_species.csv \
+    --subject id \
+    --type pokemon \
+    --edges generation_id evolution_chain_id color_id shape_id habitat_id evolves_from_species_id growth_rate_id \
+    --output_dir $OUTPUT_DIR \
+    --generate_upsert

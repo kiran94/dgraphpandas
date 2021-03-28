@@ -3,11 +3,14 @@ import logging
 import argparse
 import os
 import gzip
-from typing import List
+import json
+from typing import Any, Callable, Dict, List
+from pprint import pprint, pformat
 
 import pandas as pd
 
 from dgraphpandas.strategies.horizontal import horizontal_transform
+from dgraphpandas.strategies.vertical import vertical_transform
 from dgraphpandas.writers.upserts import generate_upserts
 
 logger = logging.getLogger(__name__)
@@ -24,60 +27,68 @@ pd.set_option('mode.chained_assignment', None)
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('-f', '--file')
-    parser.add_argument('-s', '--subject', nargs='+', required=True)
-    parser.add_argument('-e', '--edges', nargs='+', required=False)
-    parser.add_argument('-t', '--type', required=True)
+    parser.add_argument('-c', '--config')
+    parser.add_argument('-ck', '--config_file_key')
     parser.add_argument('-o', '--output_dir', default='.')
-    parser.add_argument('-c', '--chunksize', default=None, type=int)
     parser.add_argument('--console', action='store_true', default=False)
     parser.add_argument('--pre_csv', action='store_true', default=False)
-    parser.add_argument('--generate_upsert', action='store_true', default=False)
-    parser.add_argument('--encoding', default='utf-8')
+    parser.add_argument('--skip_upsert_generation', action='store_true', default=False)
+    parser.add_argument('--encoding', default=os.environ.get('DGRAPH_PANDAS_ENCODING', 'utf-8'))
 
     args = parser.parse_args()
 
+    with open(args.config, 'r') as f:
+        global_config: Dict[str, Any] = json.load(f)
+        config: Dict[str, Any] = global_config['files'][args.config_file_key]
+        logger.debug('Global Config \n %s', pformat(global_config))
+
     all_intrinsic: List[pd.DataFrame] = []
     all_edges: List[pd.DataFrame] = []
+    frame: pd.DataFrame = pd.read_csv(args.file)
 
-    logger.info(f'Reading from {args.file}')
-    if args.chunksize:
-        for index, frame in enumerate(pd.read_csv(args.file, chunksize=args.chunksize)):
-            logger.info(f'Running Chunk {index}')
-            intrinsic, edges = horizontal_transform(frame, args.subject, args.edges, args.type)
-            all_intrinsic.append(intrinsic)
-            all_edges.append(edges)
-    else:
-        frame = pd.read_csv(args.file)
-        intrinsic, edges = horizontal_transform(frame, args.subject, args.edges, args.type)
+    if global_config['transform'] == 'horizontal':
+        intrinsic, edges = horizontal_transform(frame, global_config, args.config_file_key)
         all_intrinsic.append(intrinsic)
         all_edges.append(edges)
+
+    elif global_config['transform'] == 'vertical':
+        intrinsic, edges = vertical_transform(frame)  # TODO
+        all_intrinsic.append(intrinsic)
+        all_edges.append(edges)
+
+    else:
+        raise NotImplementedError(global_config['transform'])
 
     logger.debug(f'Concatting {len(all_intrinsic)} intrinsic frames and {len(all_edges)} frames')
     intrinsic = pd.concat(all_intrinsic)
     edges = pd.concat(all_edges)
 
     if args.console:
+        print('Intrinsic:')
         print(intrinsic)
+        print('Edges:')
         print(edges)
 
     if args.pre_csv:
         os.makedirs(args.output_dir, exist_ok=True)
-        intrinsic_path = os.path.join(args.output_dir, args.type + '_intrinsic.csv')
-        edges_path = os.path.join(args.output_dir, args.type + '_edges.csv')
+        source_file_name = os.path.basename(args.file).split('.')[0]
+
+        intrinsic_path = os.path.join(args.output_dir, source_file_name + '_intrinsic.csv')
+        edges_path = os.path.join(args.output_dir, source_file_name + '_edges.csv')
 
         logger.info(f'Writing to {intrinsic_path}')
-        intrinsic.to_csv(intrinsic_path, index=False)
+        intrinsic.to_csv(intrinsic_path, index=False, encoding=args.encoding)
 
         logger.info(f'Writing to {edges_path}')
-        edges.to_csv(edges_path, index=False)
+        edges.to_csv(edges_path, index=False, encoding=args.encoding)
 
-    if args.generate_upsert:
+    if not args.skip_upsert_generation:
         logger.info('Generating Upsert Queries')
         intrinsic_upserts, edges_upserts = generate_upserts(intrinsic, edges)
 
         os.makedirs(args.output_dir, exist_ok=True)
-        intrinsic_path = os.path.join(args.output_dir, args.type + '_intrinsic.gz')
-        edges_path = os.path.join(args.output_dir, args.type + '_edges.gz')
+        intrinsic_path = os.path.join(args.output_dir, os.path.basename(args.file).split('.')[0] + '_intrinsic.gz')
+        edges_path = os.path.join(args.output_dir, os.path.basename(args.file).split('.')[0] + '_edges.gz')
 
         logger.info(f'Writing to {intrinsic_path}')
         with gzip.open(intrinsic_path, mode='wb', compresslevel=9) as zip:
@@ -91,4 +102,4 @@ if __name__ == '__main__':
             s = s.encode(encoding=args.encoding)
             zip.write(s)
     else:
-        logger.warning('generate_upsert not set, skipping')
+        logger.warning('skip_upsert_generation was set, skipping')
