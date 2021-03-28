@@ -127,9 +127,15 @@ def horizontal_transform(
 
     '''
     If we have a composite key, then join all into a single subject column
+    We do this length check as a performance optimisation as apply can take some time
+    and there is no need if there is only 1 key.
     '''
     logger.debug(f'Joining Key fields {key} to subject')
-    frame['subject'] = frame[key].apply(lambda row: key_seperator.join(row.values.astype(str)), axis=1)
+    if len(key) > 1:
+        frame['subject'] = frame[key].apply(lambda row: key_seperator.join(row.values.astype(str)), axis=1)
+    else:
+        frame['subject'] = frame[key]
+
     frame['subject'] = type + key_seperator + frame['subject']
 
     logger.debug('Dropping keys in favour of subject')
