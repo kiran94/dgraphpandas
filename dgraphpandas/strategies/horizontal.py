@@ -60,6 +60,7 @@ def _prepare_frame(
     logger.debug('Applying Type Overrides %s', type_overrides)
     for col, type in type_overrides.items():
         try:
+            logger.debug(f'Converting {col} to {type}')
             frame[col] = frame[col].astype(type)
         except ValueError:
             logger.exception(
