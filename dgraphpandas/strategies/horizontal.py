@@ -92,9 +92,9 @@ def horizontal_transform(
     drop_na_edge_objects: bool = get_from_config('drop_na_edge_objects', config, True, **(kwargs))
     predicate_field: str = get_from_config('predicate_field', config, 'predicate', **(kwargs))
     object_field: str = get_from_config('object_field', config, 'object', **(kwargs))
-    illegal_characters: str = get_from_config('illegal_characters', config, ['%', '\\.', '\\s', '\"'], **(kwargs))
-    illegal_characters_intrinsic_subject: str = get_from_config('illegal_characters_intrinsic_subject', config, ['\"'], **(kwargs))
-
+    illegal_characters: str = get_from_config('illegal_characters', config, ['%', '\\.', '\\s', '\"', '\\n', '\\r\\n'], **(kwargs))
+    illegal_characters_intrinsic_subject: str = get_from_config('illegal_characters_intrinsic_subject', config, ['\"', '\\n', '\\r\\n'], **(kwargs))
+    csv_edges: str = get_from_config('csv_edges', file_config, [], **(kwargs))
 
     rdf_types: str = get_from_config('rdf_types', file_config, None, **(kwargs))
     ignore_fields: List[str] = get_from_config('ignore_fields', file_config, [], **(kwargs))
@@ -127,6 +127,17 @@ def horizontal_transform(
         id_vars=key,
         var_name=predicate_field,
         value_name=object_field)
+
+    if csv_edges:
+        logger.info(f'Detected csv_edges {csv_edges}. Breaking up those columns')
+        csv_edge_frame = frame[frame['predicate'].isin(csv_edges)]
+        csv_edge_frame['object'] = csv_edge_frame['object'].str.split(',')
+        csv_edge_frame = csv_edge_frame.explode(column='object')
+        csv_edge_frame.dropna(subset=['object'], inplace=True)
+        csv_edge_frame['object'] = csv_edge_frame['object'].str.strip()
+
+        frame = frame[~(frame['predicate'].isin(csv_edges))]
+        frame = pd.concat([frame, csv_edge_frame])
 
     '''
     If we have a composite key, then join all into a single subject column
