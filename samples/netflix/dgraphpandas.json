@@ -38,7 +38,7 @@
                 "director": "object",
                 "cast": "object",
                 "country": "object",
-                "date_added": "M",
+                "date_added": "datetime64",
                 "release_year": "int32",
                 "rating": "object",
                 "duration": "object",
