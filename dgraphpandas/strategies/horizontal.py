@@ -99,7 +99,6 @@ def horizontal_transform(
 
     rdf_types: str = get_from_config('rdf_types', file_config, None, **(kwargs))
     ignore_fields: List[str] = get_from_config('ignore_fields', file_config, [], **(kwargs))
-
     override_edge_name: Dict[str, Any] = get_from_config('override_edge_name', file_config, {}, **(kwargs))
 
     '''
@@ -200,6 +199,17 @@ def horizontal_transform(
     intrinsic['type'] = intrinsic['predicate'].map(rdf_types)
     intrinsic['type'].fillna(default_rdf_type, inplace=True)
     edges['type'] = np.nan
+
+    '''
+    Ensure that DateTime fields are formatted in ISO format
+    And any fields are which NaT are filtered out.
+    '''
+    logger.debug('Ensuring Date Time fields are in ISO format')
+    intrinsic_with_datetime = intrinsic.loc[intrinsic['type'] == '<xs:dateTime>']
+    intrinsic = intrinsic.loc[intrinsic['type'] != '<xs:dateTime>']
+    intrinsic_with_datetime['object'] = intrinsic_with_datetime['object'].apply(lambda x: x.isoformat())
+    intrinsic_with_datetime = intrinsic_with_datetime.loc[intrinsic_with_datetime['object'] != 'NaT']
+    intrinsic = pd.concat([intrinsic, intrinsic_with_datetime])
 
     '''
     Some characters are illegal in an RDF export and DGraph will not accept them.
