@@ -7,12 +7,9 @@ import numpy as np
 import pandas as pd
 
 from dgraphpandas.types import find_rdf_types, default_rdf_type
+from dgraphpandas.config import get_from_config
 
 logger = logging.getLogger(__name__)
-
-
-def get_from_config(key: str, config: Dict[str, Any], default: Any = None, **kwargs) -> Any:
-    return kwargs.get(key, config.get(key, default))
 
 
 def _prepare_frame(
