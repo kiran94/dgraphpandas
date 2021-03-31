@@ -44,10 +44,20 @@ def _join_key_fields(frame: pd.DataFrame, key: List[str], key_seperator: str, ty
     We do this length check as a performance optimisation as apply can take some time
     and there is no need if there is only 1 key.
     '''
+    if frame is None:
+        raise ValueError('frame')
+    elif key is None:
+        raise ValueError('key')
+    elif key_seperator is None:
+        raise ValueError('key_seperator')
+    elif type is None:
+        raise ValueError('type')
+
     logger.debug(f'Joining Key fields {key} to subject')
     if len(key) > 1:
         frame['subject'] = frame[key].apply(lambda row: key_seperator.join(row.values.astype(str)), axis=1)
     else:
+        frame[key] = frame[key].astype(str)
         frame['subject'] = frame[key]
 
     frame['subject'] = type + key_seperator + frame['subject']
