@@ -42,7 +42,7 @@
                 "release_year": "int32",
                 "rating": "object",
                 "duration": "object",
-                "genre": "object",
+                "listed_in": "object",
                 "description": "object"
             },
             "edge_fields": ["type", "director", "cast", "country", "rating", "genre"],
