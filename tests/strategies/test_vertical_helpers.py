@@ -4,7 +4,7 @@ import pandas as pd
 from pandas.testing import assert_frame_equal
 from parameterized import parameterized
 
-from dgraphpandas.strategies.vertical_helpers import (_expand_csv_edges, _join_key_fields)
+from dgraphpandas.strategies.vertical_helpers import (_expand_csv_edges, _join_key_fields, _add_dgraph_type_records)
 
 
 class VerticalHelpers(unittest.TestCase):
@@ -188,5 +188,56 @@ class VerticalHelpers(unittest.TestCase):
         result_frame = _join_key_fields(frame, key, key_seperator, type)
 
         actual = expected.reset_index(drop=True)[['subject', 'predicate', 'object']]
+        output = result_frame.reset_index(drop=True)[['subject', 'predicate', 'object']]
+        assert_frame_equal(actual, output)
+
+    def test_add_dgraph_type_records_enabled_records_added(self):
+        '''
+        Ensures when add_dgraph_type_records is passed, then dgraph.type
+        records are generated and appended to the DataFrame.
+        '''
+        type = 'customer'
+        frame = pd.DataFrame(data={
+            'subject': [1, 2, 3],
+            'predicate': ['age', 'age', 'age'],
+            'object': [23, 45, 12],
+        })
+
+        result_frame = _add_dgraph_type_records(frame, add_dgraph_type_records=True, type=type)
+
+        expected = pd.DataFrame(data={
+            'subject': [1, 2, 3, 1, 2, 3],
+            'predicate': ['age']*3 + ['dgraph.type']*3,
+            'object': [23, 45, 12] + [type]*3
+        })
+
+        actual = expected.reset_index(drop=True)[['subject', 'predicate', 'object']]
+        output = result_frame.reset_index(drop=True)[['subject', 'predicate', 'object']]
+
+        self.assertEqual(6, result_frame.shape[0])
+        without_dgraph_type = result_frame[~result_frame['predicate'].isin(['dgraph.type'])]
+        with_dgraph_type = result_frame[result_frame['predicate'].isin(['dgraph.type'])]
+        self.assertEqual(3, without_dgraph_type.shape[0])
+        self.assertEqual(3, with_dgraph_type.shape[0])
+        self.assertEqual(with_dgraph_type['predicate'].values.tolist(), ['dgraph.type']*3)
+        self.assertEqual(without_dgraph_type['predicate'].values.tolist(), ['age']*3)
+
+        assert_frame_equal(actual, output)
+
+    def test_add_dgraph_type_records_disabled_records_added(self):
+        '''
+        Ensures when add_dgraph_type_records is disabled, then
+        the frame remains unchanged
+        '''
+        type = 'customer'
+        frame = pd.DataFrame(data={
+            'subject': [1, 2, 3],
+            'predicate': ['age', 'age', 'age'],
+            'object': [23, 45, 12],
+        })
+
+        result_frame = _add_dgraph_type_records(frame, add_dgraph_type_records=False, type=type)
+
+        actual = frame.reset_index(drop=True)[['subject', 'predicate', 'object']]
         output = result_frame.reset_index(drop=True)[['subject', 'predicate', 'object']]
         assert_frame_equal(actual, output)
