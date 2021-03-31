@@ -9,19 +9,25 @@ logger = logging.getLogger(__name__)
 
 default_rdf_type = os.environ.get('DEFAULT_RDF_TYPE', '<xs:string>')
 
+
+numpy_str_to_rdf_types = {
+    'object': '<xs:string>',
+    'O': '<xs:string>',
+    'int32': '<xs:int>',
+    'int64': '<xs:int>',
+    'Int32': '<xs:int>',
+    'Int64': '<xs:int>',
+    'float32': '<xs:float>',
+    'float64': '<xs:float>',
+    'Float32': '<xs:float>',
+    'Float64': '<xs:float>',
+    'datetime64': '<xs:dateTime>',
+    '<M8[ns]': '<xs:dateTime>',
+    'bool': '<xs:bool>'
+}
+
 numpy_to_rdf_types = {
-    np.dtype('O'): '<xs:string>',
-    np.dtype('int32'): '<xs:int>',
-    np.dtype('int64'): '<xs:int>',
-    np.dtype('Int32'): '<xs:int>',
-    np.dtype('Int64'): '<xs:int>',
-    np.dtype('float32'): '<xs:float>',
-    np.dtype('float64'): '<xs:float>',
-    np.dtype('Float32'): '<xs:float>',
-    np.dtype('Float64'): '<xs:float>',
-    np.dtype('datetime64'): '<xs:dateTime>',
-    np.dtype('<M8[ns]'): '<xs:dateTime>',
-    np.dtype('bool'): '<xs:bool>'
+    key: np.dtype(key) for key, value in numpy_str_to_rdf_types.items()
 }
 
 
@@ -39,3 +45,11 @@ def find_rdf_types(
         derived_types.update(overrides)
 
     return derived_types
+
+
+def find_rdf_types_2(frame: pd.DataFrame, types: Dict[str, str]):
+
+    resolved_types = {}
+    for col, type in types.items():
+        resolved_types[col] = numpy_str_to_rdf_types.get(type, default_rdf_type)
+    return resolved_types
