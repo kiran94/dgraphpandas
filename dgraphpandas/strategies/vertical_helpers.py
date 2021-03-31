@@ -5,13 +5,13 @@ from typing import Callable, Dict, Any, List, Pattern, Tuple, Union
 import pandas as pd
 
 from dgraphpandas.types import default_rdf_type
-from dgraphpandas.types import find_rdf_types_2
+from dgraphpandas.types import find_rdf_types
 
 
 logger = logging.getLogger(__name__)
 
 
-def _expand_csv_edges(frame: pd.DataFrame, csv_edges: List[str]) -> pd.DataFrame:
+def _expand_csv_edges(frame: pd.DataFrame, csv_edges: List[str], seperator=',') -> pd.DataFrame:
     '''
     Sometimes fields will be delivered in CSV format.
     For example a Movie record might have a cast field with the value: actor1, actor2, actor3
@@ -20,10 +20,14 @@ def _expand_csv_edges(frame: pd.DataFrame, csv_edges: List[str]) -> pd.DataFrame
     When a field is declared within csv_edges, then we break up each of the values in the csv into
     it's own record.
     '''
+
+    if frame is None:
+        raise ValueError('frame')
+
     if csv_edges:
         logger.info(f'Detected csv_edges {csv_edges}. Breaking up those columns')
         csv_edge_frame = frame[frame['predicate'].isin(csv_edges)]
-        csv_edge_frame['object'] = csv_edge_frame['object'].str.split(',')
+        csv_edge_frame['object'] = csv_edge_frame['object'].str.split(seperator)
         csv_edge_frame = csv_edge_frame.explode(column='object')
         csv_edge_frame.dropna(subset=['object'], inplace=True)
         csv_edge_frame['object'] = csv_edge_frame['object'].str.strip()
@@ -104,7 +108,7 @@ def _apply_rdf_types(frame: pd.DataFrame, types: Dict[str, str]):
     '''
     logger.debug('Applying RDF Types')
 
-    rdf_types = find_rdf_types_2(frame, types)
+    rdf_types = find_rdf_types(types)
     frame['type'] = frame['predicate'].map(rdf_types)
     frame['type'].fillna(default_rdf_type, inplace=True)
 
