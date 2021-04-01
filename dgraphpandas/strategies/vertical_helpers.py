@@ -263,6 +263,9 @@ def _resolve_potential_callables(frame: pd.DataFrame, potential_callables: Dict[
     For example, if you wanted to apply a convention that all your edges always end with _id
     then for the edge_fields parameter, you could provide a lambda which resolves into a list given the frame
     '''
+    if frame is None:
+        raise ValueError('frame')
+
     for key, potential_callable in potential_callables.items():
         if callable(potential_callable):
             logger.debug('resolving %s', key)
@@ -278,5 +281,10 @@ def _rename_fields(frame: pd.DataFrame, pre_rename: Dict[str, str]) -> pd.DataFr
     according to that mapping. If the predicate does not exist in the mapping
     then leave untouched.
     '''
-    frame['predicate'] = frame['predicate'].apply(lambda x: pre_rename.get(x, x))
+    if frame is None:
+        raise ValueError('frame')
+
+    if pre_rename:
+        frame['predicate'] = frame['predicate'].apply(lambda x: pre_rename.get(x, x))
+
     return frame

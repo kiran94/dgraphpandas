@@ -11,7 +11,7 @@ from parameterized import parameterized
 
 from dgraphpandas.strategies.vertical_helpers import (
     _compile_illegal_characters_regex, _expand_csv_edges, _ignore_fields, _join_key_fields, _add_dgraph_type_records,
-    _break_up_intrinsic_and_edges, _apply_rdf_types, _format_date_fields, _override_edge_name, _remove_illegal_rdf_characters, _remove_na_objects)
+    _break_up_intrinsic_and_edges, _apply_rdf_types, _format_date_fields, _override_edge_name, _remove_illegal_rdf_characters, _remove_na_objects, _rename_fields, _resolve_potential_callables)
 from dgraphpandas.types import default_rdf_type
 
 
@@ -807,3 +807,107 @@ class VerticalHelpers(unittest.TestCase):
         expected_frame = expected_frame.reset_index(drop=True).sort_index()
         result = result.reset_index(drop=True).sort_index()
         assert_frame_equal(result, expected_frame)
+
+    def test_resolve_potential_callables_null_frame(self):
+        '''
+        Ensures when the frame is null, then an error is raised
+        '''
+        potential_callables = {'key': ['key_id']}
+        with self.assertRaises(ValueError):
+            _resolve_potential_callables(None, potential_callables)
+
+    def test_resolve_potential_callables_no_callables(self):
+        '''
+        Ensures when there are no callables passed, the dictionary
+        is unchanged
+        '''
+        frame = pd.DataFrame(data={
+            'subject': ['customer_1', 'customer_1', 'customer_1'],
+            'predicate':  ['cid', 'location_id', 'weight'],
+            'object':  [1420, '45', '50']
+        })
+
+        potential_callables = {
+            'key': ['cid'],
+            'edges': ['location_id']
+        }
+
+        result_callables = _resolve_potential_callables(frame, potential_callables)
+        self.assertEqual(potential_callables, result_callables)
+
+    def test_resolve_potential_callables_callablesprovided(self):
+        '''
+        Ensures when a callable is provided it's applied against the given frame
+        and returned
+        '''
+        frame = pd.DataFrame(data={
+            'subject': ['customer_1', 'customer_1', 'customer_1'],
+            'predicate':  ['cid', 'location_id', 'weight'],
+            'object':  [1420, '45', '50']
+        })
+
+        potential_callables = {
+            'key': ['cid'],
+            'edges': lambda frame: frame.loc[frame['predicate'].str.endswith('_id'), 'predicate'].unique().tolist()
+        }
+
+        expected_result = {
+            'key': ['cid'],
+            'edges': ['location_id']
+        }
+
+        result_callables = _resolve_potential_callables(frame, potential_callables)
+        self.assertEqual(expected_result, result_callables)
+
+    def test_rename_fields_null_frame(self):
+        '''
+        Ensures when parameters are null, then an error is raised
+        '''
+        pre_rename = {'loc_id': 'location_id'}
+        with self.assertRaises(ValueError):
+            _rename_fields(None, pre_rename)
+
+    @parameterized.expand([
+            (None,),
+            ({},),
+    ])
+    def test_rename_fields_no_prerename(self, rename_fields):
+        '''
+        Ensures when no rename fields are provided,
+        then the frame is untouched.
+        '''
+        frame = pd.DataFrame(data={
+            'subject': ['customer_1', 'customer_1', 'customer_1'],
+            'predicate':  ['hair_colour', 'height', 'weight'],
+            'object':  ['black', '172', '50'],
+            'type':  ['<xs:string>', '<xs:int>', '<xs:int>']
+        })
+
+        result = _rename_fields(frame.copy(), rename_fields)
+        assert_frame_equal(result, frame)
+
+    def test_rename_fields_provided(self):
+        '''
+        Ensures when rename fields are provided,
+        they are applied to the dataframe.
+        '''
+        frame = pd.DataFrame(data={
+            'subject': ['customer_1', 'customer_1', 'customer_1'],
+            'predicate':  ['hair_colour', 'height', 'mass'],
+            'object':  ['black', '172', '50'],
+            'type':  ['<xs:string>', '<xs:int>', '<xs:int>']
+        })
+        rename_fields = {
+            'hair_colour': 'hair',
+            'mass': 'weight'
+        }
+
+        expected = pd.DataFrame(data={
+            'subject': ['customer_1', 'customer_1', 'customer_1'],
+            'predicate':  ['hair', 'height', 'weight'],
+            'object':  ['black', '172', '50'],
+            'type':  ['<xs:string>', '<xs:int>', '<xs:int>']
+        })
+
+        result = _rename_fields(frame.copy(), rename_fields)
+        assert_frame_equal(result, expected)
