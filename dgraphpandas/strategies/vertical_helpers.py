@@ -145,6 +145,7 @@ def _format_date_fields(frame: pd.DataFrame) -> pd.DataFrame:
 def _compile_illegal_characters_regex(characters: List[str]) -> Pattern:
     return re.compile('|'.join(characters))
 
+
 def _remove_illegal_rdf_characters(frame: pd.DataFrame, illegal_characters: Union[List[str], Pattern], field: str):
     '''
     Some characters are illegal in an RDF export and DGraph will not accept them.

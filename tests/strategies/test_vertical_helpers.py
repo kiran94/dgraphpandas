@@ -98,7 +98,6 @@ class VerticalHelpers(unittest.TestCase):
         output = result_frame.reset_index(drop=True).sort_index()
         assert_frame_equal(actual, output)
 
-
     @parameterized.expand([('|',), ('#',)])
     def test_expand_csv_edges_alternative_seperator(self, seperator: str):
         '''
@@ -306,7 +305,6 @@ class VerticalHelpers(unittest.TestCase):
         expected_edges = expected_edges.reset_index(drop=True)[['subject', 'predicate', 'object']]
         actual_intrinsic = edges.reset_index(drop=True)[['subject', 'predicate', 'object']]
         assert_frame_equal(expected_edges, actual_intrinsic)
-
 
     @parameterized.expand([
         (True,),
