@@ -38,7 +38,7 @@ class VerticalHelpers(unittest.TestCase):
             'object': ['object1', 'object2', 'object3']
         })
 
-        result_frame = _expand_csv_edges(frame, csv_edges)
+        result_frame = _expand_csv_edges(frame.copy(), csv_edges)
         assert_frame_equal(frame, result_frame)
 
     def test_expand_csv_edges_csv_edges_provided_but_no_eligible_values(self):
@@ -53,7 +53,7 @@ class VerticalHelpers(unittest.TestCase):
             'object': ['object1', 'object2', 'object3']
         })
 
-        result_frame = _expand_csv_edges(frame, csv_edges)
+        result_frame = _expand_csv_edges(frame.copy(), csv_edges)
 
         expected = frame.sort_index().sort_values(by='subject')
         output = result_frame.sort_index().sort_values(by='subject')
@@ -71,7 +71,7 @@ class VerticalHelpers(unittest.TestCase):
             'object': ['object1', 'object2', 'object3']
         })
 
-        result_frame = _expand_csv_edges(frame, csv_edges)
+        result_frame = _expand_csv_edges(frame.copy(), csv_edges)
 
         expected = frame.sort_index().sort_values(by='subject')
         output = result_frame.sort_index().sort_values(by='subject')
@@ -98,7 +98,7 @@ class VerticalHelpers(unittest.TestCase):
             'object': ['object1', 'object3', 'object2a', 'object2b', 'object2c']
         })
 
-        result_frame = _expand_csv_edges(frame, csv_edges)
+        result_frame = _expand_csv_edges(frame.copy(), csv_edges)
 
         actual = expected.reset_index(drop=True).sort_index()
         output = result_frame.reset_index(drop=True).sort_index()
@@ -123,7 +123,7 @@ class VerticalHelpers(unittest.TestCase):
             'object': ['object1', 'object3', 'object2a', 'object2b', 'object2c']
         })
 
-        result_frame = _expand_csv_edges(frame, csv_edges, seperator=seperator)
+        result_frame = _expand_csv_edges(frame.copy(), csv_edges, seperator=seperator)
 
         actual = expected.reset_index(drop=True).sort_index()
         output = result_frame.reset_index(drop=True).sort_index()
@@ -163,7 +163,7 @@ class VerticalHelpers(unittest.TestCase):
             'object': [23, 45, 12],
         })
 
-        result_frame = _join_key_fields(frame, key, key_seperator, type)
+        result_frame = _join_key_fields(frame.copy(), key, key_seperator, type)
 
         actual = expected.reset_index(drop=True)[['subject', 'predicate', 'object']]
         output = result_frame.reset_index(drop=True)[['subject', 'predicate', 'object']]
@@ -190,7 +190,7 @@ class VerticalHelpers(unittest.TestCase):
             'object': [45.4, 76.9, 12.3],
         })
 
-        result_frame = _join_key_fields(frame, key, key_seperator, type)
+        result_frame = _join_key_fields(frame.copy(), key, key_seperator, type)
 
         actual = expected.reset_index(drop=True)[['subject', 'predicate', 'object']]
         output = result_frame.reset_index(drop=True)[['subject', 'predicate', 'object']]
@@ -208,7 +208,7 @@ class VerticalHelpers(unittest.TestCase):
             'object': [23, 45, 12],
         })
 
-        result_frame = _add_dgraph_type_records(frame, add_dgraph_type_records=True, type=type)
+        result_frame = _add_dgraph_type_records(frame.copy(), add_dgraph_type_records=True, type=type)
 
         expected = pd.DataFrame(data={
             'subject': [1, 2, 3, 1, 2, 3],
@@ -241,7 +241,7 @@ class VerticalHelpers(unittest.TestCase):
             'object': [23, 45, 12],
         })
 
-        result_frame = _add_dgraph_type_records(frame, add_dgraph_type_records=False, type=type)
+        result_frame = _add_dgraph_type_records(frame.copy(), add_dgraph_type_records=False, type=type)
 
         actual = frame.reset_index(drop=True)[['subject', 'predicate', 'object']]
         output = result_frame.reset_index(drop=True)[['subject', 'predicate', 'object']]
@@ -269,7 +269,7 @@ class VerticalHelpers(unittest.TestCase):
             'object': [23, 45, 12],
         })
 
-        intrinsic, edges = _break_up_intrinsic_and_edges(frame, edges)
+        intrinsic, edges = _break_up_intrinsic_and_edges(frame.copy(), edges)
 
         actual = frame.reset_index(drop=True)[['subject', 'predicate', 'object']]
         output = intrinsic.reset_index(drop=True)[['subject', 'predicate', 'object']]
@@ -302,7 +302,7 @@ class VerticalHelpers(unittest.TestCase):
             'object': ['london', 'first'],
         })
 
-        intrinsic, edges = _break_up_intrinsic_and_edges(frame, ['location_id', 'class_id'])
+        intrinsic, edges = _break_up_intrinsic_and_edges(frame.copy(), ['location_id', 'class_id'])
 
         expected_intrinsic = expected_intrinsic.reset_index(drop=True)[['subject', 'predicate', 'object']]
         actual_intrinsic = intrinsic.reset_index(drop=True)[['subject', 'predicate', 'object']]
@@ -339,7 +339,7 @@ class VerticalHelpers(unittest.TestCase):
             'object': ['london', 'first'],
         })
 
-        intrinsic, edges = _break_up_intrinsic_and_edges(frame, ['location_id', 'class_id'], strip_id_from_edge_names)
+        intrinsic, edges = _break_up_intrinsic_and_edges(frame.copy(), ['location_id', 'class_id'], strip_id_from_edge_names)
 
         expected_intrinsic = expected_intrinsic.reset_index(drop=True)[['subject', 'predicate', 'object']]
         actual_intrinsic = intrinsic.reset_index(drop=True)[['subject', 'predicate', 'object']]
@@ -383,7 +383,7 @@ class VerticalHelpers(unittest.TestCase):
             'type':  [default_rdf_type, '<xs:dateTime>', '<xs:int>']
         })
 
-        result_frame = _apply_rdf_types(frame, types)
+        result_frame = _apply_rdf_types(frame.copy(), types)
         assert_frame_equal(result_frame, expected_frame)
 
     def test_apply_rdf_types_all_columns_to_map(self):
@@ -410,7 +410,7 @@ class VerticalHelpers(unittest.TestCase):
             'type':  ['<xs:string>', '<xs:dateTime>', '<xs:int>']
         })
 
-        result_frame = _apply_rdf_types(frame, types)
+        result_frame = _apply_rdf_types(frame.copy(), types)
         assert_frame_equal(result_frame, expected_frame)
 
     def test_apply_rdf_types_no_columns_to_map(self):
@@ -433,7 +433,7 @@ class VerticalHelpers(unittest.TestCase):
             'type':  [default_rdf_type]*3
         })
 
-        result_frame = _apply_rdf_types(frame, types)
+        result_frame = _apply_rdf_types(frame.copy(), types)
         assert_frame_equal(result_frame, expected_frame)
 
     def test_format_date_fields_null_frame_error(self):
@@ -455,7 +455,7 @@ class VerticalHelpers(unittest.TestCase):
             'type':  ['<xs:string>', '<xs:int>', '<xs:int>']
         })
 
-        result_frame = _format_date_fields(frame)
+        result_frame = _format_date_fields(frame.copy())
         assert_frame_equal(frame, result_frame)
 
     def test_format_date_fields_date_fields_exist(self):
@@ -477,7 +477,7 @@ class VerticalHelpers(unittest.TestCase):
             'type':  ['<xs:string>', '<xs:dateTime>', '<xs:int>']
         })
 
-        result_frame = _format_date_fields(frame)
+        result_frame = _format_date_fields(frame.copy())
 
         result_frame = result_frame.sort_values(by='predicate').reset_index(drop=True)
         expected = expected.sort_values(by='predicate').reset_index(drop=True)
@@ -530,7 +530,6 @@ class VerticalHelpers(unittest.TestCase):
         with self.assertRaises(ValueError):
             _remove_illegal_rdf_characters(frame, ['$', '@'], field)
 
-
     def test_remove_illegal_rdf_characters_illegalcharacters_found(self):
         '''
         Ensures when there are illegal characters found
@@ -550,7 +549,7 @@ class VerticalHelpers(unittest.TestCase):
             'object': ['hello world', 'this is a fine string']
         })
 
-        result_frame = _remove_illegal_rdf_characters(frame, illegal_characters, field)
+        result_frame = _remove_illegal_rdf_characters(frame.copy(), illegal_characters, field)
         assert_frame_equal(expected_frame, result_frame)
 
     def test_remove_illegal_rdf_characters_illegalcharacters_notfound(self):
@@ -566,7 +565,7 @@ class VerticalHelpers(unittest.TestCase):
         illegal_characters = ['@', '#']
         field = 'object'
 
-        result_frame = _remove_illegal_rdf_characters(frame, illegal_characters, field)
+        result_frame = _remove_illegal_rdf_characters(frame.copy(), illegal_characters, field)
         assert_frame_equal(frame, result_frame)
 
     def test_remove_illegal_rdf_characters_only_one_field(self):
