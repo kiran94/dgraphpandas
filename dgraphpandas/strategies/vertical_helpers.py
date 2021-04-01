@@ -220,17 +220,22 @@ def _override_edge_name(edges: pd.DataFrame, override_edge_name: Dict[str, Any],
     If override_edge_name has been specified then do some extra work
     to make the predicate and target object type different.
     '''
+    if edges is None:
+        raise ValueError('edges')
+    if not key_seperator:
+        raise ValueError('key_seperator')
+
     def _override_edge_name_apply(row: pd.Series, override_edge_name: Dict[str, Any], key_seperator: str):
         if row['predicate'] not in override_edge_name:
             row['object'] = row['predicate'] + key_seperator + str(row['object'])
         else:
             current_override = override_edge_name[row['predicate']]
-            row['predicate'] = current_override['predicate']
+            row['predicate'] = current_override['predicate'] if 'predicate' in current_override else row['predicate']
             row['object'] = current_override['target_node_type'] + key_seperator + str(row['object'])
 
         return row
 
-    if any(override_edge_name):
+    if override_edge_name is not None and any(override_edge_name):
         edges = edges.apply(_override_edge_name_apply, axis='columns', args=(override_edge_name, key_seperator))
     else:
         edges['object'] = edges['predicate'].astype(str) + key_seperator + edges['object'].astype(str)

@@ -5,12 +5,13 @@ from unittest.mock import patch, Mock
 import numpy as np
 
 import pandas as pd
+from pandas.core.frame import DataFrame
 from pandas.testing import assert_frame_equal
 from parameterized import parameterized
 
 from dgraphpandas.strategies.vertical_helpers import (
     _compile_illegal_characters_regex, _expand_csv_edges, _join_key_fields, _add_dgraph_type_records,
-    _break_up_intrinsic_and_edges, _apply_rdf_types, _format_date_fields, _remove_illegal_rdf_characters, _remove_na_objects)
+    _break_up_intrinsic_and_edges, _apply_rdf_types, _format_date_fields, _override_edge_name, _remove_illegal_rdf_characters, _remove_na_objects)
 from dgraphpandas.types import default_rdf_type
 
 
@@ -646,3 +647,94 @@ class VerticalHelpers(unittest.TestCase):
         result_frame = result_frame.reset_index(drop=True).sort_index()
         expected_frame = expected_frame.reset_index(drop=True).sort_index()
         assert_frame_equal(expected_frame, result_frame)
+
+    @parameterized.expand([
+            (None, 'sep'),
+            (pd.DataFrame(), None),
+    ])
+    def test_override_edge_name_null_parameters(self, edges, key_seperator):
+        '''
+        Ensures when parameters is none, then errors are raised
+        '''
+        with self.assertRaises(ValueError):
+            _override_edge_name(edges, {}, key_seperator)
+
+    @parameterized.expand([
+            (None,),
+            ({},),
+    ])
+    def test_override_edge_name_no_overrides_default_apply(self, override_edge_name):
+        '''
+        Ensures when no override_edge_name has been provided
+        then the default add predicate to object is applied.
+        '''
+        edges = pd.DataFrame(data={
+            'customer_id': ['customer_1', 'customer_2', 'customer_3'],
+            'predicate': ['location', 'location', 'location'],
+            'object': [23, 45, 12],
+        })
+        key_seperator = '_'
+
+        expected_edges = pd.DataFrame(data={
+            'customer_id': ['customer_1', 'customer_2', 'customer_3'],
+            'predicate': ['location', 'location', 'location'],
+            'object': ['location_23', 'location_45', 'location_12'],
+        })
+
+        edges = _override_edge_name(edges.copy(), override_edge_name, key_seperator)
+        assert_frame_equal(expected_edges, edges)
+
+    def test_override_edge_name_override_provided(self):
+        '''
+        Ensures when both a target_node_type and predicate and provided
+        within an override they are applied to the edge and any not defined
+        in override and left untouched
+        '''
+        edges = pd.DataFrame(data={
+            'customer_id': ['customer_1', 'customer_2', 'customer_3', 'customer_1'],
+            'predicate': ['location', 'location', 'location', 'purchased'],
+            'object': [23, 45, 12, 'apple'],
+        })
+        key_seperator = '_'
+        override_edge_name = {
+            'location': {
+                'target_node_type': 'habitat',
+                'predicate': 'secondary_location'
+            }
+        }
+
+        expected_edges = pd.DataFrame(data={
+            'customer_id': ['customer_1', 'customer_2', 'customer_3', 'customer_1'],
+            'predicate': ['secondary_location', 'secondary_location', 'secondary_location', 'purchased'],
+            'object': ['habitat_23', 'habitat_45', 'habitat_12', 'purchased_apple'],
+        })
+
+        edges = _override_edge_name(edges.copy(), override_edge_name, key_seperator)
+        assert_frame_equal(expected_edges, edges)
+
+    def test_override_edge_name_override_provided_no_predicate(self):
+        '''
+        Ensures when a target_node_type is provided but no override predicate is provided
+        then the predicate is not touched and only the target_node_type
+        is changed.
+        '''
+        edges = pd.DataFrame(data={
+            'customer_id': ['customer_1', 'customer_2', 'customer_3', 'customer_1'],
+            'predicate': ['location', 'location', 'location', 'purchased'],
+            'object': [23, 45, 12, 'apple'],
+        })
+        key_seperator = '_'
+        override_edge_name = {
+            'location': {
+                'target_node_type': 'habitat'
+            }
+        }
+
+        expected_edges = pd.DataFrame(data={
+            'customer_id': ['customer_1', 'customer_2', 'customer_3', 'customer_1'],
+            'predicate': ['location', 'location', 'location', 'purchased'],
+            'object': ['habitat_23', 'habitat_45', 'habitat_12', 'purchased_apple'],
+        })
+
+        edges = _override_edge_name(edges.copy(), override_edge_name, key_seperator)
+        assert_frame_equal(expected_edges, edges)
