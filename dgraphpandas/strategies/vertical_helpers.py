@@ -175,6 +175,12 @@ def _remove_illegal_rdf_characters(frame: pd.DataFrame, illegal_characters: Unio
     which can be inside the subject fields for intrinsic values since these are quoted and are
     actual data items which may be visible to clients.
     '''
+
+    if frame is None:
+        raise ValueError('frame')
+    if not field:
+        raise ValueError('field')
+
     logger.debug('Compiling Illegal Characters %s', illegal_characters)
     if isinstance(illegal_characters, list):
         logger.debug('Resolving illegal_characters')

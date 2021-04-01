@@ -9,7 +9,7 @@ from parameterized import parameterized
 
 from dgraphpandas.strategies.vertical_helpers import (
     _compile_illegal_characters_regex, _expand_csv_edges, _join_key_fields, _add_dgraph_type_records,
-    _break_up_intrinsic_and_edges, _apply_rdf_types, _format_date_fields)
+    _break_up_intrinsic_and_edges, _apply_rdf_types, _format_date_fields, _remove_illegal_rdf_characters)
 from dgraphpandas.types import default_rdf_type
 
 
@@ -517,3 +517,77 @@ class VerticalHelpers(unittest.TestCase):
         '''
         regex = _compile_illegal_characters_regex(characters)
         self.assertEqual(expected_regex, regex.pattern)
+
+    @parameterized.expand([
+        (None, 'subject'),
+        (pd.DataFrame(), None),
+        (pd.DataFrame(), ''),
+    ])
+    def test_remove_illegal_rdf_characters_null_parameters(self, frame, field):
+        '''
+        Ensures when parameters are null, then an error is raised
+        '''
+        with self.assertRaises(ValueError):
+            _remove_illegal_rdf_characters(frame, ['$', '@'], field)
+
+
+    def test_remove_illegal_rdf_characters_illegalcharacters_found(self):
+        '''
+        Ensures when there are illegal characters found
+        in the field, then they are removed
+        '''
+        frame = pd.DataFrame(data={
+            'subject': ['customer_1', 'customer_2'],
+            'predicate': ['description', 'description'],
+            'object': ['hello @world#', 'this is a fine string']
+        })
+        illegal_characters = ['@', '#']
+        field = 'object'
+
+        expected_frame = pd.DataFrame(data={
+            'subject': ['customer_1', 'customer_2'],
+            'predicate': ['description', 'description'],
+            'object': ['hello world', 'this is a fine string']
+        })
+
+        result_frame = _remove_illegal_rdf_characters(frame, illegal_characters, field)
+        assert_frame_equal(expected_frame, result_frame)
+
+    def test_remove_illegal_rdf_characters_illegalcharacters_notfound(self):
+        '''
+        Ensures when no illegal characters are found, then
+        the frame is unchanged.
+        '''
+        frame = pd.DataFrame(data={
+            'subject': ['customer_1', 'customer_2'],
+            'predicate': ['description', 'description'],
+            'object': ['hello world', 'this is a fine string']
+        })
+        illegal_characters = ['@', '#']
+        field = 'object'
+
+        result_frame = _remove_illegal_rdf_characters(frame, illegal_characters, field)
+        assert_frame_equal(frame, result_frame)
+
+    def test_remove_illegal_rdf_characters_only_one_field(self):
+        '''
+        Ensures when there are illegal characters in both subject and object
+        but we are only working on one of them right now then the target
+        field is cleaned but the other is untouched.
+        '''
+        frame = pd.DataFrame(data={
+            'subject': ['customer_1@@', 'custo#mer_2'],
+            'predicate': ['description', 'description'],
+            'object': ['hello @world#', 'this is a fine string']
+        })
+        illegal_characters = ['@', '#']
+        field = 'subject'
+
+        expected_frame = pd.DataFrame(data={
+            'subject': ['customer_1', 'customer_2'],
+            'predicate': ['description', 'description'],
+            'object': ['hello @world#', 'this is a fine string']
+        })
+
+        result_frame = _remove_illegal_rdf_characters(frame, illegal_characters, field)
+        assert_frame_equal(expected_frame, result_frame)
