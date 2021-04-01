@@ -1,10 +1,16 @@
+from datetime import datetime
 import unittest
-import pandas as pd
+from unittest.case import expectedFailure
+from unittest.mock import patch, Mock
 
+import pandas as pd
 from pandas.testing import assert_frame_equal
 from parameterized import parameterized
 
-from dgraphpandas.strategies.vertical_helpers import (_expand_csv_edges, _join_key_fields, _add_dgraph_type_records, _break_up_intrinsic_and_edges)
+from dgraphpandas.strategies.vertical_helpers import (
+    _compile_illegal_characters_regex, _expand_csv_edges, _join_key_fields, _add_dgraph_type_records,
+    _break_up_intrinsic_and_edges, _apply_rdf_types, _format_date_fields)
+from dgraphpandas.types import default_rdf_type
 
 
 class VerticalHelpers(unittest.TestCase):
@@ -312,8 +318,9 @@ class VerticalHelpers(unittest.TestCase):
     ])
     def test_break_up_intrinsic_and_edges_edges_exist_id_stripped_passed(self, strip_id_from_edge_names: bool):
         '''
+        Ensures when the strip_id_from_edge_names parameter is passed
+        the edge names are stripped accordingly.
         '''
-
         frame = pd.DataFrame(data={
             'subject': ['1', '2', '3', '34'],
             'predicate': ['age', 'location_id', 'age', 'class_id'],
@@ -341,3 +348,172 @@ class VerticalHelpers(unittest.TestCase):
         expected_edges = expected_edges.reset_index(drop=True)[['subject', 'predicate', 'object']]
         actual_edges = edges.reset_index(drop=True)[['subject', 'predicate', 'object']]
         assert_frame_equal(expected_edges, actual_edges)
+
+    @parameterized.expand([
+        (None, {'column1': '<xs:int>'}),
+        (pd.DataFrame(), None)
+    ])
+    def test_apply_rdf_types_nullparameters_exception(self, frame, types):
+        '''
+        Ensures when either of the parameters is null, then a value exception is raised
+        '''
+        with self.assertRaises(ValueError):
+            _apply_rdf_types(frame, types)
+
+    def test_apply_rdf_types_some_columns_to_map(self):
+        '''
+        Ensures when some of the columns have matching RDF types
+        they are mapped and the unmapped are given the default rdf type
+        '''
+        frame = pd.DataFrame(data={
+            'subject': ['customer_1', 'customer_1', 'customer_1'],
+            'predicate':  ['hair_colour', 'dob', 'weight'],
+            'object':  ['black', '1921-05-03T00:00:00', '50']
+        })
+
+        types = {
+            'dob': 'datetime64',
+            'weight': 'int32'
+        }
+
+        expected_frame = pd.DataFrame(data={
+            'subject': ['customer_1', 'customer_1', 'customer_1'],
+            'predicate':  ['hair_colour', 'dob', 'weight'],
+            'object':  ['black', '1921-05-03T00:00:00', '50'],
+            'type':  [default_rdf_type, '<xs:dateTime>', '<xs:int>']
+        })
+
+        result_frame = _apply_rdf_types(frame, types)
+        assert_frame_equal(result_frame, expected_frame)
+
+    def test_apply_rdf_types_all_columns_to_map(self):
+        '''
+        Ensures when all columns have a mapping, they are mapped to their
+        corresponding rdf type
+        '''
+        frame = pd.DataFrame(data={
+            'subject': ['customer_1', 'customer_1', 'customer_1'],
+            'predicate':  ['hair_colour', 'dob', 'weight'],
+            'object':  ['black', '1921-05-03T00:00:00', '50']
+        })
+
+        types = {
+            'hair_colour': 'object',
+            'dob': 'datetime64',
+            'weight': 'int32'
+        }
+
+        expected_frame = pd.DataFrame(data={
+            'subject': ['customer_1', 'customer_1', 'customer_1'],
+            'predicate':  ['hair_colour', 'dob', 'weight'],
+            'object':  ['black', '1921-05-03T00:00:00', '50'],
+            'type':  ['<xs:string>', '<xs:dateTime>', '<xs:int>']
+        })
+
+        result_frame = _apply_rdf_types(frame, types)
+        assert_frame_equal(result_frame, expected_frame)
+
+    def test_apply_rdf_types_no_columns_to_map(self):
+        '''
+        Ensures when there are no mappings defined, then all columns
+        are given the default rdf type
+        '''
+        frame = pd.DataFrame(data={
+            'subject': ['customer_1', 'customer_1', 'customer_1'],
+            'predicate':  ['hair_colour', 'dob', 'weight'],
+            'object':  ['black', '1921-05-03T00:00:00', '50']
+        })
+
+        types = {}
+
+        expected_frame = pd.DataFrame(data={
+            'subject': ['customer_1', 'customer_1', 'customer_1'],
+            'predicate':  ['hair_colour', 'dob', 'weight'],
+            'object':  ['black', '1921-05-03T00:00:00', '50'],
+            'type':  [default_rdf_type]*3
+        })
+
+        result_frame = _apply_rdf_types(frame, types)
+        assert_frame_equal(result_frame, expected_frame)
+
+    def test_format_date_fields_null_frame_error(self):
+        '''
+        Ensures when parameters are null, then an error is raised
+        '''
+        with self.assertRaises(ValueError):
+            _format_date_fields(None)
+
+    def test_format_date_fields_no_date_fields(self):
+        '''
+        Ensures when there are no date fields,
+        then the frame is unchanged
+        '''
+        frame = pd.DataFrame(data={
+            'subject': ['customer_1', 'customer_1', 'customer_1'],
+            'predicate':  ['hair_colour', 'height', 'weight'],
+            'object':  ['black', '172', '50'],
+            'type':  ['<xs:string>', '<xs:int>', '<xs:int>']
+        })
+
+        result_frame = _format_date_fields(frame)
+        assert_frame_equal(frame, result_frame)
+
+    def test_format_date_fields_date_fields_exist(self):
+        '''
+        Ensures when there are fields marked with datetime type
+        then they are converted into ISO format.
+        '''
+        frame = pd.DataFrame(data={
+            'subject': ['customer_1', 'customer_1', 'customer_1'],
+            'predicate':  ['hair_colour', 'dob', 'weight'],
+            'object':  ['black', datetime(2021, 1, 4), '50'],
+            'type':  ['<xs:string>', '<xs:dateTime>', '<xs:int>']
+        })
+
+        expected = pd.DataFrame(data={
+            'subject': ['customer_1', 'customer_1', 'customer_1'],
+            'predicate':  ['hair_colour', 'dob', 'weight'],
+            'object':  ['black', '2021-01-04T00:00:00', '50'],
+            'type':  ['<xs:string>', '<xs:dateTime>', '<xs:int>']
+        })
+
+        result_frame = _format_date_fields(frame)
+
+        result_frame = result_frame.sort_values(by='predicate').reset_index(drop=True)
+        expected = expected.sort_values(by='predicate').reset_index(drop=True)
+        assert_frame_equal(result_frame, expected)
+
+    def test_format_date_fields_date_fields_exist_but_not_datetime(self):
+        '''
+        Ensures when a date field is provided but it's not
+        an actual datetime object, an error is raised
+        '''
+        frame = pd.DataFrame(data={
+            'subject': ['customer_1', 'customer_1', 'customer_1'],
+            'predicate':  ['hair_colour', 'dob', 'weight'],
+            'object':  ['black', '2021 Jan 21', '50'],
+            'type':  ['<xs:string>', '<xs:dateTime>', '<xs:int>']
+        })
+
+        with self.assertRaises(AttributeError):
+            _format_date_fields(frame)
+
+    def test_compile_illegal_characters_regex_nonecharacters(self):
+        '''
+        Ensure when none characters are passed, then none
+        is returned
+        '''
+        self.assertIsNone(_compile_illegal_characters_regex(None))
+
+    @parameterized.expand([
+        (['@'], '@'),
+        (['$', '@'], '$|@'),
+        (['\\^', '\\#', '\\~', '\\+'], '\^|\#|\~|\+'),
+    ])
+    def test_compile_illegal_characters_regex_characterspassed(self, characters, expected_regex):
+        '''
+        Ensures when the given regex is provided
+        then the predefined regex pattern is constructed.
+        '''
+        regex = _compile_illegal_characters_regex(characters)
+        self.assertEqual(expected_regex, regex.pattern)
