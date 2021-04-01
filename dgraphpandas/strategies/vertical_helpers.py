@@ -83,7 +83,7 @@ def _add_dgraph_type_records(frame: pd.DataFrame, add_dgraph_type_records: bool,
     return frame
 
 
-def _break_up_intrinsic_and_edges(frame: pd.DataFrame, edges: List[str], strip_id_from_edge_names: bool) -> Tuple[pd.DataFrame, pd.DataFrame]:
+def _break_up_intrinsic_and_edges(frame: pd.DataFrame, edges: List[str], strip_id_from_edge_names: bool = True) -> Tuple[pd.DataFrame, pd.DataFrame]:
     '''
     If there are edges defined, then break up into intrinsic and edge frames
     Otherwise still break up but return an empty edges frame
@@ -93,6 +93,9 @@ def _break_up_intrinsic_and_edges(frame: pd.DataFrame, edges: List[str], strip_i
     have a 'school_id' field which points to the school. In a Graph Database it might make
     more sense to have (Student) - school -> (School) rather then having an _id in the predicate.
     '''
+    if frame is None:
+        raise ValueError('frame')
+
     if edges:
         logger.debug(f'Splitting into Intrinsic and edges based on edges {edges}')
         intrinsic = frame.loc[~frame['predicate'].isin(edges)]

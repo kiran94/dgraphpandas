@@ -4,7 +4,7 @@ import pandas as pd
 from pandas.testing import assert_frame_equal
 from parameterized import parameterized
 
-from dgraphpandas.strategies.vertical_helpers import (_expand_csv_edges, _join_key_fields, _add_dgraph_type_records)
+from dgraphpandas.strategies.vertical_helpers import (_expand_csv_edges, _join_key_fields, _add_dgraph_type_records, _break_up_intrinsic_and_edges)
 
 
 class VerticalHelpers(unittest.TestCase):
@@ -241,3 +241,105 @@ class VerticalHelpers(unittest.TestCase):
         actual = frame.reset_index(drop=True)[['subject', 'predicate', 'object']]
         output = result_frame.reset_index(drop=True)[['subject', 'predicate', 'object']]
         assert_frame_equal(actual, output)
+
+    def test_break_up_intrinsic_and_edges_null_parameter_exception(self):
+        '''
+        Ensures when parameters are null, then an exception is raised.
+        '''
+        with self.assertRaises(ValueError):
+            _break_up_intrinsic_and_edges(None, ['edges'])
+
+    @parameterized.expand([
+        (None,),
+        ([],)
+    ])
+    def test_break_up_intrinsic_and_edges_no_edges_only_intrinsic_and_default_edges(self, edges):
+        '''
+        Ensures when no edges have been defined, then only intrinsic has data
+        and edges is the default.
+        '''
+        frame = pd.DataFrame(data={
+            'subject': [1, 2, 3],
+            'predicate': ['age', 'age', 'age'],
+            'object': [23, 45, 12],
+        })
+
+        intrinsic, edges = _break_up_intrinsic_and_edges(frame, edges)
+
+        actual = frame.reset_index(drop=True)[['subject', 'predicate', 'object']]
+        output = intrinsic.reset_index(drop=True)[['subject', 'predicate', 'object']]
+        assert_frame_equal(actual, output)
+
+        self.assertTrue(edges.empty)
+        self.assertEqual(edges.columns.tolist(), ['subject', 'predicate', 'object', 'type'])
+
+    def test_break_up_intrinsic_and_edges_edges_exist_default_id_stripped(self):
+        '''
+        Ensures when edges exist they are split into edges frame
+        and by default _id is stripped
+        '''
+
+        frame = pd.DataFrame(data={
+            'subject': ['1', '2', '3', '34'],
+            'predicate': ['age', 'location_id', 'age', 'class_id'],
+            'object': ['23', 'london', '12', 'first'],
+        })
+
+        expected_intrinsic = pd.DataFrame(data={
+            'subject': ['1', '3'],
+            'predicate': ['age', 'age'],
+            'object': ['23', '12'],
+        })
+
+        expected_edges = pd.DataFrame(data={
+            'subject': ['2', '34'],
+            'predicate': ['location', 'class'],
+            'object': ['london', 'first'],
+        })
+
+        intrinsic, edges = _break_up_intrinsic_and_edges(frame, ['location_id', 'class_id'])
+
+        expected_intrinsic = expected_intrinsic.reset_index(drop=True)[['subject', 'predicate', 'object']]
+        actual_intrinsic = intrinsic.reset_index(drop=True)[['subject', 'predicate', 'object']]
+        assert_frame_equal(expected_intrinsic, actual_intrinsic)
+
+        expected_edges = expected_edges.reset_index(drop=True)[['subject', 'predicate', 'object']]
+        actual_intrinsic = edges.reset_index(drop=True)[['subject', 'predicate', 'object']]
+        assert_frame_equal(expected_edges, actual_intrinsic)
+
+
+    @parameterized.expand([
+        (True,),
+        (False,)
+    ])
+    def test_break_up_intrinsic_and_edges_edges_exist_id_stripped_passed(self, strip_id_from_edge_names: bool):
+        '''
+        '''
+
+        frame = pd.DataFrame(data={
+            'subject': ['1', '2', '3', '34'],
+            'predicate': ['age', 'location_id', 'age', 'class_id'],
+            'object': ['23', 'london', '12', 'first'],
+        })
+
+        expected_intrinsic = pd.DataFrame(data={
+            'subject': ['1', '3'],
+            'predicate': ['age', 'age'],
+            'object': ['23', '12'],
+        })
+
+        expected_edges = pd.DataFrame(data={
+            'subject': ['2', '34'],
+            'predicate': (['location', 'class'] if strip_id_from_edge_names else ['location_id', 'class_id']),
+            'object': ['london', 'first'],
+        })
+
+        intrinsic, edges = _break_up_intrinsic_and_edges(frame, ['location_id', 'class_id'], strip_id_from_edge_names)
+
+        expected_intrinsic = expected_intrinsic.reset_index(drop=True)[['subject', 'predicate', 'object']]
+        actual_intrinsic = intrinsic.reset_index(drop=True)[['subject', 'predicate', 'object']]
+        assert_frame_equal(expected_intrinsic, actual_intrinsic)
+
+        expected_edges = expected_edges.reset_index(drop=True)[['subject', 'predicate', 'object']]
+        actual_edges = edges.reset_index(drop=True)[['subject', 'predicate', 'object']]
+        assert_frame_equal(expected_edges, actual_edges)
