@@ -197,6 +197,9 @@ def _remove_na_objects(frame: pd.DataFrame, drop_na: bool = True):
     If the object is NA/Null then the predicate does not exist from this node
     to the target node, so drop those records.
     '''
+    if frame is None:
+        raise ValueError('frame')
+
     if drop_na:
         logger.debug('Dropping records where NA on object')
         frame.dropna(subset=['object'], inplace=True)

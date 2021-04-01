@@ -2,6 +2,7 @@ from datetime import datetime
 import unittest
 from unittest.case import expectedFailure
 from unittest.mock import patch, Mock
+import numpy as np
 
 import pandas as pd
 from pandas.testing import assert_frame_equal
@@ -9,7 +10,7 @@ from parameterized import parameterized
 
 from dgraphpandas.strategies.vertical_helpers import (
     _compile_illegal_characters_regex, _expand_csv_edges, _join_key_fields, _add_dgraph_type_records,
-    _break_up_intrinsic_and_edges, _apply_rdf_types, _format_date_fields, _remove_illegal_rdf_characters)
+    _break_up_intrinsic_and_edges, _apply_rdf_types, _format_date_fields, _remove_illegal_rdf_characters, _remove_na_objects)
 from dgraphpandas.types import default_rdf_type
 
 
@@ -588,5 +589,60 @@ class VerticalHelpers(unittest.TestCase):
             'object': ['hello @world#', 'this is a fine string']
         })
 
-        result_frame = _remove_illegal_rdf_characters(frame, illegal_characters, field)
+        result_frame = _remove_illegal_rdf_characters(frame.copy(), illegal_characters, field)
+        assert_frame_equal(expected_frame, result_frame)
+
+    def test_remove_na_objects_null_parameters(self):
+        '''
+        Ensures when parameters are null, then an error is raised
+        '''
+        with self.assertRaises(ValueError):
+            _remove_na_objects(None)
+
+    @parameterized.expand([
+        (np.nan,),
+        (None,),
+        (pd.NA,),
+        ('NA',)
+    ])
+    def test_remove_na_objects_false(self, na_value):
+        '''
+        Ensures when there are NA values but the drop_na flag
+        is set to false, then the frame is unchanged
+        '''
+        frame = pd.DataFrame(data={
+            'subject': ['subject1', 'subject2', 'subject3'],
+            'predicate': ['predicate1', 'predicate2', 'predicate3'],
+            'object': ['object1', na_value, 'object3']
+        })
+
+        result_frame = _remove_na_objects(frame.copy(), drop_na=False)
+        assert_frame_equal(frame, result_frame)
+
+    @parameterized.expand([
+            (np.nan,),
+            (None,),
+            (pd.NA,)
+    ])
+    def test_remove_na_objects_true(self, na_value):
+        '''
+        Ensures when drop_na is set to true then
+        those records are removed from the frame.
+        '''
+        frame = pd.DataFrame(data={
+            'subject': ['subject1', 'subject2', 'subject3'],
+            'predicate': ['predicate1', 'predicate2', 'predicate3'],
+            'object': ['object1', na_value, 'object3']
+        })
+
+        expected_frame = pd.DataFrame(data={
+            'subject': ['subject1', 'subject3'],
+            'predicate': ['predicate1', 'predicate3'],
+            'object': ['object1', 'object3']
+        })
+
+        result_frame = _remove_na_objects(frame.copy(), drop_na=True)
+
+        result_frame = result_frame.reset_index(drop=True).sort_index()
+        expected_frame = expected_frame.reset_index(drop=True).sort_index()
         assert_frame_equal(expected_frame, result_frame)
