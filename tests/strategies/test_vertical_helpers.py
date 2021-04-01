@@ -10,7 +10,7 @@ from pandas.testing import assert_frame_equal
 from parameterized import parameterized
 
 from dgraphpandas.strategies.vertical_helpers import (
-    _compile_illegal_characters_regex, _expand_csv_edges, _join_key_fields, _add_dgraph_type_records,
+    _compile_illegal_characters_regex, _expand_csv_edges, _ignore_fields, _join_key_fields, _add_dgraph_type_records,
     _break_up_intrinsic_and_edges, _apply_rdf_types, _format_date_fields, _override_edge_name, _remove_illegal_rdf_characters, _remove_na_objects)
 from dgraphpandas.types import default_rdf_type
 
@@ -738,3 +738,72 @@ class VerticalHelpers(unittest.TestCase):
 
         edges = _override_edge_name(edges.copy(), override_edge_name, key_seperator)
         assert_frame_equal(expected_edges, edges)
+
+    def test_ignore_fields_null_frame(self):
+        '''
+        Ensures when the frame is null, then an error is raised.
+        '''
+        with self.assertRaises(ValueError):
+            _ignore_fields(None, ['internal_customer_id'])
+
+    @parameterized.expand([
+            (None,),
+            ([],),
+    ])
+    def test_ignore_no_ignorefields(self, ignore_fields):
+        '''
+        Ensures whn no ignore fields are provided, then the
+        frame is untouched.
+        '''
+        frame = pd.DataFrame(data={
+            'subject': ['customer_1', 'customer_1', 'customer_1'],
+            'predicate':  ['hair_colour', 'height', 'weight'],
+            'object':  ['black', '172', '50'],
+            'type':  ['<xs:string>', '<xs:int>', '<xs:int>']
+        })
+
+        result = _ignore_fields(frame.copy(), ignore_fields)
+        assert_frame_equal(result, frame)
+
+    def test_ignore_fields_provided_but_not_in_frame(self):
+        '''
+        Ensures when ignore fields are provided but
+        they do not exist in the dataframe, then
+        the frame is untouched.
+        '''
+        frame = pd.DataFrame(data={
+            'subject': ['customer_1', 'customer_1', 'customer_1'],
+            'predicate':  ['hair_colour', 'height', 'weight'],
+            'object':  ['black', '172', '50'],
+            'type':  ['<xs:string>', '<xs:int>', '<xs:int>']
+        })
+        ignore_fields = ['dob']
+
+        result = _ignore_fields(frame.copy(), ignore_fields)
+        assert_frame_equal(result, frame)
+
+    def test_ignore_fields_provided_and_in_frame(self):
+        '''
+        Ensures when ignore fields are provided and
+        the predicate does exist then it is removed.
+        '''
+        frame = pd.DataFrame(data={
+            'subject': ['customer_1', 'customer_1', 'customer_1'],
+            'predicate':  ['hair_colour', 'height', 'weight'],
+            'object':  ['black', '172', '50'],
+            'type':  ['<xs:string>', '<xs:int>', '<xs:int>']
+        })
+        ignore_fields = ['height']
+
+        expected_frame = pd.DataFrame(data={
+            'subject': ['customer_1', 'customer_1'],
+            'predicate':  ['hair_colour', 'weight'],
+            'object':  ['black', '50'],
+            'type':  ['<xs:string>', '<xs:int>']
+        })
+
+        result = _ignore_fields(frame.copy(), ignore_fields)
+
+        expected_frame = expected_frame.reset_index(drop=True).sort_index()
+        result = result.reset_index(drop=True).sort_index()
+        assert_frame_equal(result, expected_frame)

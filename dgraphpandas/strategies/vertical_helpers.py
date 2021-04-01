@@ -248,7 +248,12 @@ def _ignore_fields(frame: pd.DataFrame, ignore_fields: List[str]) -> pd.DataFram
     For any predicates within the ignore fields list, remove them
     from our frame.
     '''
-    frame = frame[~frame['predicate'].isin(ignore_fields)]
+    if frame is None:
+        raise ValueError('frame')
+
+    if ignore_fields:
+        frame = frame[~frame['predicate'].isin(ignore_fields)]
+
     return frame
 
 
