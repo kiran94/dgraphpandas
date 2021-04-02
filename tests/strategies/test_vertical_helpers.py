@@ -1,17 +1,17 @@
 from datetime import datetime
 import unittest
-from unittest.case import expectedFailure
-from unittest.mock import patch, Mock
 import numpy as np
 
 import pandas as pd
-from pandas.core.frame import DataFrame
 from pandas.testing import assert_frame_equal
 from parameterized import parameterized
 
 from dgraphpandas.strategies.vertical_helpers import (
-    _compile_illegal_characters_regex, _expand_csv_edges, _ignore_fields, _join_key_fields, _add_dgraph_type_records,
-    _break_up_intrinsic_and_edges, _apply_rdf_types, _format_date_fields, _override_edge_name, _remove_illegal_rdf_characters, _remove_na_objects, _rename_fields, _resolve_potential_callables)
+    _compile_illegal_characters_regex, _expand_csv_edges, _ignore_fields,
+    _join_key_fields, _add_dgraph_type_records, _break_up_intrinsic_and_edges,
+    _apply_rdf_types, _format_date_fields, _override_edge_name,
+    _remove_illegal_rdf_characters, _remove_na_objects, _rename_fields,
+    _resolve_potential_callables)
 from dgraphpandas.types import default_rdf_type
 
 
@@ -510,7 +510,7 @@ class VerticalHelpers(unittest.TestCase):
     @parameterized.expand([
         (['@'], '@'),
         (['$', '@'], '$|@'),
-        (['\\^', '\\#', '\\~', '\\+'], '\^|\#|\~|\+'),
+        (['\\^', '\\#', '\\~', '\\+'], '\\^|\\#|\\~|\\+'),
     ])
     def test_compile_illegal_characters_regex_characterspassed(self, characters, expected_regex):
         '''
@@ -621,9 +621,9 @@ class VerticalHelpers(unittest.TestCase):
         assert_frame_equal(frame, result_frame)
 
     @parameterized.expand([
-            (np.nan,),
-            (None,),
-            (pd.NA,)
+        (np.nan,),
+        (None,),
+        (pd.NA,)
     ])
     def test_remove_na_objects_true(self, na_value):
         '''
@@ -649,8 +649,8 @@ class VerticalHelpers(unittest.TestCase):
         assert_frame_equal(expected_frame, result_frame)
 
     @parameterized.expand([
-            (None, 'sep'),
-            (pd.DataFrame(), None),
+        (None, 'sep'),
+        (pd.DataFrame(), None),
     ])
     def test_override_edge_name_null_parameters(self, edges, key_seperator):
         '''
@@ -660,8 +660,8 @@ class VerticalHelpers(unittest.TestCase):
             _override_edge_name(edges, {}, key_seperator)
 
     @parameterized.expand([
-            (None,),
-            ({},),
+        (None,),
+        ({},),
     ])
     def test_override_edge_name_no_overrides_default_apply(self, override_edge_name):
         '''
@@ -747,8 +747,8 @@ class VerticalHelpers(unittest.TestCase):
             _ignore_fields(None, ['internal_customer_id'])
 
     @parameterized.expand([
-            (None,),
-            ([],),
+        (None,),
+        ([],),
     ])
     def test_ignore_no_ignorefields(self, ignore_fields):
         '''
@@ -868,8 +868,8 @@ class VerticalHelpers(unittest.TestCase):
             _rename_fields(None, pre_rename)
 
     @parameterized.expand([
-            (None,),
-            ({},),
+        (None,),
+        ({},),
     ])
     def test_rename_fields_no_prerename(self, rename_fields):
         '''

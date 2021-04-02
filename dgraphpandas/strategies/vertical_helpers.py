@@ -149,7 +149,7 @@ def _format_date_fields(frame: pd.DataFrame) -> pd.DataFrame:
         intrinsic_with_datetime['object'] = intrinsic_with_datetime['object'].apply(lambda x: x.isoformat())
     except AttributeError as e:
         logger.error(
-            'It looks like a value being declared as a datetime is not actually a datetime', 
+            'It looks like a value being declared as a datetime is not actually a datetime',
             e,
             extra={'frame': intrinsic_with_datetime})
         raise

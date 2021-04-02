@@ -1,11 +1,9 @@
-from collections import namedtuple
-from datetime import datetime
 import unittest
-from numpy.core.arrayprint import dtype_is_implied
-from parameterized import parameterized
+from datetime import datetime
 
 import pandas as pd
 from pandas.testing import assert_frame_equal
+from parameterized import parameterized
 
 from dgraphpandas.strategies.vertical import vertical_transform
 
@@ -279,7 +277,7 @@ class Vertical(unittest.TestCase):
             'customer',
             {
                 'files': {
-                    'customer': {'subject_fields': ['customer_id'] }
+                    'customer': {'subject_fields': ['customer_id']}
                 }
             },
             pd.DataFrame(data={
@@ -645,7 +643,7 @@ class Vertical(unittest.TestCase):
             pd.DataFrame(data={
                 'subject': ['customer_1', 'customer_3'],
                 'predicate': ['age', 'orders'],
-                'object': [23,'1'],
+                'object': [23, '1'],
                 'type': ['<xs:string>']*2
             }),
             pd.DataFrame(data={

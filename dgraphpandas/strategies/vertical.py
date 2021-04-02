@@ -2,7 +2,6 @@ import logging
 from typing import Callable, Dict, Any, List, Union
 
 import pandas as pd
-import numpy as np
 
 from dgraphpandas.config import get_from_config
 from dgraphpandas.strategies.vertical_helpers import (_expand_csv_edges, _join_key_fields, _add_dgraph_type_records,
