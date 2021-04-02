@@ -159,7 +159,7 @@ def _format_date_fields(frame: pd.DataFrame) -> pd.DataFrame:
     return frame
 
 
-def _compile_illegal_characters_regex(characters: List[str]) -> Pattern:
+def _compile_illegal_characters_regex(characters: List[str]) -> Union[Pattern, None]:
     if not characters:
         return None
 
@@ -257,7 +257,7 @@ def _ignore_fields(frame: pd.DataFrame, ignore_fields: List[str]) -> pd.DataFram
     return frame
 
 
-def _resolve_potential_callables(frame: pd.DataFrame, potential_callables: Dict[str, Union[List[str], Callable]]) -> Dict[str, List[str]]:
+def _resolve_potential_callables(frame: pd.DataFrame, potential_callables: Dict[str, Union[List[str], str, Callable]]) -> Dict[str, Union[List[str], str, Callable]]:
     '''
     Some user defined parameters are Callable so that they can be derived from the frame dynamically.
     For example, if you wanted to apply a convention that all your edges always end with _id

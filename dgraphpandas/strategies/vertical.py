@@ -39,17 +39,17 @@ def vertical_transform(
     dgraph_type: str = get_from_config('dgraph_type', file_config, config_file_key, **(kwargs))
 
     key_seperator: str = get_from_config('key_separator', config, '_', **(kwargs))
-    add_dgraph_type_records: str = get_from_config('add_dgraph_type_records', config, True, **(kwargs))
-    strip_id_from_edge_names: str = get_from_config('strip_id_from_edge_names', config, True, **(kwargs))
+    add_dgraph_type_records: bool = get_from_config('add_dgraph_type_records', config, True, **(kwargs))
+    strip_id_from_edge_names: bool = get_from_config('strip_id_from_edge_names', config, True, **(kwargs))
     drop_na_intrinsic_objects: bool = get_from_config('drop_na_intrinsic_objects', config, True, **(kwargs))
     drop_na_edge_objects: bool = get_from_config('drop_na_edge_objects', config, True, **(kwargs))
-    illegal_characters: str = get_from_config('illegal_characters', config, ['%', '\\.', '\\s', '\"', '\\n', '\\r\\n'], **(kwargs))
-    illegal_characters_intrinsic_object: str = get_from_config('illegal_characters_intrinsic_object', config, ['\"', '\\n', '\\r\\n'], **(kwargs))
+    illegal_characters: List[str] = get_from_config('illegal_characters', config, ['%', '\\.', '\\s', '\"', '\\n', '\\r\\n'], **(kwargs))
+    illegal_characters_intrinsic_object: List[str] = get_from_config('illegal_characters_intrinsic_object', config, ['\"', '\\n', '\\r\\n'], **(kwargs))
     csv_edges: str = get_from_config('csv_edges', file_config, [], **(kwargs))
     ignore_fields: List[str] = get_from_config('ignore_fields', file_config, [], **(kwargs))
     override_edge_name: Dict[str, Any] = get_from_config('override_edge_name', file_config, {}, **(kwargs))
     pre_rename: Dict[str, str] = get_from_config('pre_rename', file_config, {}, **(kwargs))
-    type_overrides: str = get_from_config('type_overrides', file_config, {}, **(kwargs))
+    type_overrides: Dict[str, str] = get_from_config('type_overrides', file_config, {}, **(kwargs))
 
     potential_callables = _resolve_potential_callables(frame, {
         'subject_fields': subject_fields,

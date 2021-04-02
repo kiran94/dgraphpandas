@@ -51,7 +51,7 @@ if __name__ == '__main__':
         all_edges.append(edges)
 
     elif global_config['transform'] == 'vertical':
-        intrinsic, edges = vertical_transform(frame)  # TODO
+        intrinsic, edges = vertical_transform(frame, global_config, args.config_file_key)
         all_intrinsic.append(intrinsic)
         all_edges.append(edges)
 
