@@ -22,7 +22,18 @@ def vertical_transform(
     '''
     Vertically Transform a Pandas Dataframe into Intrinsic and Edge DataFrames (close to RDF format)
     '''
-    file_config: Dict[str, Any] = config['files'][config_file_key]
+    if frame is None:
+        raise ValueError('frame')
+    if not config:
+        raise ValueError('config')
+    if not config_file_key:
+        raise ValueError('config_file_key')
+
+    try:
+        file_config: Dict[str, Any] = config['files'][config_file_key]
+    except KeyError:
+        logger.exception(f'Ensure that {config_file_key} is within the files object in config')
+        raise
 
     subject_fields: Union[List[str], Callable[..., List[str]]] = get_from_config('subject_fields', file_config, **(kwargs))
     edge_fields: Union[List[str], Callable[..., List[str]]] = get_from_config('edge_fields', file_config, [], **(kwargs))
@@ -51,6 +62,13 @@ def vertical_transform(
     edges = potential_callables['edge_fields']
     type = potential_callables['dgraph_type']
 
+    if not key:
+        raise ValueError('subject_fields must be defined')
+    if 'predicate' not in frame.columns:
+        raise KeyError('predicate column must be defined on vertical frame')
+    if 'object' not in frame.columns:
+        raise KeyError('object column must be defined on vertical frame')
+
     frame = _rename_fields(frame, pre_rename)
     frame = _ignore_fields(frame, ignore_fields)
     frame = _expand_csv_edges(frame, csv_edges)
@@ -59,7 +77,7 @@ def vertical_transform(
 
     intrinsic, edges = _break_up_intrinsic_and_edges(frame, edges, strip_id_from_edge_names)
     intrinsic = _apply_rdf_types(intrinsic, type_overrides)
-    edges['type'] = np.nan
+    edges['type'] = None
 
     intrinsic = _format_date_fields(intrinsic)
     intrinsic = _remove_illegal_rdf_characters(intrinsic, illegal_characters, 'subject')
