@@ -45,7 +45,7 @@ def vertical_transform(
     drop_na_intrinsic_objects: bool = get_from_config('drop_na_intrinsic_objects', config, True, **(kwargs))
     drop_na_edge_objects: bool = get_from_config('drop_na_edge_objects', config, True, **(kwargs))
     illegal_characters: str = get_from_config('illegal_characters', config, ['%', '\\.', '\\s', '\"', '\\n', '\\r\\n'], **(kwargs))
-    illegal_characters_intrinsic_subject: str = get_from_config('illegal_characters_intrinsic_subject', config, ['\"', '\\n', '\\r\\n'], **(kwargs))
+    illegal_characters_intrinsic_object: str = get_from_config('illegal_characters_intrinsic_object', config, ['\"', '\\n', '\\r\\n'], **(kwargs))
     csv_edges: str = get_from_config('csv_edges', file_config, [], **(kwargs))
     ignore_fields: List[str] = get_from_config('ignore_fields', file_config, [], **(kwargs))
     override_edge_name: Dict[str, Any] = get_from_config('override_edge_name', file_config, {}, **(kwargs))
@@ -81,7 +81,7 @@ def vertical_transform(
 
     intrinsic = _format_date_fields(intrinsic)
     intrinsic = _remove_illegal_rdf_characters(intrinsic, illegal_characters, 'subject')
-    intrinsic = _remove_illegal_rdf_characters(intrinsic, illegal_characters_intrinsic_subject, 'object')
+    intrinsic = _remove_illegal_rdf_characters(intrinsic, illegal_characters_intrinsic_object, 'object')
     edges = _remove_illegal_rdf_characters(edges, illegal_characters, 'subject')
     edges = _remove_illegal_rdf_characters(edges, illegal_characters, 'object')
 

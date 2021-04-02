@@ -1,4 +1,5 @@
 from collections import namedtuple
+from datetime import datetime
 import unittest
 from numpy.core.arrayprint import dtype_is_implied
 from parameterized import parameterized
@@ -401,7 +402,298 @@ class Vertical(unittest.TestCase):
             }),
             pd.DataFrame(columns=['subject', 'predicate', 'object', 'type']),
             {'csv_edges': ['orders']}
-        )
+        ),
+        ###
+        (
+            'with_composite_key',
+            'order',
+            {
+                'files': {
+                    'order': {
+                        'subject_fields': ['customer_id', 'order_id']
+                    }
+                },
+                'add_dgraph_type_records': False
+            },
+            pd.DataFrame(data={
+                'customer_id': [1, 2, 3],
+                'order_id': [908, 456, 287],
+                'predicate': ['total_value', 'quantity', 'item'],
+                'object': [2031, 5, 'ipads']
+            }),
+            pd.DataFrame(data={
+                'subject': ['order_1_908', 'order_2_456', 'order_3_287'],
+                'predicate': ['total_value', 'quantity', 'item'],
+                'object': [2031, 5, 'ipads'],
+                'type': ['<xs:string>']*3
+            }),
+            pd.DataFrame(columns=['subject', 'predicate', 'object', 'type']),
+            {}
+        ),
+        ###
+        (
+            'with_edges',
+            'customer',
+            {
+                'files': {
+                    'customer': {
+                        'subject_fields': ['customer_id'],
+                        'edge_fields': ['location_id']
+                    },
+                },
+                'add_dgraph_type_records': False
+            },
+            pd.DataFrame(data={
+                'customer_id': [1, 2, 3, 1, 2],
+                'predicate': ['age', 'weight', 'orders', 'location_id', 'location_id'],
+                'object': [23, 90, '1', 'loc45', 'loc64']
+            }),
+            pd.DataFrame(data={
+                'subject': ['customer_1', 'customer_2', 'customer_3'],
+                'predicate': ['age', 'weight', 'orders'],
+                'object': [23, 90, '1'],
+                'type': ['<xs:string>']*3
+            }),
+            pd.DataFrame(data={
+                'subject': ['customer_1', 'customer_2'],
+                'predicate': ['location', 'location'],
+                'object': ['location_loc45', 'location_loc64'],
+                'type': [None]*2
+            }),
+            {}
+        ),
+        ###
+        (
+            'strip_id_from_edge_names',
+            'customer',
+            {
+                'files': {
+                    'customer': {
+                        'subject_fields': ['customer_id'],
+                        'edge_fields': ['location_id']
+                    },
+                },
+                'strip_id_from_edge_names': False,
+                'add_dgraph_type_records': False,
+            },
+            pd.DataFrame(data={
+                'customer_id': [1, 2, 3, 1, 2],
+                'predicate': ['age', 'weight', 'orders', 'location_id', 'location_id'],
+                'object': [23, 90, '1', 'loc45', 'loc64']
+            }),
+            pd.DataFrame(data={
+                'subject': ['customer_1', 'customer_2', 'customer_3'],
+                'predicate': ['age', 'weight', 'orders'],
+                'object': [23, 90, '1'],
+                'type': ['<xs:string>']*3
+            }),
+            pd.DataFrame(data={
+                'subject': ['customer_1', 'customer_2'],
+                'predicate': ['location_id', 'location_id'],
+                'object': ['location_id_loc45', 'location_id_loc64'],
+                'type': [None]*2
+            }),
+            {}
+        ),
+        ###
+        (
+            'strip_id_from_edge_names_kwargs',
+            'customer',
+            {
+                'files': {
+                    'customer': {
+                        'subject_fields': ['customer_id'],
+                        'edge_fields': ['location_id']
+                    },
+                },
+                'strip_id_from_edge_names': False
+            },
+            pd.DataFrame(data={
+                'customer_id': [1, 2, 3, 1, 2],
+                'predicate': ['age', 'weight', 'orders', 'location_id', 'location_id'],
+                'object': [23, 90, '1', 'loc45', 'loc64']
+            }),
+            pd.DataFrame(data={
+                'subject': ['customer_1', 'customer_2', 'customer_3'],
+                'predicate': ['age', 'weight', 'orders'],
+                'object': [23, 90, '1'],
+                'type': ['<xs:string>']*3
+            }),
+            pd.DataFrame(data={
+                'subject': ['customer_1', 'customer_2'],
+                'predicate': ['location_id', 'location_id'],
+                'object': ['location_id_loc45', 'location_id_loc64'],
+                'type': [None]*2
+            }),
+            {'add_dgraph_type_records': False}
+        ),
+        ###
+        (
+            'key_seperator override',
+            'order',
+            {
+                'files': {
+                    'order': {
+                        'subject_fields': ['customer_id', 'order_id']
+                    }
+                },
+                'add_dgraph_type_records': False,
+                'key_separator': "@"
+            },
+            pd.DataFrame(data={
+                'customer_id': [1, 2, 3],
+                'order_id': [908, 456, 287],
+                'predicate': ['total_value', 'quantity', 'item'],
+                'object': [2031, 5, 'ipads']
+            }),
+            pd.DataFrame(data={
+                'subject': ['order@1@908', 'order@2@456', 'order@3@287'],
+                'predicate': ['total_value', 'quantity', 'item'],
+                'object': [2031, 5, 'ipads'],
+                'type': ['<xs:string>']*3
+            }),
+            pd.DataFrame(columns=['subject', 'predicate', 'object', 'type']),
+            {}
+        ),
+        ###
+        (
+            'with datetime fields',
+            'customer',
+            {
+                'files': {
+                    'customer': {
+                        'subject_fields': ['customer_id'],
+                        'edge_fields': ['location_id'],
+                        'type_overrides': {
+                            'dob': 'datetime64'
+                        }
+                    },
+                },
+                'add_dgraph_type_records': False,
+            },
+            pd.DataFrame(data={
+                'customer_id': [1, 2, 3, 1, 2],
+                'predicate': ['dob', 'weight', 'orders', 'location_id', 'location_id'],
+                'object': [datetime(2021, 4, 5), 90, '1', 'loc45', 'loc64']
+            }),
+            pd.DataFrame(data={
+                'subject': ['customer_2', 'customer_3', 'customer_1'],
+                'predicate': ['weight', 'orders', 'dob'],
+                'object': [90, '1', '2021-04-05T00:00:00'],
+                'type': ['<xs:string>']*2 + ['<xs:dateTime>']
+            }),
+            pd.DataFrame(data={
+                'subject': ['customer_1', 'customer_2'],
+                'predicate': ['location', 'location'],
+                'object': ['location_loc45', 'location_loc64'],
+                'type': [None]*2
+            }),
+            {}
+        ),
+        ###
+        (
+            'illegal_characters',
+            'customer',
+            {
+                'files': {
+                    'customer': {
+                        'subject_fields': ['customer_id'],
+                        'edge_fields': ['location_id']
+                    },
+                },
+                'illegal_characters': ['%'],
+                'illegal_characters_intrinsic_object': ['\"'],
+                'add_dgraph_type_records': False,
+            },
+            pd.DataFrame(data={
+                'customer_id': ['%1%', 2, 3, 1, 2],
+                'predicate': ['age', 'weight', 'orders', 'location_id', 'location_id'],
+                'object': [23, '"90"', '1', 'loc45', 'loc64']
+            }),
+            pd.DataFrame(data={
+                'subject': ['customer_1', 'customer_2', 'customer_3'],
+                'predicate': ['age', 'weight', 'orders'],
+                'object': [23, '90', '1'],
+                'type': ['<xs:string>']*3
+            }),
+            pd.DataFrame(data={
+                'subject': ['customer_1', 'customer_2'],
+                'predicate': ['location', 'location'],
+                'object': ['location_loc45', 'location_loc64'],
+                'type': [None]*2
+            }),
+            {}
+        ),
+        ###
+        (
+            'null_objects',
+            'customer',
+            {
+                'files': {
+                    'customer': {
+                        'subject_fields': ['customer_id'],
+                        'edge_fields': ['location_id']
+                    },
+                },
+                'add_dgraph_type_records': False,
+            },
+            pd.DataFrame(data={
+                'customer_id': [1, 2, 3, 1, 2],
+                'predicate': ['age', 'weight', 'orders', 'location_id', 'location_id'],
+                'object': [23, None, '1', 'loc45', None]
+            }),
+            pd.DataFrame(data={
+                'subject': ['customer_1', 'customer_3'],
+                'predicate': ['age', 'orders'],
+                'object': [23,'1'],
+                'type': ['<xs:string>']*2
+            }),
+            pd.DataFrame(data={
+                'subject': ['customer_1'],
+                'predicate': ['location'],
+                'object': ['location_loc45'],
+                'type': [None]
+            }),
+            {}
+        ),
+        ###
+        (
+            'override_edge_name',
+            'customer',
+            {
+                'files': {
+                    'customer': {
+                        'subject_fields': ['customer_id'],
+                        'edge_fields': ['location_id'],
+                        'override_edge_name': {
+                            'location': {
+                                'predicate': 'habitat',
+                                'target_node_type': 'hab'
+                            }
+                        }
+                    },
+                },
+                'add_dgraph_type_records': False
+            },
+            pd.DataFrame(data={
+                'customer_id': [1, 2, 3, 1, 2],
+                'predicate': ['age', 'weight', 'orders', 'location_id', 'location_id'],
+                'object': [23, 90, '1', 'loc45', 'loc64']
+            }),
+            pd.DataFrame(data={
+                'subject': ['customer_1', 'customer_2', 'customer_3'],
+                'predicate': ['age', 'weight', 'orders'],
+                'object': [23, 90, '1'],
+                'type': ['<xs:string>']*3
+            }),
+            pd.DataFrame(data={
+                'subject': ['customer_1', 'customer_2'],
+                'predicate': ['habitat', 'habitat'],
+                'object': ['hab_loc45', 'hab_loc64'],
+                'type': [None]*2
+            }),
+            {'add_dgraph_type_records': False}
+        ),
 
     ])
     def test_vertical_transform(
@@ -414,7 +706,16 @@ class Vertical(unittest.TestCase):
             expected_edges,
             kwargs):
         '''
+        Ensures that Vertical Transforms are working.
+        Each of the parameter sets being passed here represents:
+            For a given input frame and configuration,
+            does the output match the given intrinsic and edges
 
+        Note that the core flow of running the logic is the same but
+        all the different combination of inputs is coming from the parameters.
+
+        add_dgraph_type_records is added in some of these tests only to reduce
+        the verbosity of our DataFrame declarations.
         '''
         intrinsic, edges = vertical_transform(input_frame, config, config_file_key, **kwargs)
 
@@ -428,10 +729,16 @@ class Vertical(unittest.TestCase):
             assert_frame_equal(expected_intrinsic, intrinsic)
             assert_frame_equal(expected_edges, edges)
         except AssertionError:
+            print('Failed', name)
             print('Input:')
             print(input_frame)
             print('Expected Intrinsic:')
             print(expected_intrinsic)
             print('Intrinsic:')
             print(intrinsic)
+            print('#####')
+            print('Expected Edges:')
+            print(expected_edges)
+            print('Edges:')
+            print(edges)
             raise
