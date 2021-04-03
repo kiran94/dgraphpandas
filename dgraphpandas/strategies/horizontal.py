@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 
 
 def horizontal_transform(
-        frame: pd.DataFrame,
+        frame: Union[str, pd.DataFrame],
         config: Dict[str, Any],
         config_file_key: str,
         **kwargs):
@@ -21,6 +21,10 @@ def horizontal_transform(
     file_config: Dict[str, Any] = config['files'][config_file_key]
     type_overrides: Dict[str, str] = get_from_config('type_overrides', file_config, {}, **(kwargs))
     subject_fields: Union[List[str], Callable[..., List[str]]] = get_from_config('subject_fields', file_config, **(kwargs))
+
+    if isinstance(frame, str):
+        logger.debug(f'Reading file {frame}')
+        frame = pd.read_csv(frame)
 
     '''
     Ensure that object values have the correct type according to type_overrides.

@@ -42,15 +42,14 @@ def main():
 
     all_intrinsic: List[pd.DataFrame] = []
     all_edges: List[pd.DataFrame] = []
-    frame: pd.DataFrame = pd.read_csv(args.file)
 
     if global_config['transform'] == 'horizontal':
-        intrinsic, edges = horizontal_transform(frame, global_config, args.config_file_key)
+        intrinsic, edges = horizontal_transform(args.file, global_config, args.config_file_key)
         all_intrinsic.append(intrinsic)
         all_edges.append(edges)
 
     elif global_config['transform'] == 'vertical':
-        intrinsic, edges = vertical_transform(frame, global_config, args.config_file_key)
+        intrinsic, edges = vertical_transform(args.file, global_config, args.config_file_key)
         all_intrinsic.append(intrinsic)
         all_edges.append(edges)
 

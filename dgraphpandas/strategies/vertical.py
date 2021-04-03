@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 
 
 def vertical_transform(
-        frame: pd.DataFrame,
+        frame: Union[str, pd.DataFrame],
         config: Dict[str, Any],
         config_file_key: str,
         **kwargs):
@@ -33,6 +33,10 @@ def vertical_transform(
     except KeyError:
         logger.exception(f'Ensure that {config_file_key} is within the files object in config')
         raise
+
+    if isinstance(frame, str):
+        logger.debug(f'Reading file {frame}')
+        frame = pd.read_csv(frame)
 
     subject_fields: Union[List[str], Callable[..., List[str]]] = get_from_config('subject_fields', file_config, **(kwargs))
     edge_fields: Union[List[str], Callable[..., List[str]]] = get_from_config('edge_fields', file_config, [], **(kwargs))
