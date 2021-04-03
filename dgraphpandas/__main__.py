@@ -23,7 +23,7 @@ except ImportError as e:
 pd.set_option('mode.chained_assignment', None)
 
 
-if __name__ == '__main__':
+def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('-f', '--file')
     parser.add_argument('-c', '--config')
@@ -38,7 +38,6 @@ if __name__ == '__main__':
 
     with open(args.config, 'r') as f:
         global_config: Dict[str, Any] = json.load(f)
-        config: Dict[str, Any] = global_config['files'][args.config_file_key]
         logger.debug('Global Config \n %s', pformat(global_config))
 
     all_intrinsic: List[pd.DataFrame] = []
@@ -102,3 +101,7 @@ if __name__ == '__main__':
             zip.write(s)
     else:
         logger.warning('skip_upsert_generation was set, skipping')
+
+
+if __name__ == '__main__':
+    main()
