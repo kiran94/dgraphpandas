@@ -157,9 +157,9 @@ class Vertical(unittest.TestCase):
                     'subject_fields': ['customer_id'],
                     'dgraph_type': "customer",
                     'type_overrides': {
-                        'age': 'Int32',
+                        'age': 'int32',
                         'weight': 'float32',
-                        'orders': 'Int32',
+                        'orders': 'int32',
                     }
                 }
             }
@@ -191,9 +191,9 @@ class Vertical(unittest.TestCase):
                         'subject_fields': ['customer_id'],
                         'dgraph_type': "customer",
                         'type_overrides': {
-                            'age': 'Int32',
+                            'age': 'int32',
                             'weight': 'float32',
-                            'orders': 'Int32',
+                            'orders': 'int32',
                         }
                     }
                 }
@@ -221,9 +221,9 @@ class Vertical(unittest.TestCase):
                     'customer': {
                         'subject_fields': ['customer_id'],
                         'type_overrides': {
-                            'age': 'Int32',
+                            'age': 'int32',
                             'weight': 'float32',
-                            'orders': 'Int32',
+                            'orders': 'int32',
                         }
                     }
                 }
