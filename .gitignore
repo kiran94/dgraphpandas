@@ -1,7 +1,3 @@
-The following stacks are not supported:
-Python
-
-
 # Created by https://www.toptal.com/developers/gitignore/api/Python
 # Edit at https://www.toptal.com/developers/gitignore?templates=Python
 
@@ -153,3 +149,11 @@ Thumbs.db #thumbnail cache on Windows
 
 
 # End of https://www.toptal.com/developers/gitignore/api/Python
+
+data/
+output/
+samples/**/input/*.csv
+samples/**/output/*.gz
+samples/**/xidmap/*
+
+settings.json

@@ -1,0 +1,30 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Netflix Genre Sample",
+            "type": "python",
+            "request": "launch",
+            "module": "dgraphpandas",
+            "args": [
+                "-c", "samples/netflix/dgraphpandas.json",
+                "-ck", "genre",
+                "-f", "samples/netflix/input/genre.csv",
+                "-o", "samples/netflix/output"
+            ]
+        },
+        {
+            "name": "Netflix Title Sample",
+            "type": "python",
+            "request": "launch",
+            "module": "dgraphpandas",
+            "args": [
+                "-c", "samples/netflix/dgraphpandas.json",
+                "-ck", "titles",
+                "-f", "samples/netflix/input/netflix_titles.csv",
+                "-o", "samples/netflix/output",
+                "--console"
+            ]
+        }
+    ]
+}

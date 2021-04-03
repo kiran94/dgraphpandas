@@ -1,0 +1,52 @@
+{
+    "transform": "horizontal",
+    "files": {
+        "show_types": {
+            "subject_fields": ["id"],
+            "dgraph_type": "show_types",
+            "pre_rename": { "type": "identifier" }
+        },
+        "genre": {
+            "subject_fields": ["id"],
+            "dgraph_type": "genre",
+            "pre_rename": { "genre": "identifier" }
+        },
+        "rating": {
+            "subject_fields": ["id"],
+            "dgraph_type": "rating",
+            "pre_rename": { "rating": "identifier" }
+        },
+        "directors": {
+            "subject_fields": ["id"],
+            "dgraph_type": "director",
+            "pre_rename": { "director": "identifier" }
+        },
+        "cast": {
+            "subject_fields": ["id"],
+            "dgraph_type": "cast",
+            "pre_rename": { "cast": "identifier" }
+        },
+        "titles": {
+            "subject_fields": ["show_id"],
+            "dgraph.type": "title",
+            "pre_rename": {
+                "listed_in": "genre"
+            },
+            "type_overrides": {
+                "type": "object",
+                "title": "object",
+                "director": "object",
+                "cast": "object",
+                "country": "object",
+                "date_added": "datetime64",
+                "release_year": "int32",
+                "rating": "object",
+                "duration": "object",
+                "listed_in": "object",
+                "description": "object"
+            },
+            "edge_fields": ["type", "director", "cast", "country", "rating", "genre"],
+            "csv_edges": ["director", "cast", "genre", "country"]
+        }
+    }
+}
