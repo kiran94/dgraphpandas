@@ -172,6 +172,7 @@ class UpsertTests(unittest.TestCase):
     ])
     def test_generate_upsert_only_edges(self, name, edges, expected_output):
         '''
+        Ensures when there are only edges, the expected output is generated
         '''
         intrinsic = pd.DataFrame(columns=['subject', 'predicate', 'object', 'type'])
 
@@ -179,3 +180,58 @@ class UpsertTests(unittest.TestCase):
 
         self.assertEqual(len(dql_intrinsic), 0)
         self.assertEqual(dql_edges, expected_output)
+
+    @parameterized.expand([
+        ###
+        (
+            'single_intrinsic_and_edge',
+            pd.DataFrame(data={
+                        'subject': ['customer_1'],
+                        'predicate': ['age'],
+                        'object': [23],
+                        'type': ['<xs:int>']
+            }),
+            pd.DataFrame(data={
+                        'subject': ['customer_1'],
+                        'predicate': ['location'],
+                        'object': ['loc_32'],
+                        'type': [None]
+            }),
+            [
+                '<customer_1> <age> "23"^^<xs:int> .',
+                '<customer_1> <location> <loc_32> .'
+            ]
+        ),
+        ###
+        (
+            'multiple_records',
+            pd.DataFrame(data={
+                        'subject': ['customer_1', 'customer_2', 'customer_1', 'customer_3'],
+                        'predicate': ['age', 'hair', 'dob', 'weight'],
+                        'object': [23, 'black', '20210302T00:00:00', 1.32],
+                        'type': ['<xs:int>', '<xs:string>', '<xs:dateTime>', '<xs:float>']
+            }),
+            pd.DataFrame(data={
+                        'subject': ['customer_1', 'customer_3', 'customer_2'],
+                        'predicate': ['location', 'group', 'location'],
+                        'object': ['loc_32', 'group_89', 'loc_90'],
+                        'type': [None]*3
+            }),
+            [
+                '<customer_1> <age> "23"^^<xs:int> .',
+                '<customer_2> <hair> "black"^^<xs:string> .',
+                '<customer_1> <dob> "20210302T00:00:00"^^<xs:dateTime> .',
+                '<customer_3> <weight> "1.32"^^<xs:float> .',
+                '<customer_1> <location> <loc_32> .',
+                '<customer_3> <group> <group_89> .',
+                '<customer_2> <location> <loc_90> .'
+            ]
+        )
+    ])
+    def test_generate_upsert_both_intrinsic_edges(self, name, intrinsic, edges, expected_output):
+        '''
+        Ensures when there are both intrinsic and edges, the expected output is generated
+        '''
+        dql_intrinsic, dql_edges = generate_upserts(intrinsic, edges)
+        all_dql = dql_intrinsic + dql_edges
+        self.assertEqual(all_dql, expected_output)
