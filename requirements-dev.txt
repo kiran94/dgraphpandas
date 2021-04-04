@@ -3,3 +3,4 @@ autopep8
 coloredlogs
 parameterized
 coverage
+jupyter
