@@ -25,14 +25,21 @@ pd.set_option('mode.chained_assignment', None)
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('-f', '--file')
-    parser.add_argument('-c', '--config')
-    parser.add_argument('-ck', '--config_file_key')
-    parser.add_argument('-o', '--output_dir', default='.')
-    parser.add_argument('--console', action='store_true', default=False)
-    parser.add_argument('--pre_csv', action='store_true', default=False)
-    parser.add_argument('--skip_upsert_generation', action='store_true', default=False)
-    parser.add_argument('--encoding', default=os.environ.get('DGRAPH_PANDAS_ENCODING', 'utf-8'))
+    parser.add_argument('-f', '--file', required=True, help='The Data File (CSV) to convert into RDF.')
+    parser.add_argument('-c', '--config', required=True, help='The DgraphPandas Configuration. See Documentation for options/examples.')
+    parser.add_argument('-ck', '--config_file_key', required=True, help='The Entry in the Configuration to use for this passed file.')
+    parser.add_argument('-o', '--output_dir', default='.', help='The output directory to write files.')
+    parser.add_argument('--console', action='store_true', default=False, help='Write the Preprocessed DataFrames to console (for debugging)')
+    parser.add_argument('--pre_csv', action='store_true', default=False, help='Write the Preprocessed DataFrame to CSV (for debugging)')
+    parser.add_argument('--skip_upsert_generation', action='store_true', default=False, help="Don't generate RDF files")
+    parser.add_argument('--encoding', default=os.environ.get('DGRAPH_PANDAS_ENCODING', 'utf-8'), help='The Encoding to write files.')
+
+    parser.add_argument('--key_separator')
+    parser.add_argument('--add_dgraph_type_records', default=True)
+    parser.add_argument('--drop_na_intrinsic_objects', default=True)
+    parser.add_argument('--drop_na_edge_objects', default=True)
+    parser.add_argument('--illegal_characters', default=['%', '\\.', '\\s', '\"', '\\n', '\\r\\n'])
+    parser.add_argument('--illegal_characters_intrinsic_object', default=['\"', '\\n', '\\r\\n'])
 
     args = parser.parse_args()
 
@@ -42,14 +49,23 @@ def main():
 
     all_intrinsic: List[pd.DataFrame] = []
     all_edges: List[pd.DataFrame] = []
+    options = {
+        'key_separator': args.key_separator,
+        'add_dgraph_type_records': args.add_dgraph_type_records,
+        'drop_na_intrinsic_objects': args.drop_na_intrinsic_objects,
+        'drop_na_edge_objects': args.drop_na_edge_objects,
+        'illegal_characters': args.illegal_characters,
+        'illegal_characters_intrinsic_object': args.illegal_characters_intrinsic_object
+    }
+    options = {key: value for key, value in options.items() if value is not None and value is not False}
 
     if global_config['transform'] == 'horizontal':
-        intrinsic, edges = horizontal_transform(args.file, global_config, args.config_file_key)
+        intrinsic, edges = horizontal_transform(args.file, global_config, args.config_file_key, **(options))
         all_intrinsic.append(intrinsic)
         all_edges.append(edges)
 
     elif global_config['transform'] == 'vertical':
-        intrinsic, edges = vertical_transform(args.file, global_config, args.config_file_key)
+        intrinsic, edges = vertical_transform(args.file, global_config, args.config_file_key, **(options))
         all_intrinsic.append(intrinsic)
         all_edges.append(edges)
 
