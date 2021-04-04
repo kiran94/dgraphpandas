@@ -69,7 +69,7 @@ config = {
 }
 
 # Perform a Horizontal Transform on the passed file using the config/key
-intrinsic, edges = horizontal_transform('planets.csv', config, "planet")
+intrinsic, edges = horizontal_transform('solar_system.csv', config, "planet")
 
 # Generate RDF Upsert statements
 intrinsic_upserts, edges_upserts = generate_upserts(intrinsic, edges)
