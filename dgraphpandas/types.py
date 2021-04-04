@@ -2,7 +2,6 @@ import os
 
 from typing import Dict
 import logging
-import numpy as np
 
 logger = logging.getLogger(__name__)
 
@@ -13,16 +12,13 @@ numpy_str_to_rdf_types = {
     'object': '<xs:string>',
     'O': '<xs:string>',
     'int32': '<xs:int>',
-    'int64': '<xs:int>',
     'float32': '<xs:float>',
+    'int64': '<xs:int>',
+    'Int64': '<xs:int>',
     'float64': '<xs:float>',
     'datetime64': '<xs:dateTime>',
     '<M8[ns]': '<xs:dateTime>',
     'bool': '<xs:bool>'
-}
-
-numpy_to_rdf_types = {
-    key: np.dtype(key) for key, _ in numpy_str_to_rdf_types.items()
 }
 
 

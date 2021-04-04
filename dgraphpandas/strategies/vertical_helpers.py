@@ -78,6 +78,7 @@ def _add_dgraph_type_records(frame: pd.DataFrame, add_dgraph_type_records: bool,
         add_type_frame = frame.copy()
         add_type_frame['object'] = type
         add_type_frame['predicate'] = 'dgraph.type'
+        add_type_frame.drop_duplicates(keep='first', inplace=True)
         frame = pd.concat([frame, add_type_frame])
 
     return frame

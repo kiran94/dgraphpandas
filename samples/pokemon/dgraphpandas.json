@@ -12,46 +12,86 @@
             "subject_fields": ["id"],
             "dgraph_type": "generation",
             "edge_fields": ["region_id"],
-            "pre_rename": {
-                "main_region_id": "region_id"
-            },
+            "pre_rename": { "main_region_id": "region_id" },
             "type_overrides": {
                 "id": "int32",
                 "region_id": "int32"
             }
+        },
+        "version": {
+            "subject_fields": ["id"],
+            "edge_fields": ["version_group_id"]
+        },
+        "region": {
+            "subject_fields": ["id"]
         },
         "types": {
             "subject_fields": ["id"],
             "dgraph_type": "type",
             "edge_fields": ["generation_id", "damage_class_id"],
             "type_overrides": {
-                "id": "Int32",
-                "generation_id": "Int32",
-                "damage_class_id": "Int32"
+                "id": "int32",
+                "generation_id": "int32",
+                "damage_class_id": "int32"
             }
+        },
+        "pokemon": {
+            "subject_fields": ["id"],
+            "dgraph_type": "pokemon",
+            "type_overrides": {
+                "height": "int32",
+                "weight": "int32",
+                "base_experience": "int32",
+                "order": "int32",
+                "is_default": "bool"
+            }
+        },
+        "move": {
+            "subject_fields": ["id"],
+            "type_overrides": {
+                "power": "Int64",
+                "pp": "Int64",
+                "accuracy": "Int64",
+                "priority": "int32",
+                "effect_chance": "float32",
+                "contest_type_id": "Int64",
+                "super_contest_effect_id": "Int64",
+                "effect_id": "Int64",
+                "contest_effect_id": "Int64"
+            },
+            "edge_fields": [
+                "generation_id",
+                "type_id",
+                "target_id",
+                "damage_class_id",
+                "effect_id",
+                "contest_type_id",
+                "contest_effect_id",
+                "super_contest_effect_id"
+            ]
         },
         "pokemon_species": {
             "subject_fields": ["id"],
             "dgraph_type": "pokemon",
             "type_overrides": {
                 "id": "string",
-                "generation_id": "Int32",
-                "evolves_from_species_id": "Int32",
-                "evolution_chain_id": "Int32",
-                "color_id": "Int32",
-                "shape_id": "Int32",
-                "habitat_id": "Int32",
+                "generation_id": "int32",
+                "evolves_from_species_id": "int32",
+                "evolution_chain_id": "int32",
+                "color_id": "int32",
+                "shape_id": "int32",
+                "habitat_id": "int32",
                 "gender_rate": "Float32",
                 "capture_rate": "Float32",
                 "base_happiness": "Float32",
-                "hatch_counter": "Int32",
+                "hatch_counter": "int32",
                 "has_gender_differences": "bool",
-                "growth_rate_id": "Int32",
+                "growth_rate_id": "int32",
                 "forms_switchable": "bool",
                 "is_legendary": "bool",
                 "is_mythical": "bool",
-                "order": "Int32",
-                "conquest_order": "Int32",
+                "order": "int32",
+                "conquest_order": "int32",
                 "is_baby": "bool"
             },
             "edge_fields": ["generation_id", "evolves_from_species_id", "evolution_chain_id", "color_id", "shape_id", "habitat_id", "growth_rate_id"],

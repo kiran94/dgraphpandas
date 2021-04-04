@@ -1,0 +1,28 @@
+{
+  "transform": "horizontal",
+  "files": {
+    "planet": {
+      "subject_fields": ["id"],
+      "edge_fields": ["type"],
+      "type_overrides": {
+        "order_from_sun": "int32",
+        "diameter_earth_relative": "float32",
+        "diameter_km": "float32",
+        "mass_earth_relative": "float32",
+        "mean_distance_from_sun_au": "float32",
+        "orbital_period_years": "float32",
+        "orbital_eccentricity": "float32",
+        "mean_orbital_velocity_km_sec": "float32",
+        "rotation_period_days": "float32",
+        "inclination_axis_degrees": "float32",
+        "mean_temperature_surface_c": "float32",
+        "gravity_equator_earth_relative": "float32",
+        "escape_velocity_km_sec": "float32",
+        "mean_density": "float32",
+        "number_moons": "int32",
+        "rings": "bool"
+      },
+      "ignore_fields": ["image", "parent"]
+    }
+  }
+}
