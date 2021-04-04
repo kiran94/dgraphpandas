@@ -157,21 +157,21 @@ These options can be placed on the root of the config or passed as `kwargs` dire
 - `type_overrides`
     - Recommended. This ensures that data types are being treated as a type and the output RDF has the correct type mapped into it. Without this fields will go under the default rdf type `<xs:string>` but you may want a field to be a true int in RDF.
     - Additionally certain data types such as `datetime64` will activate special handling to ensure the output in RDF is within the correct format to be ingested into DGraph.
-    - Supported Types can be found [here](https://github.com/kiran94/dgraphpandas/blob/7e8152fc34c7d481237266e6543f344c07101dd0/dgraphpandas/types.py#L12)
+    - Supported Types can be found [here](https://github.com/kiran94/dgraphpandas/blob/main/dgraphpandas/types.py)
 - `csv_edges`
     - Sometimes a vendor will provide a data file where a single column is actually a csv list and each csv value should be broken into multiple RDF statements (because they relate to independent entities). Adding that column into this list will do that.
-    - For example in the [Netflix sample / title file](samples/netflix/dgraphpandas.json) we have a `cast` column where the values are `actor_1, actor2` then adding to csv_edges will ensure that the movie has 2 different relationships for each cast member.
+    - For example in the [Netflix sample / title file](https://github.com/kiran94/dgraphpandas/blob/main/samples/netflix/dgraphpandas.json) we have a `cast` column where the values are `actor_1, actor2` then adding to csv_edges will ensure that the movie has 2 different relationships for each cast member.
 - `ignore_fields`
-    - Add fields in the input that we don't are about to this list so they aren't present in the output.
+    - Add fields in the input that we don't are about to this list so they aren't present in the output
 - `override_edge_name`
     - Ensure that the edge name as a different predicate and/or target_node_type to what is defined in the file.
-    - For example in the [Pokemon sample / pokemon_species](samples/pokemon/dgraphpandas.json) file you will see a column called `evolves_from_species` which tells us for a given pokemon which other pokemon does it evolve from. If we were to use the raw data here we would get a `evolves_from_species` edge with an incorrect target xid. Instead we want to override the `target_node_type` to `pokemon` so the edge correctly loops back to a node of the same type.
+    - For example in the [Pokemon sample / pokemon_species](https://github.com/kiran94/dgraphpandas/blob/main/samples/pokemon/dgraphpandas.json) file you will see a column called `evolves_from_species` which tells us for a given pokemon which other pokemon does it evolve from. If we were to use the raw data here we would get a `evolves_from_species` edge with an incorrect target xid. Instead we want to override the `target_node_type` to `pokemon` so the edge correctly loops back to a node of the same type.
 - `pre_rename`
     - Rename intrinsic predicates or edge names to something else
 
 ## Samples
 
-Samples can be found [here](samples/). They follow a convention where the download script can be found within the `input` directory and the config, generate_upsert, publish scripts can be found root of each respective sample.
+Samples can be found [here](https://github.com/kiran94/dgraphpandas/tree/main/samples). They follow a convention where the download script can be found within the `input` directory and the config, generate_upsert, publish scripts can be found root of each respective sample.
 
 ## Local Setup
 
