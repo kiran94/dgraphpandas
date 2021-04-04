@@ -15,6 +15,10 @@ A Library (with accompanying cli tool) to transform [Pandas](https://pandas.pyda
 
 ## Usage
 
+```sh
+python -m pip install dgraphpandas
+```
+
 ### Command Line
 
 This is a real example which you can find in the samples folder and run from the root of this repository.
