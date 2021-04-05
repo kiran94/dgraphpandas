@@ -246,8 +246,8 @@ Where each of the orders has been associated with it's customer and store.
 A Configuration file influences how we transform a DataFrame. It consists of:
 
 - Global configuration options
-  - Options which will be applied to files
-  - These can either be defined in the configuration or as `kwargs` in the transform method.
+  - Options which will be applied to all files
+  - These can either be defined in the configuration or as `kwargs` in the transform method or both where the `kwargs` takes priority.
   - A collection of `files`
 
 - File configuration options
@@ -256,8 +256,9 @@ A Configuration file influences how we transform a DataFrame. It consists of:
   - `edge_fields` are optional and if provided will generate edge output
   - `type_overrides` are optional but recommended to ensure the correct type is attached in RDF
 
-*If you are running this with the module and passing via `kwargs` then these options may also be lambda callable with takes the dataframe. For example if you didn't want to hard code all your edge fields and were following a convention that all edge fields have suffix `_id` then you could set the edge_fields to `lambda frame: frame.loc[frame['predicate'].str.endswith('_id'), 'predicate'].unique().tolist()`
-`*
+*If you are running this with the module and passing via `kwargs` then the above options may also be lambda callable that takes the DataFrame as an input. For example if you didn't want to hard code all your edge fields and were following a convention that all edge fields have suffix `_id` then you could set the edge_fields to `lambda frame: frame.loc[frame['predicate'].str.endswith('_id'), 'predicate'].unique().tolist()`*
+
+An example of the configuration for the [planets sample](https://github.com/kiran94/dgraphpandas/blob/main/samples/planets/solar_system.csv) might look like this:
 
 ```py
 config = {
@@ -297,18 +298,19 @@ config = {
 These options can be placed on the root of the config or passed as `kwargs` directly.
 
 - `add_dgraph_type_records`
-    - DGraph has a special field called `dgraph.type`, this can be used to query via the `type()`
+    - DGraph has a special predicate called [`dgraph.type`](https://dgraph.io/docs/query-language/type-system/#setting-the-type-of-a-node), this can be used to query via the `type()`
     function. If `add_dgraph_type_records` is enabled, then we add `dgraph.type` fields
-    to the current frame.
+    to the current export.
 - `strip_id_from_edge_names`
     - Its common for a data set to have a reference to another 'table' using `_id` convention
-    - For example if you had a Student & School then the student might more sense to have (Student) - school -> (School) rather then having an `_id` in the predicate.
+    - You may not want the `_id` in your predicate name so this options strips it away
+    - For example if you had a Student & School then the student might more sense to have `(Student) - school -> (School)` rather then `(Student) - school_id -> (School)`.
 - `drop_na_intrinsic_objects`
-    - Automatically drop intrinsic records where the object is NA. In a relational model, you might have a column with a null entry however in a graph model you may want to omit the attribute altogether
+    - Automatically drop intrinsic records where the object is NA. In a relational model, you might have a column with a `null` entry however in a graph model you may want to omit the attribute altogether.
 - `drop_na_edge_objects`
-    - Same as `drop_na_intrinsic_objects` but for edges
+    - Same as `drop_na_intrinsic_objects` but for edges.
 - `key_separator`
-    - Separator used to combine key fields. For example if the key separator was `_` and we were operating on an intrinsic attribute for a customer with id 1 then the `xid` would be `customer_1`
+    - Separator used to combine key fields. For example if the key separator was `_` and we were operating on an intrinsic attribute for a customer with id 1 then the `xid` would be `customer_1` but if our seperator was `$` then it would be `customer$1`.
 - `illegal_characters`
     - Characters to strip from intrinsic and edge subjects. if the unique identifier has a character not supported by RDF/DGraph then strip them away or they will not be accepted by live loading.
 - `illegal_characters_intrinsic_object`
@@ -321,12 +323,12 @@ These options can be placed on the root of the config or passed as `kwargs` dire
     - Supported Types can be found [here](https://github.com/kiran94/dgraphpandas/blob/main/dgraphpandas/types.py)
 - `csv_edges`
     - Sometimes a vendor will provide a data file where a single column is actually a csv list and each csv value should be broken into multiple RDF statements (because they relate to independent entities). Adding that column into this list will do that.
-    - For example in the [Netflix sample / title file](https://github.com/kiran94/dgraphpandas/blob/main/samples/netflix/dgraphpandas.json) we have a `cast` column where the values are `actor_1, actor2` then adding to csv_edges will ensure that the movie has 2 different relationships for each cast member.
+    - For example in the [netflix sample / title file](https://github.com/kiran94/dgraphpandas/blob/e5b2864eeb285bcf4d41215f70c4675a0bc95075/samples/netflix/dgraphpandas.json#L43) we have a `cast` column where the values are `actor_1, actor2`. Enabling `csv_edges` will ensure that the movie has 2 different relationships for each cast member.
 - `ignore_fields`
-    - Add fields in the input that we don't are about to this list so they aren't present in the output
+    - Add fields in the input that we don't care about to this list so they aren't present in the output
 - `override_edge_name`
     - Ensure that the edge name as a different predicate and/or target_node_type to what is defined in the file.
-    - For example in the [Pokemon sample / pokemon_species](https://github.com/kiran94/dgraphpandas/blob/main/samples/pokemon/dgraphpandas.json) file you will see a column called `evolves_from_species` which tells us for a given pokemon which other pokemon does it evolve from. If we were to use the raw data here we would get a `evolves_from_species` edge with an incorrect target xid. Instead we want to override the `target_node_type` to `pokemon` so the edge correctly loops back to a node of the same type.
+    - For example in the [pokemon sample / pokemon_species](https://github.com/kiran94/dgraphpandas/blob/e5b2864eeb285bcf4d41215f70c4675a0bc95075/samples/pokemon/dgraphpandas.json#L99-L103) file you will see a column called `evolves_from_species` which tells us for a given pokemon which other pokemon does it evolve from. If we were to use the raw data here we would get a `evolves_from_species` edge with an incorrect target xid. Instead we want to override the `target_node_type` to `pokemon` so the edge correctly loops back to a node of the same type.
 - `pre_rename`
     - Rename intrinsic predicates or edge names to something else
 
@@ -400,7 +402,7 @@ for index, frame in enumerate(pd.read_csv('your_input.csv', chunksize=1000)):
   # Generate Rdf Upserts for this Chunk
   intrinsic_upserts, edges_upserts = generate_upserts(intrinsic, edges)
 
-  # Then you can do whatever you want with these
+  # Then you can do whatever you want with these before the next iteration
 ```
 
 ## Local Setup
@@ -431,9 +433,10 @@ docker-compose up
 # generating rdf and publishing to your
 # local DGraph
 
+# If you are making changes then
 # Install a Local Copy of the Library
 python -m pip install -e .
 
-# Remember to Uninstall once ready
+# Remember to uninstall once done
 python -m pip uninstall dgraphpandas -y
 ```
