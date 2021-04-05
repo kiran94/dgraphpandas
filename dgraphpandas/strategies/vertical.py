@@ -36,7 +36,8 @@ def vertical_transform(
 
     if isinstance(frame, str):
         logger.debug(f'Reading file {frame}')
-        frame = pd.read_csv(frame)
+        read_csv_options: Dict[str, Any] = get_from_config('read_csv_options', file_config, {}, **(kwargs))
+        frame = pd.read_csv(frame, **(read_csv_options))
 
     subject_fields: Union[List[str], Callable[..., List[str]]] = get_from_config('subject_fields', file_config, **(kwargs))
     edge_fields: Union[List[str], Callable[..., List[str]]] = get_from_config('edge_fields', file_config, [], **(kwargs))

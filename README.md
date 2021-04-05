@@ -331,6 +331,9 @@ These options can be placed on the root of the config or passed as `kwargs` dire
     - For example in the [pokemon sample / pokemon_species](https://github.com/kiran94/dgraphpandas/blob/e5b2864eeb285bcf4d41215f70c4675a0bc95075/samples/pokemon/dgraphpandas.json#L99-L103) file you will see a column called `evolves_from_species` which tells us for a given pokemon which other pokemon does it evolve from. If we were to use the raw data here we would get a `evolves_from_species` edge with an incorrect target xid. Instead we want to override the `target_node_type` to `pokemon` so the edge correctly loops back to a node of the same type.
 - `pre_rename`
     - Rename intrinsic predicates or edge names to something else
+- `read_csv_options`
+  - Applied to the [`pd.read_csv`](https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.read_csv.html) call when a file is passed to a transform
+  - For example if the vendor file was tab separated then this could be `{'sep': '\t'}`
 
 ## Samples
 

@@ -1,4 +1,5 @@
 import unittest
+from unittest.mock import patch, Mock
 from datetime import datetime
 
 import pandas as pd
@@ -173,6 +174,57 @@ class Vertical(unittest.TestCase):
         })
 
         intrinsic, edges = vertical_transform(frame, config, config_file_key)
+
+        intrinsic = intrinsic.reset_index(drop=True)
+        expected_frame = expected_frame.reset_index(drop=True)
+
+        assert_frame_equal(expected_frame, intrinsic)
+        self.assertTrue(edges.empty)
+
+    @patch('dgraphpandas.strategies.vertical.pd.read_csv')
+    def test_vertical_transform_csv_file(self, mock_pandas: Mock):
+        '''
+        Ensures when a file path is passed, then the file is read
+        from pandas with the given options
+        '''
+        file = 'test.csv'
+        read_csv_options = {'sep': ';'}
+
+        frame = pd.DataFrame(data={
+            'customer_id': [1, 2, 3],
+            'predicate': ['age', 'weight', 'orders'],
+            'object': [23, 90, 10]
+        })
+        mock_pandas.return_value = frame
+
+        config_file_key = 'customer'
+        config = {
+            'files': {
+                'customer': {
+                    'subject_fields': ['customer_id'],
+                    'dgraph_type': "customer",
+                    'type_overrides': {
+                        'age': 'int32',
+                        'weight': 'float32',
+                        'orders': 'int32',
+                    },
+                    'read_csv_options': read_csv_options
+                }
+            }
+        }
+
+        expected_frame = pd.DataFrame(data={
+            'subject': ['customer_1', 'customer_2', 'customer_3', 'customer_1', 'customer_2', 'customer_3'],
+            'predicate': ['age', 'weight', 'orders', 'dgraph.type', 'dgraph.type', 'dgraph.type'],
+            'object': [23, 90, 10, 'customer', 'customer', 'customer'],
+            'type': ['<xs:int>', '<xs:float>', '<xs:int>'] + ['<xs:string>']*3
+        })
+
+        intrinsic, edges = vertical_transform(file, config, config_file_key)
+
+        args, kwargs = mock_pandas.call_args_list[0]
+        self.assertEqual(file, args[0])
+        self.assertEqual(read_csv_options, kwargs)
 
         intrinsic = intrinsic.reset_index(drop=True)
         expected_frame = expected_frame.reset_index(drop=True)
