@@ -1,2 +1,2 @@
 __name__ = 'dgraphpandas'
-__version__ = '0.0.6'
+__version__ = '0.0.7'

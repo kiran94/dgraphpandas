@@ -33,7 +33,8 @@ def horizontal_transform(
 
     if isinstance(frame, str):
         logger.debug(f'Reading file {frame}')
-        frame = pd.read_csv(frame)
+        read_csv_options: Dict[str, Any] = get_from_config('read_csv_options', file_config, {}, **(kwargs))
+        frame = pd.read_csv(frame, **(read_csv_options))
 
     if frame.shape[1] <= len(subject_fields):
         raise ValueError(f'''

@@ -261,3 +261,48 @@ class HorizontalTests(unittest.TestCase):
         assert_frame_equal(expected_melted, args[0])
         self.assertEqual(config, args[1])
         self.assertEqual(config_file_key, args[2])
+
+    @patch('dgraphpandas.strategies.horizontal.vertical_transform')
+    @patch('dgraphpandas.strategies.horizontal.pd.read_csv', spec=pd.read_csv)
+    def test_horizontal_melted_file_path_custom_csv_passed(self, mock_pandas: Mock, mock_transform: Mock):
+        '''
+        Ensures when a read_csv_options option is defined inside file configuration
+        it is applied to the pd.read_csv call.
+        '''
+        file = 'test.csv'
+        read_csv_options = {'sep': ';'}
+        frame = pd.DataFrame(data={
+            'customer_id': [1, 2, 3],
+            'age': [23, 67, 56]
+        })
+        config = {
+            'files': {
+                'customer': {
+                    'subject_fields': ['customer_id'],
+                    'type_overrides': {
+                        'customer_id': 'int32',
+                        'age': 'int32'
+                    },
+                    'read_csv_options': read_csv_options
+                }
+            }
+        }
+        config_file_key = 'customer'
+        expected_melted = pd.DataFrame(data={
+            'customer_id': pd.Series([1, 2, 3], dtype='int32'),
+            'predicate': pd.Series(['age']*3, dtype='O'),
+            'object': pd.Series([23, 67, 56], dtype='int32')
+        })
+
+        mock_pandas.return_value = frame
+
+        horizontal_transform(file, config, config_file_key)
+
+        args, kwargs = mock_pandas.call_args_list[0]
+        self.assertEqual(file, args[0])
+        self.assertEqual(read_csv_options, kwargs)
+
+        args, kwargs = mock_transform.call_args_list[0]
+        assert_frame_equal(expected_melted, args[0])
+        self.assertEqual(config, args[1])
+        self.assertEqual(config_file_key, args[2])
