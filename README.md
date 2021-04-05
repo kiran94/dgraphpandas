@@ -324,6 +324,8 @@ These options can be placed on the root of the config or passed as `kwargs` dire
 - `csv_edges`
     - Sometimes a vendor will provide a data file where a single column is actually a csv list and each csv value should be broken into multiple RDF statements (because they relate to independent entities). Adding that column into this list will do that.
     - For example in the [netflix sample / title file](https://github.com/kiran94/dgraphpandas/blob/e5b2864eeb285bcf4d41215f70c4675a0bc95075/samples/netflix/dgraphpandas.json#L43) we have a `cast` column where the values are `actor_1, actor2`. Enabling `csv_edges` will ensure that the movie has 2 different relationships for each cast member.
+- `csv_edges_separator`
+    - Alternative separator for `csv_edges`
 - `ignore_fields`
     - Add fields in the input that we don't care about to this list so they aren't present in the output
 - `override_edge_name`
