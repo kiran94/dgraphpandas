@@ -8,12 +8,17 @@ A Library (with accompanying cli tool) to transform [Pandas](https://pandas.pyda
   - [Usage](#usage)
     - [Command Line](#command-line)
     - [Module](#module)
-    - [Working with Larger Files](#working-with-larger-files)
-      - [Command Line](#command-line-1)
-      - [Module](#module-1)
+  - [Getting Started](#getting-started)
+  - [Horizontal and Vertical Formats](#horizontal-and-vertical-formats)
+    - [Horizontal](#horizontal)
+    - [Vertical](#vertical)
+    - [Edges](#edges)
   - [Configuration](#configuration)
     - [Additional Configuration](#additional-configuration)
   - [Samples](#samples)
+  - [Working with Larger Files](#working-with-larger-files)
+    - [Command Line](#command-line-1)
+    - [Module](#module-1)
   - [Local Setup](#local-setup)
 
 ## Usage
@@ -24,10 +29,24 @@ python -m pip install dgraphpandas
 
 ### Command Line
 
-This is a real example which you can find in the samples folder and run from the root of this repository.
+```sh
+❯ dgraphpandas --help
+usage: dgraphpandas [-h] -f FILE -c CONFIG -ck CONFIG_FILE_KEY [-o OUTPUT_DIR]
+                    [--console] [--pre_csv] [--skip_upsert_generation]
+                    [--encoding ENCODING] [--chunk_size CHUNK_SIZE]
+                    [--gz_compression_level GZ_COMPRESSION_LEVEL]
+                    [--key_separator KEY_SEPARATOR]
+                    [--add_dgraph_type_records ADD_DGRAPH_TYPE_RECORDS]
+                    [--drop_na_intrinsic_objects DROP_NA_INTRINSIC_OBJECTS]
+                    [--drop_na_edge_objects DROP_NA_EDGE_OBJECTS]
+                    [--illegal_characters ILLEGAL_CHARACTERS]
+                    [--illegal_characters_intrinsic_object ILLEGAL_CHARACTERS_INTRINSIC_OBJECT]
+```
+
+This is a real example which you can find in the [samples folder](https://github.com/kiran94/dgraphpandas/tree/main/samples) and run from the root of this repository:
 
 ```sh
-python -m dgraphpandas \
+dgraphpandas \
   --config samples/planets/dgraphpandas.json \
   --config_file_key planet \
   --file samples/planets/solar_system.csv \
@@ -35,6 +54,8 @@ python -m dgraphpandas \
 ```
 
 ### Module
+
+This example can also be found in [Notebook](https://github.com/kiran94/dgraphpandas/blob/main/samples/notebooks/PlanetSample.ipynb) form.
 
 ```py
 from dgraphpandas.strategies.horizontal import horizontal_transform
@@ -83,72 +104,142 @@ print(intrinsic)
 print(edges)
 ```
 
-### Working with Larger Files
+## Getting Started
 
-If you have very large input files, it may make sense to break up your files into smaller ones to reduce the likely hood of memory issues.
-
-dgraphpandas provides facilities to break up exports via the cli tool into chunks or if you are using the module directly then you can find an example below on how to use pandas to break up your file.
-
-#### Command Line
-
-In the CLI you have the `chunk_size` parameter to determine an upper limit for your files.
+Fire up a Terminal (Assuming not Windows but WSL is okay).
 
 ```sh
-python -m dgraphpandas \
-  -c samples/netflix/dgraphpandas.json \
-  -ck title -f samples/netflix/input/netflix_titles.csv \
-  -o samples/netflix/output \
-  --chunk_size 1000
+# Create a Configuration
+echo '{
+    "transform": "horizontal",
+    "files": {
+       "animal": {
+            "subject_fields": ["species_id"],
+            "edge_fields": ["habitat_id"],
+            "type_overrides": {
+              "number_of_legs": "int32"
+            }
+        }
+    }
+}' > dgraphpandas.json
+
+# Create a Data file
+echo "species_id,name,number_of_legs,habitat_id,
+1,Elephant,4,10,
+2,Lion,4,7,
+3,Flamingo,2,78,
+" > animals.csv
+
+# Run dgraphpandas
+dgraphpandas -f animals.csv -c dgraphpandas.json -ck animal
+
+# Unzip output
+gzip -d animals_intrinsic.gz
+gzip -d animals_edges.gz
+
+# Verify Output
+❯ cat animals_intrinsic
+<animal_1> <name> "Elephant"^^<xs:string> .
+<animal_2> <name> "Lion"^^<xs:string> .
+<animal_3> <name> "Flamingo"^^<xs:string> .
+<animal_1> <number_of_legs> "4"^^<xs:int> .
+<animal_2> <number_of_legs> "4"^^<xs:int> .
+<animal_3> <number_of_legs> "2"^^<xs:int> .
+<animal_1> <dgraph.type> "animal"^^<xs:string> .
+<animal_2> <dgraph.type> "animal"^^<xs:string> .
+<animal_3> <dgraph.type> "animal"^^<xs:string> .
+
+❯ cat animals_edges
+<animal_1> <habitat> <habitat_10> .
+<animal_2> <habitat> <habitat_7> .
+<animal_3> <habitat> <habitat_78> .
 ```
 
-When you pass this, only `chunk_size` lines will be pushed through the RDF generation logic at a time and the output will be indexed per chunk. For example:
+## Horizontal and Vertical Formats
 
-```sh
-❯ ls -la samples/netflix/output/
-total 12M
-drwxr-xr-x 2 kiran kiran 4.0K Apr  4 18:13 .
-drwxr-xr-x 6 kiran kiran 4.0K Apr  4 16:45 ..
--rw-r--r-- 1 kiran kiran 706K Apr  4 18:13 netflix_titles_edges.gz
--rw-r--r-- 1 kiran kiran 706K Apr  4 18:13 netflix_titles_edges_2.gz
--rw-r--r-- 1 kiran kiran 706K Apr  4 18:13 netflix_titles_edges_3.gz
--rw-r--r-- 1 kiran kiran 706K Apr  4 18:13 netflix_titles_edges_4.gz
--rw-r--r-- 1 kiran kiran 706K Apr  4 18:13 netflix_titles_edges_5.gz
--rw-r--r-- 1 kiran kiran 706K Apr  4 18:13 netflix_titles_edges_6.gz
--rw-r--r-- 1 kiran kiran 706K Apr  4 18:13 netflix_titles_edges_7.gz
--rw-r--r-- 1 kiran kiran 706K Apr  4 18:13 netflix_titles_edges_8.gz
--rw-r--r-- 1 kiran kiran 701K Apr  4 18:13 netflix_titles_intrinsic.gz
--rw-r--r-- 1 kiran kiran 701K Apr  4 18:13 netflix_titles_intrinsic_2.gz
--rw-r--r-- 1 kiran kiran 701K Apr  4 18:13 netflix_titles_intrinsic_3.gz
--rw-r--r-- 1 kiran kiran 701K Apr  4 18:13 netflix_titles_intrinsic_4.gz
--rw-r--r-- 1 kiran kiran 701K Apr  4 18:13 netflix_titles_intrinsic_5.gz
--rw-r--r-- 1 kiran kiran 701K Apr  4 18:13 netflix_titles_intrinsic_6.gz
--rw-r--r-- 1 kiran kiran 701K Apr  4 18:13 netflix_titles_intrinsic_7.gz
--rw-r--r-- 1 kiran kiran 701K Apr  4 18:13 netflix_titles_intrinsic_8.gz
+dgraphpandas takes two kinds of input; vertical and horizontal. In both instances they are expected to be in csv format.
+
+### Horizontal
+
+Horizontal follows a tabular structure and is probably the more likely format found out in the wild. It might look like this:
+
+```
+customer_id    weight    height
+1              90        190
+2              23        120
+3              100       56
 ```
 
-You can then take these exports and live load them as normal.
+When you provide the subject fields as `['customer_id']` then dgraphpandas will be treat the rest of the columns as data values. It will be pivoted like this:
 
-#### Module
-
-When you are using the module directly, you can leverage the fact that the transform methods can take a `DataFrame` directly and you can pre-chunk before they enter.
-
-For Example:
-
-```py
-from dgraphpandas.strategies.horizontal import horizontal_transform
-from dgraphpandas.writers.upserts import generate_upserts
-
-# Each Chunk won't be loaded into memory until it hits that particular loop.
-for index, frame in enumerate(pd.read_csv('your_input.csv', chunksize=1000)):
-
-  # Generate for this Chunk
-  intrinsic, edges = horizontal_transform(frame, dgraphpandas_config, 'your_input_key')
-
-  # Generate Rdf Upserts for this Chunk
-  intrinsic_upserts, edges_upserts = generate_upserts(intrinsic, edges)
-
-  # Then you can do whatever you want with these
 ```
+customer_id    predicate    object
+1              weight       90
+1              height       190
+2              weight       23
+2              height       120
+3              weight       100
+3              height       56
+```
+
+Then along with the options provided within the passed configuration then the output RDF might look like this:
+
+```xml
+<customer_1>     <weight>       "90"^^<xs:int> .
+<customer_1>     <height>       "190"^^<xs:int> .
+<customer_2>     <weight>       "23"^^<xs:int> .
+<customer_2>     <height>       "120"^^<xs:int> .
+<customer_3>     <weight>       "100"^^<xs:int> .
+<customer_3>     <height>       "56"^^<xs:int> .
+```
+
+Where `customer_` was appended as it was defined as the `type` for this export and types were associated because it was defined inside `type_overrides`.
+
+### Vertical
+
+Vertical transformation is very similar to the above Horizontal explanation but we skip the initial pivoting step as the data is already looks like `customer_id`, `predicate`, `object`.
+
+### Edges
+
+Edges are derived from the `edge_fields` defined inside the file level configuration and they are sent just like data fields from the input file.
+
+As they are defined in `edge_fields`, dgraphpandas will split these out and treat them slightly differently during transformation and generation of the RDF output.
+
+For example if we had an E-Commerce Orders table:
+
+```
+order_id    customer_id    store_id
+5           1              1
+9           2              2
+2           3              1
+```
+
+And we had a configuration like this:
+
+```json
+{
+    "transform": "horizontal",
+    "files": {
+       "order": {
+            "subject_fields": ["order_id"],
+            "edge_fields": ["customer_id", "store_id"]
+        }
+    }
+}
+```
+
+Then the output RDF would look like this:
+
+```xml
+<order_5> <customer> <customer_1> .
+<order_9> <customer> <customer_2> .
+<order_2> <customer> <customer_3> .
+<order_5> <store> <store_1> .
+<order_9> <store> <store_2> .
+<order_2> <store> <store_1> .
+```
+
+Where each of the orders has been associated with it's customer and store.
 
 ## Configuration
 
@@ -244,6 +335,73 @@ These options can be placed on the root of the config or passed as `kwargs` dire
 Samples can be found [here](https://github.com/kiran94/dgraphpandas/tree/main/samples). They follow a convention where the download script can be found within the `input` directory and the config, generate_upsert, publish scripts can be found root of each respective sample.
 
 There are also [Jupyter Notebooks](https://github.com/kiran94/dgraphpandas/tree/main/samples/notebooks) which should show step by step examples.
+
+## Working with Larger Files
+
+If you have very large input files, it may make sense to break up your files into smaller ones to reduce the likely hood of memory issues.
+
+dgraphpandas provides facilities to break up exports via the cli tool into chunks or if you are using the module directly then you can find an example below on how to use pandas to break up your file.
+
+### Command Line
+
+In the CLI you have the `chunk_size` parameter to determine an upper limit for your files.
+
+```sh
+python -m dgraphpandas \
+  -c samples/netflix/dgraphpandas.json \
+  -ck title -f samples/netflix/input/netflix_titles.csv \
+  -o samples/netflix/output \
+  --chunk_size 1000
+```
+
+When you pass this, only `chunk_size` lines will be pushed through the RDF generation logic at a time and the output will be indexed per chunk. For example:
+
+```sh
+❯ ls -la samples/netflix/output/
+total 12M
+drwxr-xr-x 2 kiran kiran 4.0K Apr  4 18:13 .
+drwxr-xr-x 6 kiran kiran 4.0K Apr  4 16:45 ..
+-rw-r--r-- 1 kiran kiran 706K Apr  4 18:13 netflix_titles_edges.gz
+-rw-r--r-- 1 kiran kiran 706K Apr  4 18:13 netflix_titles_edges_2.gz
+-rw-r--r-- 1 kiran kiran 706K Apr  4 18:13 netflix_titles_edges_3.gz
+-rw-r--r-- 1 kiran kiran 706K Apr  4 18:13 netflix_titles_edges_4.gz
+-rw-r--r-- 1 kiran kiran 706K Apr  4 18:13 netflix_titles_edges_5.gz
+-rw-r--r-- 1 kiran kiran 706K Apr  4 18:13 netflix_titles_edges_6.gz
+-rw-r--r-- 1 kiran kiran 706K Apr  4 18:13 netflix_titles_edges_7.gz
+-rw-r--r-- 1 kiran kiran 706K Apr  4 18:13 netflix_titles_edges_8.gz
+-rw-r--r-- 1 kiran kiran 701K Apr  4 18:13 netflix_titles_intrinsic.gz
+-rw-r--r-- 1 kiran kiran 701K Apr  4 18:13 netflix_titles_intrinsic_2.gz
+-rw-r--r-- 1 kiran kiran 701K Apr  4 18:13 netflix_titles_intrinsic_3.gz
+-rw-r--r-- 1 kiran kiran 701K Apr  4 18:13 netflix_titles_intrinsic_4.gz
+-rw-r--r-- 1 kiran kiran 701K Apr  4 18:13 netflix_titles_intrinsic_5.gz
+-rw-r--r-- 1 kiran kiran 701K Apr  4 18:13 netflix_titles_intrinsic_6.gz
+-rw-r--r-- 1 kiran kiran 701K Apr  4 18:13 netflix_titles_intrinsic_7.gz
+-rw-r--r-- 1 kiran kiran 701K Apr  4 18:13 netflix_titles_intrinsic_8.gz
+```
+
+You can then take these exports and live load them as normal.
+
+### Module
+
+When you are using the module directly, you can leverage the fact that the transform methods can take a `DataFrame` directly and you can pre-chunk before they enter.
+
+For Example:
+
+```py
+from dgraphpandas.strategies.horizontal import horizontal_transform
+from dgraphpandas.writers.upserts import generate_upserts
+
+# Each Chunk won't be loaded into memory until it hits that particular loop.
+for index, frame in enumerate(pd.read_csv('your_input.csv', chunksize=1000)):
+
+  # Generate for this Chunk
+  intrinsic, edges = horizontal_transform(frame, dgraphpandas_config, 'your_input_key')
+
+  # Generate Rdf Upserts for this Chunk
+  intrinsic_upserts, edges_upserts = generate_upserts(intrinsic, edges)
+
+  # Then you can do whatever you want with these
+```
 
 ## Local Setup
 
