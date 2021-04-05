@@ -17,14 +17,30 @@ def horizontal_transform(
     '''
     Horizontally Transform a Pandas DataFrame into Intrinsic and Edge DataFrames.
     '''
+    if frame is None:
+        raise ValueError('frame')
+    if not config:
+        raise ValueError('config')
+    if not config_file_key:
+        raise ValueError('config_file_key')
 
     file_config: Dict[str, Any] = config['files'][config_file_key]
     type_overrides: Dict[str, str] = get_from_config('type_overrides', file_config, {}, **(kwargs))
     subject_fields: Union[List[str], Callable[..., List[str]]] = get_from_config('subject_fields', file_config, **(kwargs))
 
+    if not subject_fields:
+        raise ValueError('subject_fields')
+
     if isinstance(frame, str):
         logger.debug(f'Reading file {frame}')
         frame = pd.read_csv(frame)
+
+    if frame.shape[1] <= len(subject_fields):
+        raise ValueError(f'''
+            It looks like there are no data fields.
+            The subject_fields are {subject_fields}
+            The frame columns are {frame.columns}
+        ''')
 
     '''
     Ensure that object values have the correct type according to type_overrides.
