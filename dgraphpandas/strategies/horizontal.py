@@ -31,16 +31,16 @@ def horizontal_transform(
     if not subject_fields:
         raise ValueError('subject_fields')
 
+    if isinstance(frame, str):
+        logger.debug(f'Reading file {frame}')
+        frame = pd.read_csv(frame)
+
     if frame.shape[1] <= len(subject_fields):
         raise ValueError(f'''
             It looks like there are no data fields.
             The subject_fields are {subject_fields}
             The frame columns are {frame.columns}
         ''')
-
-    if isinstance(frame, str):
-        logger.debug(f'Reading file {frame}')
-        frame = pd.read_csv(frame)
 
     '''
     Ensure that object values have the correct type according to type_overrides.
