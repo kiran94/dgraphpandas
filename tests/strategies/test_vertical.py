@@ -455,6 +455,34 @@ class Vertical(unittest.TestCase):
         ),
         ###
         (
+            'with_csv_edges_custom_sep',
+            'customer',
+            {
+                'files': {
+                    'customer': {
+                        'subject_fields': ['customer_id'],
+                        'csv_edges': ['orders'],
+                        'csv_edges_seperator': '@'
+                    },
+                },
+                'add_dgraph_type_records': False
+            },
+            pd.DataFrame(data={
+                'customer_id': [1, 2, 3],
+                'predicate': ['age', 'weight', 'orders'],
+                'object': [23, 90, '1@2@3']
+            }),
+            pd.DataFrame(data={
+                'subject': ['customer_1', 'customer_2', 'customer_3', 'customer_3', 'customer_3'],
+                'predicate': ['age', 'weight', 'orders', 'orders', 'orders'],
+                'object': [23, 90, '1', '2', '3'],
+                'type': ['<xs:string>']*5
+            }),
+            pd.DataFrame(columns=['subject', 'predicate', 'object', 'type']),
+            {}
+        ),
+        ###
+        (
             'with_composite_key',
             'order',
             {

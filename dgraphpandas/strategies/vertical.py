@@ -51,6 +51,7 @@ def vertical_transform(
     illegal_characters: List[str] = get_from_config('illegal_characters', config, ['%', '\\.', '\\s', '\"', '\\n', '\\r\\n'], **(kwargs))
     illegal_characters_intrinsic_object: List[str] = get_from_config('illegal_characters_intrinsic_object', config, ['\"', '\\n', '\\r\\n'], **(kwargs))
     csv_edges: str = get_from_config('csv_edges', file_config, [], **(kwargs))
+    csv_edges_seperator: str = get_from_config('csv_edges_seperator', file_config, ',', **(kwargs))
     ignore_fields: List[str] = get_from_config('ignore_fields', file_config, [], **(kwargs))
     override_edge_name: Dict[str, Any] = get_from_config('override_edge_name', file_config, {}, **(kwargs))
     pre_rename: Dict[str, str] = get_from_config('pre_rename', file_config, {}, **(kwargs))
@@ -75,7 +76,7 @@ def vertical_transform(
 
     frame = _rename_fields(frame, pre_rename)
     frame = _ignore_fields(frame, ignore_fields)
-    frame = _expand_csv_edges(frame, csv_edges)
+    frame = _expand_csv_edges(frame, csv_edges, seperator=csv_edges_seperator)
     frame = _join_key_fields(frame, key, key_seperator, type)
     frame = _add_dgraph_type_records(frame, add_dgraph_type_records, type)
 
