@@ -306,3 +306,221 @@ class HorizontalTests(unittest.TestCase):
         assert_frame_equal(expected_melted, args[0])
         self.assertEqual(config, args[1])
         self.assertEqual(config_file_key, args[2])
+
+    @parameterized.expand([
+        ###
+        (
+            'year_wrong_order',
+            {'dob': {'format': "%Y-%m-%d"}},
+            pd.DataFrame(data={
+                'customer_id': [1, 2],
+                'dob': ['03-02-2021', '01-03-1945'],
+                'weight': [50, 32]
+            })
+        ),
+        ###
+        (
+            'alphanumerical_string',
+            {'dob': {'format': "%Y-%m-%d"}},
+            pd.DataFrame(data={
+                'customer_id': [1, 2],
+                'dob': ['not a date', '01-03-1945'],
+                'weight': [50, 32]
+            })
+        ),
+        ###
+        (
+            'missing_dashes',
+            {'dob': {'format': "%Y-%m%d"}},
+            pd.DataFrame(data={
+                'customer_id': [1, 2],
+                'dob': ['2021-03-02', '19450301'],
+                'weight': [50, 32]
+            })
+        ),
+        ###
+        (
+            'missing_dots',
+            {'dob': {'format': "%Y.%m.%d"}},
+            pd.DataFrame(data={
+                'customer_id': [1, 2],
+                'dob': ['2021-03-02', '1945.03&01'],
+                'weight': [50, 32]
+            })
+        ),
+        ###
+        (
+            'malformed_month_string',
+            {'dob': {'format': "%d-%b-%Y"}},
+            pd.DataFrame(data={
+                'customer_id': [1, 2],
+                'dob': ['02-FebFake-2021', '01-Mar-1945'],
+                'weight': [50, 32]
+            })
+        )
+    ])
+    @patch('dgraphpandas.strategies.horizontal.vertical_transform')
+    def test_horizontal_transform_incorrect_date_format(self, name, date_format, frame, transform_mock: Mock):
+        '''
+        Ensures when the date format provided does not match the value within the frame,
+        then an error is raised.
+        '''
+        config_file_key = 'customer'
+        config = {
+            'files': {
+                config_file_key: {
+                    'subject_fields': ['customer_id'],
+                    'date_fields': date_format
+                }
+            }
+        }
+
+        with self.assertRaisesRegex(ValueError, "time data (.*) (doesn't|does not) match format(.*)"):
+            horizontal_transform(frame, config, config_file_key)
+        transform_mock.assert_not_called()
+
+    @parameterized.expand([
+        ###
+        (
+            'uncoverted_month_day',
+            {'dob': {'format': "%Y"}},
+            pd.DataFrame(data={
+                'customer_id': [1, 2],
+                'dob': ['2021-03-02', '1945-03-01'],
+                'weight': [50, 32]
+            })
+        ),
+        ###
+        (
+            'uncoverted_month_year',
+            {'dob': {'format': "%m-%d"}},
+            pd.DataFrame(data={
+                'customer_id': [1, 2],
+                'dob': ['03-02-2021', '03-01-2021'],
+                'weight': [50, 32]
+            })
+        )
+    ])
+    @patch('dgraphpandas.strategies.horizontal.vertical_transform')
+    def test_horizontal_transform_unconverted_date_parts(self, name, date_format, frame, transform_mock: Mock):
+        '''
+        Ensures when the date partially matches and there are some converted
+        parts, an error is raised
+        '''
+        config_file_key = 'customer'
+        config = {
+            'files': {
+                config_file_key: {
+                    'subject_fields': ['customer_id'],
+                    'date_fields': date_format
+                }
+            }
+        }
+
+        with self.assertRaisesRegex(ValueError, "unconverted data remains: (.*)"):
+            horizontal_transform(frame, config, config_file_key)
+        transform_mock.assert_not_called()
+
+    @parameterized.expand([
+        ###
+        (
+            'dash_format',
+            {'dob': {'format': "%Y-%m-%d"}},
+            pd.DataFrame(data={
+                'customer_id': [1, 2],
+                'dob': ['2021-03-02', '1945-03-01'],
+                'weight': [50, 32]
+            }),
+            pd.DataFrame(data={
+                'customer_id': [1, 2, 1, 2],
+                'predicate': ['dob', 'dob', 'weight', 'weight'],
+                'object':[pd.to_datetime('2021-03-02 00:00:00'), pd.to_datetime('1945-03-01 00:00:00'), 50, 32]
+            })
+        ),
+        ###
+        (
+            'dot_format',
+            {'dob': {'format': "%Y.%m.%d"}},
+            pd.DataFrame(data={
+                'customer_id': [1, 2],
+                'dob': ['1999.05.09', '1789.02.12'],
+                'weight': [50, 32]
+            }),
+            pd.DataFrame(data={
+                'customer_id': [1, 2, 1, 2],
+                'predicate': ['dob', 'dob', 'weight', 'weight'],
+                'object': [pd.to_datetime('1999-05-09 00:00:00'), pd.to_datetime('1789-02-12 00:00:00'), 50, 32]
+            })
+        ),
+        ###
+        (
+            'multiple_date_fields',
+            {'updated_at': {'format': '%Y.%m.%d'}, 'dob': {'format': "%Y.%m.%d"}},
+            pd.DataFrame(data={
+                'customer_id': [1, 2],
+                'dob': ['1999.05.09', '1789.02.12'],
+                'updated_at': ['2021.03.02', '2021.03.04'],
+                'weight': [50, 32]
+            }),
+            pd.DataFrame(data={
+                'customer_id': [1, 2, 1, 2, 1, 2],
+                'predicate': ['dob', 'dob', 'updated_at', 'updated_at', 'weight', 'weight'],
+                'object': [
+                    pd.to_datetime('1999-05-09 00:00:00'),
+                    pd.to_datetime('1789-02-12 00:00:00'),
+                    pd.to_datetime('2021-03-02 00:00:00'),
+                    pd.to_datetime('2021-03-04 00:00:00'),
+                    50,
+                    32]
+            })
+        ),
+        ###
+        (
+            'multiple_date_fields_different_formats',
+            {'updated_at': {'format': '%Y$%m$%d'}, 'dob': {'format': "%Y.%m.%d"}},
+            pd.DataFrame(data={
+                'customer_id': [1, 2],
+                'dob': ['1999.05.09', '1789.02.12'],
+                'updated_at': ['2021$03$02', '2021$03$04'],
+                'weight': [50, 32]
+            }),
+            pd.DataFrame(data={
+                'customer_id': [1, 2, 1, 2, 1, 2],
+                'predicate': ['dob', 'dob', 'updated_at', 'updated_at', 'weight', 'weight'],
+                'object': [
+                    pd.to_datetime('1999-05-09 00:00:00'),
+                    pd.to_datetime('1789-02-12 00:00:00'),
+                    pd.to_datetime('2021-03-02 00:00:00'),
+                    pd.to_datetime('2021-03-04 00:00:00'),
+                    50,
+                    32]
+            })
+        )
+    ])
+    @patch('dgraphpandas.strategies.horizontal.vertical_transform')
+    def test_horizontal_transform_correct_date_format(self, name, date_format, frame, expected_melted, transform_mock: Mock):
+        '''
+        Ensures when the date_format provided is in the correct format,
+        no error is raised
+        '''
+        config_file_key = 'customer'
+        config = {
+            'files': {
+                config_file_key: {
+                    'subject_fields': ['customer_id'],
+                    'date_fields': date_format
+                }
+            }
+        }
+
+        horizontal_transform(frame, config, config_file_key)
+
+        transform_mock.assert_called_once()
+        args, kwargs = transform_mock.call_args_list[0]
+
+        passed_frame, passed_config, passed_config_key = args
+
+        assert_frame_equal(passed_frame, expected_melted)
+        self.assertEqual(passed_config, config)
+        self.assertEqual(passed_config_key, config_file_key)
+        self.assertEqual(kwargs, {})

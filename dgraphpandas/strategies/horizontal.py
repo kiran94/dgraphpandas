@@ -27,6 +27,7 @@ def horizontal_transform(
     file_config: Dict[str, Any] = config['files'][config_file_key]
     type_overrides: Dict[str, str] = get_from_config('type_overrides', file_config, {}, **(kwargs))
     subject_fields: Union[List[str], Callable[..., List[str]]] = get_from_config('subject_fields', file_config, **(kwargs))
+    date_fields: Dict[str, str] = get_from_config('date_fields', file_config, {}, **(kwargs))
 
     if not subject_fields:
         raise ValueError('subject_fields')
@@ -43,12 +44,24 @@ def horizontal_transform(
             The frame columns are {frame.columns}
         ''')
 
+    for col, date_format in date_fields.items():
+        date_format = date_fields[col]
+        logger.debug(f'Converting {col} to datetime: {date_format}')
+        frame[col] = pd.to_datetime(frame[col], **(date_format))
+        if col not in type_overrides:
+            logger.debug(f'Ensuring {col} has datetime64 type')
+            type_overrides[col] = 'datetime64'
+
     '''
     Ensure that object values have the correct type according to type_overrides.
     For example, when pandas reads a csv and detects a numerical value it may decide to
     represent them as a float e.g 10.0 so when it's melted into a string it will show as such
     But we really want the value to be just 10 so it matches the corresponding rdf type.
     Therefore before we melt the frame, we enforce these columns have the correct form.
+
+    Date Fields get special treatment as they can be represented in many different ways
+    from different sources. Therefore if the column has been defined in date_fields
+    then apply those options to that column.
     '''
     logger.debug('Applying Type Overrides %s', type_overrides)
     for col, type in type_overrides.items():
