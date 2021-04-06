@@ -44,6 +44,11 @@ def horizontal_transform(
             The frame columns are {frame.columns}
         ''')
 
+    '''
+    Date Fields get special treatment as they can be represented in many different ways
+    from different sources. Therefore if the column has been defined in date_fields
+    then apply those options to that column.
+    '''
     for col, date_format in date_fields.items():
         date_format = date_fields[col]
         logger.debug(f'Converting {col} to datetime: {date_format}')
@@ -58,10 +63,6 @@ def horizontal_transform(
     represent them as a float e.g 10.0 so when it's melted into a string it will show as such
     But we really want the value to be just 10 so it matches the corresponding rdf type.
     Therefore before we melt the frame, we enforce these columns have the correct form.
-
-    Date Fields get special treatment as they can be represented in many different ways
-    from different sources. Therefore if the column has been defined in date_fields
-    then apply those options to that column.
     '''
     logger.debug('Applying Type Overrides %s', type_overrides)
     for col, type in type_overrides.items():
