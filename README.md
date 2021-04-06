@@ -1,6 +1,6 @@
 # dgraphpandas
 
-[![Python Build](https://github.com/kiran94/dgraphpandas/actions/workflows/python-package.yml/badge.svg)](https://github.com/kiran94/dgraphpandas/actions/workflows/python-package.yml) ![PyPI](https://img.shields.io/pypi/v/dgraphpandas?color=blue&style=flat-square) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Build](https://github.com/kiran94/dgraphpandas/actions/workflows/python-package.yml/badge.svg)](https://github.com/kiran94/dgraphpandas/actions/workflows/python-package.yml) ![PyPI](https://img.shields.io/pypi/v/dgraphpandas?color=blue&style=flat-square) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 A Library (with accompanying cli tool) to transform [Pandas](https://pandas.pydata.org/pandas-docs/stable/user_guide/index.html#user-guide) DataFrames into Exports ([RDF](https://en.wikipedia.org/wiki/Resource_Description_Framework)) to be sent to [DGraph Live Loader](https://dgraph.io/docs/deploy/fast-data-loading/live-loader/)
 
