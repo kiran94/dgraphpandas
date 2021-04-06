@@ -336,6 +336,8 @@ These options can be placed on the root of the config or passed as `kwargs` dire
 - `read_csv_options`
   - Applied to the [`pd.read_csv`](https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.read_csv.html) call when a file is passed to a transform
   - For example if the vendor file was tab separated then this could be `{'sep': '\t'}`
+- `date_fields`
+  - Apply datetime options to a field. This option can be useful when the input file has a date column with an unsual format. For each field, this object is passed into [`pd.to_datetime`](https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.to_datetime.html). For example if you had a column called `dob` then you could set this object to `{ "dob": {"format": "%Y-%m-%d"} }`. All the [standard](https://docs.python.org/3/library/datetime.html#strftime-and-strptime-format-codes) format codes are supported.
 
 ## Samples
 

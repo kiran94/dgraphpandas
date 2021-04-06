@@ -56,6 +56,7 @@ def vertical_transform(
     override_edge_name: Dict[str, Any] = get_from_config('override_edge_name', file_config, {}, **(kwargs))
     pre_rename: Dict[str, str] = get_from_config('pre_rename', file_config, {}, **(kwargs))
     type_overrides: Dict[str, str] = get_from_config('type_overrides', file_config, {}, **(kwargs))
+    date_fields: Dict[str, str] = get_from_config('date_fields', file_config, {}, **(kwargs))
 
     potential_callables = _resolve_potential_callables(frame, {
         'subject_fields': subject_fields,
@@ -84,7 +85,7 @@ def vertical_transform(
     intrinsic = _apply_rdf_types(intrinsic, type_overrides)
     edges['type'] = None
 
-    intrinsic = _format_date_fields(intrinsic)
+    intrinsic = _format_date_fields(intrinsic, date_fields)
     intrinsic = _remove_illegal_rdf_characters(intrinsic, illegal_characters, 'subject')
     intrinsic = _remove_illegal_rdf_characters(intrinsic, illegal_characters_intrinsic_object, 'object')
     edges = _remove_illegal_rdf_characters(edges, illegal_characters, 'subject')

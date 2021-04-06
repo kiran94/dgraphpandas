@@ -134,13 +134,21 @@ def _apply_rdf_types(frame: pd.DataFrame, types: Dict[str, str]):
     return frame
 
 
-def _format_date_fields(frame: pd.DataFrame) -> pd.DataFrame:
+def _format_date_fields(frame: pd.DataFrame, date_formats: Dict[str, str] = {}) -> pd.DataFrame:
     '''
     Ensure that DateTime fields are formatted in ISO format
     And any fields are which NaT are filtered out.
     '''
     if frame is None:
         raise ValueError('frame')
+
+    if date_formats:
+        logger.debug(f'Applying date_formats {date_formats}')
+        for col, format in date_formats.items():
+            logger.debug(f'Applying {format} to {col}')
+            mask = frame['predicate'] == col
+            frame.loc[mask, 'object'] = pd.to_datetime(frame.loc[mask, 'object'], **(format))
+            frame.loc[mask, 'type'] = '<xs:dateTime>'
 
     logger.debug('Ensuring Date Time fields are in ISO format')
     intrinsic_with_datetime = frame.loc[frame['type'] == '<xs:dateTime>']
