@@ -670,6 +670,39 @@ class Vertical(unittest.TestCase):
         ),
         ###
         (
+            'with datetime_formats',
+            'customer',
+            {
+                'files': {
+                    'customer': {
+                        'subject_fields': ['customer_id'],
+                        'edge_fields': ['location_id'],
+                        'date_fields': {'dob': {'format': '%Y %b %d'}}
+                    },
+                },
+                'add_dgraph_type_records': False,
+            },
+            pd.DataFrame(data={
+                'customer_id': [1, 2, 3, 1, 2],
+                'predicate': ['dob', 'weight', 'orders', 'location_id', 'location_id'],
+                'object': ['2021 Mar 13', 90, '1', 'loc45', 'loc64']
+            }),
+            pd.DataFrame(data={
+                'subject': ['customer_2', 'customer_3', 'customer_1'],
+                'predicate': ['weight', 'orders', 'dob'],
+                'object': [90, '1', '2021-03-13T00:00:00'],
+                'type': ['<xs:string>']*2 + ['<xs:dateTime>']
+            }),
+            pd.DataFrame(data={
+                'subject': ['customer_1', 'customer_2'],
+                'predicate': ['location', 'location'],
+                'object': ['location_loc45', 'location_loc64'],
+                'type': [None]*2
+            }),
+            {}
+        ),
+        ###
+        (
             'illegal_characters',
             'customer',
             {

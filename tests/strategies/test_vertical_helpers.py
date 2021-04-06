@@ -500,6 +500,32 @@ class VerticalHelpers(unittest.TestCase):
         with self.assertRaises(AttributeError):
             _format_date_fields(frame)
 
+    def test_format_date_fields_formats_provided(self):
+        '''
+        Ensures when a date field is provided, the object is converted
+        into ISO format
+        '''
+        frame = pd.DataFrame(data={
+            'subject': ['customer_1', 'customer_1', 'customer_1'],
+            'predicate':  ['hair_colour', 'dob', 'weight'],
+            'object':  ['black', '2021 Jan 21', '50'],
+            'type':  ['<xs:string>', '<xs:dateTime>', '<xs:int>']
+        })
+
+        date_fields = {
+            'dob': {"format": "%Y %b %d"}
+        }
+
+        result = _format_date_fields(frame, date_fields)
+        expected_frame = pd.DataFrame(data={
+            'subject': ['customer_1', 'customer_1', 'customer_1'],
+            'predicate': ['hair_colour', 'weight', 'dob'],
+            'object': ['black', '50', '2021-01-21T00:00:00'],
+            'type': ['<xs:string>', '<xs:int>', '<xs:dateTime>']
+        })
+
+        assert_frame_equal(result.reset_index(drop=True), expected_frame.reset_index(drop=True))
+
     def test_compile_illegal_characters_regex_nonecharacters(self):
         '''
         Ensure when none characters are passed, then none
