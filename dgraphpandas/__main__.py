@@ -25,7 +25,7 @@ def main():
     parser.add_argument('--console', action='store_true', default=False, help='Write the Preprocessed DataFrames to console (for debugging)')
     parser.add_argument('--pre_csv', action='store_true', default=False, help='Write the Preprocessed DataFrame to CSV (for debugging)')
     parser.add_argument('--skip_upsert_generation', action='store_true', default=False, help="Don't generate RDF files")
-    parser.add_argument('--encoding', default=os.environ.get('DGRAPH_PANDAS_ENCODING', 'utf-8'), help='The Encoding to write files.')
+    parser.add_argument('--encoding', default=os.environ.get('DGRAPHPANDAS_ENCODING', 'utf-8'), help='The Encoding to write files.')
     parser.add_argument('--chunk_size', default=10_000_000, type=int, help='Process and output in chunks rather all at once')
     parser.add_argument('--gz_compression_level', default=9, type=int, help='Compression level to set output gzip files to')
     parser.add_argument('--key_separator')
