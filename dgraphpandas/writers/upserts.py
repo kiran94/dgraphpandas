@@ -8,6 +8,13 @@ logger = logging.getLogger(__name__)
 
 
 def _generate_intrinsic(intrinsic: pd.DataFrame) -> List[str]:
+    '''
+    Generates Intrinsic RDF records from the given frame.
+    Intrinsic records are fields for a given node:
+
+    <sloth> <legs> "4"^^<xs:int> .
+    <sloth> <color> "grey"^^<xs:string> .
+    '''
     intrinsic['subject'] = intrinsic['subject'].astype(str)
     intrinsic['predicate'] = intrinsic['predicate'].astype(str)
     intrinsic['object'] = intrinsic['object'].astype(str)
@@ -21,6 +28,13 @@ def _generate_intrinsic(intrinsic: pd.DataFrame) -> List[str]:
 
 
 def _generate_edges(edges: pd.DataFrame) -> List[str]:
+    '''
+    Generates Edge RDF records for the given frame.
+    Edge records connect nodes:
+
+    <sloth> <species> <mammal> .
+    <sloth> <country> <africa> .
+    '''
     edges['subject'] = edges['subject'].astype(str)
     edges['predicate'] = edges['predicate'].astype(str)
     edges['object'] = edges['object'].astype(str)
@@ -34,6 +48,9 @@ def _generate_edges(edges: pd.DataFrame) -> List[str]:
 def generate_upserts(
         intrinsic: pd.DataFrame,
         edges: pd.DataFrame, drop_na_objects=True) -> Tuple[List[str], List[str]]:
+    '''
+    Generates RDF Upsert Statements for the given intrinsic and edges frames.
+    '''
 
     if intrinsic is None:
         raise ValueError('intrinsic')
