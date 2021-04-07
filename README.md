@@ -41,6 +41,7 @@ usage: dgraphpandas [-h] -f FILE -c CONFIG -ck CONFIG_FILE_KEY [-o OUTPUT_DIR]
                     [--drop_na_edge_objects DROP_NA_EDGE_OBJECTS]
                     [--illegal_characters ILLEGAL_CHARACTERS]
                     [--illegal_characters_intrinsic_object ILLEGAL_CHARACTERS_INTRINSIC_OBJECT]
+                    [--version] [-v {DEBUG,INFO,WARNING,ERROR,NOTSET}]
 ```
 
 This is a real example which you can find in the [samples folder](https://github.com/kiran94/dgraphpandas/tree/main/samples) and run from the root of this repository:
