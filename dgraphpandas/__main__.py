@@ -8,7 +8,7 @@ from pprint import pformat
 
 import pandas as pd
 
-from dgraphpandas import __version__
+from dgraphpandas import __version__, __description__
 from dgraphpandas.strategies.horizontal import horizontal_transform
 from dgraphpandas.strategies.vertical import vertical_transform
 from dgraphpandas.writers.upserts import generate_upserts
@@ -25,7 +25,7 @@ pd.set_option('mode.chained_assignment', None)
 
 
 def main():
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(description=__description__)
     parser.add_argument('-f', '--file', required=True, help='The Data File (CSV) to convert into RDF.')
     parser.add_argument('-c', '--config', required=True, help='The DgraphPandas Configuration. See Documentation for options/examples.')
     parser.add_argument('-ck', '--config_file_key', required=True, help='The Entry in the Configuration to use for this passed file.')
