@@ -76,11 +76,11 @@
             "type_overrides": {
                 "id": "string",
                 "generation_id": "int32",
-                "evolves_from_species_id": "int32",
+                "evolves_from_species_id": "Int64",
                 "evolution_chain_id": "int32",
                 "color_id": "int32",
-                "shape_id": "int32",
-                "habitat_id": "int32",
+                "shape_id": "Int64",
+                "habitat_id": "Int64",
                 "gender_rate": "Float32",
                 "capture_rate": "Float32",
                 "base_happiness": "Float32",
@@ -91,7 +91,7 @@
                 "is_legendary": "bool",
                 "is_mythical": "bool",
                 "order": "int32",
-                "conquest_order": "int32",
+                "conquest_order": "Int64",
                 "is_baby": "bool"
             },
             "edge_fields": ["generation_id", "evolves_from_species_id", "evolution_chain_id", "color_id", "shape_id", "habitat_id", "growth_rate_id"],
