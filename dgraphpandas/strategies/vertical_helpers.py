@@ -25,7 +25,7 @@ def _expand_csv_edges(frame: pd.DataFrame, csv_edges: List[str], seperator=',') 
         raise ValueError('frame')
 
     if csv_edges:
-        logger.info(f'Detected csv_edges {csv_edges}. Breaking up those columns')
+        logger.debug(f'Detected csv_edges {csv_edges}. Breaking up those columns')
         csv_edge_frame = frame[frame['predicate'].isin(csv_edges)]
         csv_edge_frame['object'] = csv_edge_frame['object'].str.split(seperator)
         csv_edge_frame = csv_edge_frame.explode(column='object')

@@ -13,14 +13,6 @@ from dgraphpandas.strategies.horizontal import horizontal_transform
 from dgraphpandas.strategies.vertical import vertical_transform
 from dgraphpandas.writers.upserts import generate_upserts
 
-logger = logging.getLogger(__name__)
-
-try:
-    import coloredlogs
-    coloredlogs.install(level='DEBUG')
-except ImportError as e:
-    logger.warning(e)
-
 pd.set_option('mode.chained_assignment', None)
 
 
@@ -43,8 +35,20 @@ def main():
     parser.add_argument('--illegal_characters', default=['%', '\\.', '\\s', '\"', '\\n', '\\r\\n'])
     parser.add_argument('--illegal_characters_intrinsic_object', default=['\"', '\\n', '\\r\\n'])
     parser.add_argument('--version', action='version', version=__version__)
+    parser.add_argument('-v', '--verbosity',
+                        choices=['DEBUG', 'INFO', 'WARNING', 'ERROR', 'NOTSET'],
+                        default=os.environ.get('DGRAPHPANDAS_LOG', 'INFO'))
 
     args = parser.parse_args()
+
+    logging.basicConfig(level=args.verbosity)
+    logger = logging.getLogger(__name__)
+
+    try:
+        import coloredlogs
+        coloredlogs.install(level=args.verbosity)
+    except ImportError as e:
+        logger.debug(e)
 
     with open(args.config, 'r') as f:
         global_config: Dict[str, Any] = json.load(f)
