@@ -1,5 +1,5 @@
 from setuptools import setup, find_packages
-from dgraphpandas import __name__, __version__
+from dgraphpandas import __name__, __version__, __description__
 
 with open("README.md", "r") as desc:
     long_description = desc.read()
@@ -15,7 +15,7 @@ with open("README.md", "r") as desc:
             install_requires=requirements,
             long_description=long_description,
             long_description_content_type="text/markdown",
-            description="Transform Pandas DataFrames into Exports to be sent to DGraph",
+            description=__description__,
             url="https://github.com/kiran94/dgraphpandas",
             entry_points={
                 'console_scripts': [
