@@ -297,3 +297,12 @@ def _rename_fields(frame: pd.DataFrame, pre_rename: Dict[str, str]) -> pd.DataFr
         frame['predicate'] = frame['predicate'].apply(lambda x: pre_rename.get(x, x))
 
     return frame
+
+
+def _find_id_edges(frame: pd.DataFrame) -> List[str]:
+    '''
+    Gets a unique list of predicates in the given column which have _id suffix.
+    '''
+    if frame is None:
+        raise ValueError('frame')
+    return frame.loc[frame['predicate'].str.endswith('_id'), 'predicate'].unique().tolist()

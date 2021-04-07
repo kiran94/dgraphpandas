@@ -607,6 +607,37 @@ class Vertical(unittest.TestCase):
         ),
         ###
         (
+            'edge_id_convention',
+            'customer',
+            {
+                'files': {
+                    'customer': {
+                        'subject_fields': ['customer_id'],
+                        'edge_id_convention': True
+                    },
+                }
+            },
+            pd.DataFrame(data={
+                'customer_id': [1, 2, 3, 1, 2],
+                'predicate': ['age', 'weight', 'orders', 'location_id', 'location_id'],
+                'object': [23, 90, '1', 'loc45', 'loc64']
+            }),
+            pd.DataFrame(data={
+                'subject': ['customer_1', 'customer_2', 'customer_3'],
+                'predicate': ['age', 'weight', 'orders'],
+                'object': [23, 90, '1'],
+                'type': ['<xs:string>']*3
+            }),
+            pd.DataFrame(data={
+                'subject': ['customer_1', 'customer_2'],
+                'predicate': ['location', 'location'],
+                'object': ['location_loc45', 'location_loc64'],
+                'type': [None]*2
+            }),
+            {'add_dgraph_type_records': False}
+        ),
+        ###
+        (
             'key_seperator override',
             'order',
             {

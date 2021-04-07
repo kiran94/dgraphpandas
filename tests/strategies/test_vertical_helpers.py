@@ -11,7 +11,7 @@ from dgraphpandas.strategies.vertical_helpers import (
     _join_key_fields, _add_dgraph_type_records, _break_up_intrinsic_and_edges,
     _apply_rdf_types, _format_date_fields, _override_edge_name,
     _remove_illegal_rdf_characters, _remove_na_objects, _rename_fields,
-    _resolve_potential_callables)
+    _resolve_potential_callables, _find_id_edges)
 from dgraphpandas.types import default_rdf_type
 
 
@@ -937,3 +937,39 @@ class VerticalHelpers(unittest.TestCase):
 
         result = _rename_fields(frame.copy(), rename_fields)
         assert_frame_equal(result, expected)
+
+    def test_find_id_edges_null_frame(self):
+        '''
+        Ensures when there is a null frame, then
+        an error is raised
+        '''
+        with self.assertRaises(ValueError):
+            _find_id_edges(None)
+
+    def test_find_id_edges_no_id_fields(self):
+        '''
+        Ensures when there are no _id predicates,
+        then an empty result is returned
+        '''
+        frame = pd.DataFrame(data={
+            'subject': ['customer_id', 'customer_1'],
+            'predicate': ['age', 'weight'],
+            'object': [100, 45]
+        })
+
+        edges = _find_id_edges(frame)
+        self.assertIsNotNone(edges)
+        self.assertEqual(0, len(edges))
+
+    def test_find_id_edges_id_fields(self):
+        '''
+        Ensures when there are _id fields, they are returned
+        '''
+        frame = pd.DataFrame(data={
+            'subject': ['customer_id', 'customer_1'],
+            'predicate': ['class_id', 'membership_id'],
+            'object': [1, 2]
+        })
+
+        edges = _find_id_edges(frame)
+        self.assertEqual(edges, ['class_id', 'membership_id'])

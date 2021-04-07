@@ -7,7 +7,8 @@ from dgraphpandas.config import get_from_config
 from dgraphpandas.strategies.vertical_helpers import (_expand_csv_edges, _join_key_fields, _add_dgraph_type_records,
                                                       _break_up_intrinsic_and_edges, _apply_rdf_types, _format_date_fields,
                                                       _remove_illegal_rdf_characters, _remove_na_objects, _override_edge_name,
-                                                      _ignore_fields, _resolve_potential_callables, _rename_fields)
+                                                      _ignore_fields, _resolve_potential_callables, _rename_fields,
+                                                      _find_id_edges)
 
 
 logger = logging.getLogger(__name__)
@@ -57,6 +58,11 @@ def vertical_transform(
     pre_rename: Dict[str, str] = get_from_config('pre_rename', file_config, {}, **(kwargs))
     type_overrides: Dict[str, str] = get_from_config('type_overrides', file_config, {}, **(kwargs))
     date_fields: Dict[str, str] = get_from_config('date_fields', file_config, {}, **(kwargs))
+    edge_id_convention: bool = get_from_config('edge_id_convention', file_config, False, **(kwargs))
+
+    if edge_id_convention:
+        logger.debug('Override edge_fields with _id convention')
+        edge_fields = _find_id_edges
 
     potential_callables = _resolve_potential_callables(frame, {
         'subject_fields': subject_fields,
