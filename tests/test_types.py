@@ -52,7 +52,12 @@ class TypesTests(unittest.TestCase):
                 'column10': 'float64',
                 'column11': 'datetime64',
                 'column12': '<M8[ns]',
-                'column13': 'bool'
+                'column13': 'bool',
+                'column14': 'int',
+                'column15': 'float',
+                'column16': 'string',
+                'column17': 'boolean',
+                'column18': 'datetime'
         }
 
         expected = {
@@ -68,7 +73,12 @@ class TypesTests(unittest.TestCase):
                 'column10': '<xs:float>',
                 'column11': '<xs:dateTime>',
                 'column12': '<xs:dateTime>',
-                'column13': '<xs:bool>'
+                'column13': '<xs:bool>',
+                'column14': '<xs:int>',
+                'column15': '<xs:float>',
+                'column16': '<xs:string>',
+                'column17': '<xs:bool>',
+                'column18': '<xs:dateTime>',
         }
 
         resolved_types = find_rdf_types(types)
