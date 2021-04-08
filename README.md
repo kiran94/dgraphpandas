@@ -343,6 +343,12 @@ These options can be placed on the root of the config or passed as `kwargs` dire
 - `edge_id_convention`
     - Applies `_id` convention to find edges when set to `true`
     - Same as providing the edge_field `lambda frame: frame.loc[frame['predicate'].str.endswith('_id'), 'predicate'].unique().tolist()`.
+- `predicate_field`
+  - Only applicable for vertical transforms
+  - Allows you to define your own predicate field name if not the default `predicate`
+- `object_field`
+  - Only applicable to vertical transforms
+  - Allows you to define your own object field name if not the default `object`
 
 ## Samples
 
