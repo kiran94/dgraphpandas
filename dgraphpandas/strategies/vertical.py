@@ -44,6 +44,8 @@ def vertical_transform(
     edge_fields: Union[List[str], Callable[..., List[str]]] = get_from_config('edge_fields', file_config, [], **(kwargs))
     dgraph_type: str = get_from_config('dgraph_type', file_config, config_file_key, **(kwargs))
 
+    predicate_field: str = get_from_config('predicate_field', file_config, 'predicate', **(kwargs))
+    object_field: str = get_from_config('object_field', file_config, 'object', **(kwargs))
     key_seperator: str = get_from_config('key_separator', config, '_', **(kwargs))
     add_dgraph_type_records: bool = get_from_config('add_dgraph_type_records', config, True, **(kwargs))
     strip_id_from_edge_names: bool = get_from_config('strip_id_from_edge_names', config, True, **(kwargs))
@@ -67,20 +69,25 @@ def vertical_transform(
     potential_callables = _resolve_potential_callables(frame, {
         'subject_fields': subject_fields,
         'edge_fields': edge_fields,
-        'dgraph_type': dgraph_type
+        'dgraph_type': dgraph_type,
+        'predicate_field': predicate_field,
+        'object_field': object_field
     })
 
     key = potential_callables["subject_fields"]
     edges = potential_callables['edge_fields']
     type = potential_callables['dgraph_type']
+    predicate_resolved = potential_callables['predicate_field']
+    object_resolved = potential_callables['object_field']
 
     if not key:
         raise ValueError('subject_fields must be defined')
-    if 'predicate' not in frame.columns:
-        raise KeyError('predicate column must be defined on vertical frame')
-    if 'object' not in frame.columns:
-        raise KeyError('object column must be defined on vertical frame')
+    if predicate_resolved not in frame.columns:
+        raise KeyError(f'predicate column {predicate_resolved} must be defined on vertical frame')
+    if object_resolved not in frame.columns:
+        raise KeyError(f'object column {object_resolved} must be defined on vertical frame')
 
+    frame = frame.rename(columns={predicate_resolved: 'predicate', object_resolved: 'object'})
     frame = _rename_fields(frame, pre_rename)
     frame = _ignore_fields(frame, ignore_fields)
     frame = _expand_csv_edges(frame, csv_edges, seperator=csv_edges_seperator)
