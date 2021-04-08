@@ -296,6 +296,100 @@ class Vertical(unittest.TestCase):
         ),
         ###
         (
+            'custom_predicate',
+            'customer',
+            {
+                'files': {
+                    'customer': {
+                        'subject_fields': ['customer_id'],
+                        'type_overrides': {
+                            'age': 'int32',
+                            'weight': 'float32',
+                            'orders': 'int32',
+                        },
+                        'predicate_field': 'my_field'
+                    }
+                }
+            },
+            pd.DataFrame(data={
+                'customer_id': [1, 2, 3],
+                'my_field': ['age', 'weight', 'orders'],
+                'object': [23, 90, 10]
+            }),
+            pd.DataFrame(data={
+                'subject': ['customer_1', 'customer_2', 'customer_3', 'customer_1', 'customer_2', 'customer_3'],
+                'predicate': ['age', 'weight', 'orders', 'dgraph.type', 'dgraph.type', 'dgraph.type'],
+                'object': [23, 90, 10, 'customer', 'customer', 'customer'],
+                'type': ['<xs:int>', '<xs:float>', '<xs:int>'] + ['<xs:string>']*3
+            }),
+            pd.DataFrame(columns=['subject', 'predicate', 'object', 'type']),
+            {}
+        ),
+        ###
+        (
+            'custom_object',
+            'customer',
+            {
+                'files': {
+                    'customer': {
+                        'subject_fields': ['customer_id'],
+                        'type_overrides': {
+                            'age': 'int32',
+                            'weight': 'float32',
+                            'orders': 'int32',
+                        },
+                        'object_field': 'my_object_field'
+                    }
+                }
+            },
+            pd.DataFrame(data={
+                'customer_id': [1, 2, 3],
+                'predicate': ['age', 'weight', 'orders'],
+                'my_object_field': [23, 90, 10]
+            }),
+            pd.DataFrame(data={
+                'subject': ['customer_1', 'customer_2', 'customer_3', 'customer_1', 'customer_2', 'customer_3'],
+                'predicate': ['age', 'weight', 'orders', 'dgraph.type', 'dgraph.type', 'dgraph.type'],
+                'object': [23, 90, 10, 'customer', 'customer', 'customer'],
+                'type': ['<xs:int>', '<xs:float>', '<xs:int>'] + ['<xs:string>']*3
+            }),
+            pd.DataFrame(columns=['subject', 'predicate', 'object', 'type']),
+            {}
+        ),
+        ###
+        (
+            'custom_predicate_and_object',
+            'customer',
+            {
+                'files': {
+                    'customer': {
+                        'subject_fields': ['customer_id'],
+                        'type_overrides': {
+                            'age': 'int32',
+                            'weight': 'float32',
+                            'orders': 'int32',
+                        },
+                        'object_field': 'my_object_field',
+                        'predicate_field': 'my_field'
+                    }
+                }
+            },
+            pd.DataFrame(data={
+                'customer_id': [1, 2, 3],
+                'my_field': ['age', 'weight', 'orders'],
+                'my_object_field': [23, 90, 10]
+            }),
+            pd.DataFrame(data={
+                'subject': ['customer_1', 'customer_2', 'customer_3', 'customer_1', 'customer_2', 'customer_3'],
+                'predicate': ['age', 'weight', 'orders', 'dgraph.type', 'dgraph.type', 'dgraph.type'],
+                'object': [23, 90, 10, 'customer', 'customer', 'customer'],
+                'type': ['<xs:int>', '<xs:float>', '<xs:int>'] + ['<xs:string>']*3
+            }),
+            pd.DataFrame(columns=['subject', 'predicate', 'object', 'type']),
+            {}
+        ),
+        ###
+        (
             'rename_fields',
             'customer',
             {
