@@ -47,10 +47,12 @@ def to_rdf(
         frame: A Pandas DataFrame or file path to a CSV to be converted.
         config: A Configuration Dictionary or file path
         config_key: The file (key) to use in the configuration
+        output_dir: The output directory to push exports. If none, don't export
 
     Returns:
-        None if the output_dir was supplied as the data was written to disk
-        else a Tuple of the intrinsic and edges
+        If chunking was applied then a list of tuples
+        If no chunking then just a tuple
+        Each tuple has two items: intrinsic and edges
     '''
     if frame is None:
         raise ValueError('frame')
