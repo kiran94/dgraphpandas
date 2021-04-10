@@ -415,7 +415,7 @@ For Example:
 ```py
 import dgraphpandas as dpd
 
-dpd.to_rdf('your_input.csv', config, 'your_input_key' output_dir='.', export_rdf=True, chunk_size=1000)
+dpd.to_rdf('your_input.csv', config, 'your_input_key', output_dir='.', export_rdf=True, chunk_size=1000)
 ```
 
 If you wanted more control, then you could also call the underlying methods to leverage the fact that the transform methods can take a `DataFrame` directly and you can pre-chunk before you enter.
