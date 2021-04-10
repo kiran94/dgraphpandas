@@ -964,17 +964,17 @@ class Vertical(unittest.TestCase):
         try:
             assert_frame_equal(expected_intrinsic, intrinsic)
             assert_frame_equal(expected_edges, edges)
-        except AssertionError:
-            print('Failed', name)
-            print('Input:')
-            print(input_frame)
-            print('Expected Intrinsic:')
-            print(expected_intrinsic)
-            print('Intrinsic:')
-            print(intrinsic)
-            print('#####')
-            print('Expected Edges:')
-            print(expected_edges)
-            print('Edges:')
-            print(edges)
-            raise
+        except AssertionError:  # pragma: no cover
+            print('Failed', name)  # pragma: no cover
+            print('Input:')  # pragma: no cover
+            print(input_frame)  # pragma: no cover
+            print('Expected Intrinsic:')  # pragma: no cover
+            print(expected_intrinsic)  # pragma: no cover
+            print('Intrinsic:')  # pragma: no cover
+            print(intrinsic)  # pragma: no cover
+            print('#####')  # pragma: no cover
+            print('Expected Edges:')  # pragma: no cover
+            print(expected_edges)  # pragma: no cover
+            print('Edges:')  # pragma: no cover
+            print(edges)  # pragma: no cover
+            raise  # pragma: no cover

@@ -32,8 +32,8 @@ python -m pip install dgraphpandas
 ```sh
 ❯ dgraphpandas --help
 usage: dgraphpandas [-h] -f FILE -c CONFIG -ck CONFIG_FILE_KEY [-o OUTPUT_DIR]
-                    [--console] [--pre_csv] [--skip_upsert_generation]
-                    [--encoding ENCODING] [--chunk_size CHUNK_SIZE]
+                    [--console] [--export_csv] [--encoding ENCODING]
+                    [--chunk_size CHUNK_SIZE]
                     [--gz_compression_level GZ_COMPRESSION_LEVEL]
                     [--key_separator KEY_SEPARATOR]
                     [--add_dgraph_type_records ADD_DGRAPH_TYPE_RECORDS]
@@ -41,8 +41,7 @@ usage: dgraphpandas [-h] -f FILE -c CONFIG -ck CONFIG_FILE_KEY [-o OUTPUT_DIR]
                     [--drop_na_edge_objects DROP_NA_EDGE_OBJECTS]
                     [--illegal_characters ILLEGAL_CHARACTERS]
                     [--illegal_characters_intrinsic_object ILLEGAL_CHARACTERS_INTRINSIC_OBJECT]
-                    [--version]
-                    [-v {DEBUG,INFO,WARNING,ERROR,NOTSET}]
+                    [--version] [-v {DEBUG,INFO,WARNING,ERROR,NOTSET}]
 ```
 
 This is a real example which you can find in the [samples folder](https://github.com/kiran94/dgraphpandas/tree/main/samples) and run from the root of this repository:
@@ -60,9 +59,7 @@ dgraphpandas \
 This example can also be found in [Notebook](https://github.com/kiran94/dgraphpandas/blob/main/samples/notebooks/PlanetSample.ipynb) form.
 
 ```py
-from dgraphpandas.strategies.horizontal import horizontal_transform
-from dgraphpandas.strategies.vertical import vertical_transform
-from dgraphpandas.writers.upserts import generate_upserts
+import dgraphpandas as dpd
 
 # Define a Configuration for your data files(s). Explained further in the Configuration section.
 config = {
@@ -95,15 +92,23 @@ config = {
 }
 
 # Perform a Horizontal Transform on the passed file using the config/key
-intrinsic, edges = horizontal_transform('solar_system.csv', config, "planet")
-
 # Generate RDF Upsert statements
-intrinsic_upserts, edges_upserts = generate_upserts(intrinsic, edges)
+intrinsic, edges = dpd.to_rdf('solar_system.csv', config, 'planet', output_dir='.', export_rdf=True)
 
 # Do something with these statements e.g write to zip and ship to DGraph
 # The cli will zip this output automatically
+# In module mode when you provide output_dir and export_rdf it will automatically zip and write to disk
 print(intrinsic)
 print(edges)
+```
+
+Alternatively, you could call the underlying methods
+
+```py
+# Perform a Horizontal Transform on the passed file using the config/key
+intrinsic, edges = horizontal_transform('solar_system.csv', config, "planet")
+# Generate RDF Upsert statements
+intrinsic_upserts, edges_upserts = generate_upserts(intrinsic, edges)
 ```
 
 ## Getting Started
@@ -403,9 +408,17 @@ You can then take these exports and live load them as normal.
 
 ### Module
 
-When you are using the module directly, you can leverage the fact that the transform methods can take a `DataFrame` directly and you can pre-chunk before they enter.
+The `chunk_size` method is also available on `to_rdf`. If you provide an `output_dir` & `export_rdf` this will automatically be written out to an export file on disk.
 
 For Example:
+
+```py
+import dgraphpandas as dpd
+
+dpd.to_rdf('your_input.csv', config, 'your_input_key', output_dir='.', export_rdf=True, chunk_size=1000)
+```
+
+If you wanted more control, then you could also call the underlying methods to leverage the fact that the transform methods can take a `DataFrame` directly and you can pre-chunk before you enter.
 
 ```py
 from dgraphpandas.strategies.horizontal import horizontal_transform
