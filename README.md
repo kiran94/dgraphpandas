@@ -97,6 +97,7 @@ intrinsic, edges = dpd.to_rdf('solar_system.csv', config, 'planet', output_dir='
 
 # Do something with these statements e.g write to zip and ship to DGraph
 # The cli will zip this output automatically
+# In module mode when you provide output_dir and export_rdf it will automatically zip and write to disk
 print(intrinsic)
 print(edges)
 ```
@@ -406,8 +407,6 @@ drwxr-xr-x 6 kiran kiran 4.0K Apr  4 16:45 ..
 You can then take these exports and live load them as normal.
 
 ### Module
-
-When you are using the module directly,
 
 The `chunk_size` method is also available on `to_rdf`. If you provide an `output_dir` & `export_rdf` this will automatically be written out to an export file on disk.
 
