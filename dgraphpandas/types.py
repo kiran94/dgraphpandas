@@ -35,6 +35,6 @@ def find_rdf_types(types: Dict[str, str]) -> Dict[str, str]:
         raise ValueError('types')
 
     resolved_types: Dict[str, str] = {}
-    for col, type in types.items():
-        resolved_types[col] = _str_to_rdf_types.get(type, default_rdf_type)
+    for col, current_type in types.items():
+        resolved_types[col] = _str_to_rdf_types.get(current_type, default_rdf_type)
     return resolved_types

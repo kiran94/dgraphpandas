@@ -256,6 +256,7 @@ class HorizontalTests(unittest.TestCase):
 
         args, kwargs = mock_pandas.call_args_list[0]
         self.assertEqual(file, args[0])
+        self.assertEqual({}, kwargs)
 
         args, kwargs = mock_transform.call_args_list[0]
         assert_frame_equal(expected_melted, args[0])

@@ -38,10 +38,10 @@ def _expand_csv_edges(frame: pd.DataFrame, csv_edges: List[str], seperator=',') 
     return frame
 
 
-def _join_key_fields(frame: pd.DataFrame, key: List[str], key_seperator: str, type: str) -> pd.DataFrame:
+def _join_key_fields(frame: pd.DataFrame, key: List[str], key_seperator: str, dgraph_type: str) -> pd.DataFrame:
     '''
     If we have a composite key, then join all into a single subject column
-    We do this length check as a performance optimisation as apply can take some time
+    We do this length check as a performance optimization as apply can take some time
     and there is no need if there is only 1 key.
     '''
     if frame is None:
@@ -50,7 +50,7 @@ def _join_key_fields(frame: pd.DataFrame, key: List[str], key_seperator: str, ty
         raise ValueError('key')
     elif key_seperator is None:
         raise ValueError('key_seperator')
-    elif type is None:
+    elif dgraph_type is None:
         raise ValueError('type')
 
     logger.debug(f'Joining Key fields {key} to subject')
@@ -60,7 +60,7 @@ def _join_key_fields(frame: pd.DataFrame, key: List[str], key_seperator: str, ty
         frame[key] = frame[key].astype(str)
         frame['subject'] = frame[key]
 
-    frame['subject'] = type + key_seperator + frame['subject']
+    frame['subject'] = dgraph_type + key_seperator + frame['subject']
 
     logger.debug('Dropping keys in favour of subject')
     frame = frame.drop(labels=key, axis=1)
@@ -134,7 +134,7 @@ def _apply_rdf_types(frame: pd.DataFrame, types: Dict[str, str]):
     return frame
 
 
-def _format_date_fields(frame: pd.DataFrame, date_formats: Dict[str, str] = {}) -> pd.DataFrame:
+def _format_date_fields(frame: pd.DataFrame, date_formats: Dict[str, str] = None) -> pd.DataFrame:
     '''
     Ensure that DateTime fields are formatted in ISO format
     And any fields are which NaT are filtered out.

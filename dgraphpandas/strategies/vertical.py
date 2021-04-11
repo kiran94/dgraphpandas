@@ -49,7 +49,7 @@ def vertical_transform(
     key_seperator: str = get_from_config('key_separator', config, '_', **(kwargs))
     add_dgraph_type_records: bool = get_from_config('add_dgraph_type_records', config, True, **(kwargs))
     strip_id_from_edge_names: bool = get_from_config('strip_id_from_edge_names', config, True, **(kwargs))
-    drop_na_intrinsic_objects: bool = get_from_config('drop_na_intrinsic_objects', config, True, **(kwargs))
+    drop_na_intrinsic_objects = get_from_config('drop_na_intrinsic_objects', config, True, **(kwargs))
     drop_na_edge_objects: bool = get_from_config('drop_na_edge_objects', config, True, **(kwargs))
     illegal_characters: List[str] = get_from_config('illegal_characters', config, ['%', '\\.', '\\s', '\"', '\\n', '\\r\\n'], **(kwargs))
     illegal_characters_intrinsic_object: List[str] = get_from_config('illegal_characters_intrinsic_object', config, ['\"', '\\n', '\\r\\n'], **(kwargs))
@@ -76,7 +76,7 @@ def vertical_transform(
 
     key = potential_callables["subject_fields"]
     edges = potential_callables['edge_fields']
-    type = potential_callables['dgraph_type']
+    dgraph_type = potential_callables['dgraph_type']
     predicate_resolved = potential_callables['predicate_field']
     object_resolved = potential_callables['object_field']
 
@@ -91,8 +91,8 @@ def vertical_transform(
     frame = _rename_fields(frame, pre_rename)
     frame = _ignore_fields(frame, ignore_fields)
     frame = _expand_csv_edges(frame, csv_edges, seperator=csv_edges_seperator)
-    frame = _join_key_fields(frame, key, key_seperator, type)
-    frame = _add_dgraph_type_records(frame, add_dgraph_type_records, type)
+    frame = _join_key_fields(frame, key, key_seperator, dgraph_type)
+    frame = _add_dgraph_type_records(frame, add_dgraph_type_records, dgraph_type)
 
     intrinsic, edges = _break_up_intrinsic_and_edges(frame, edges, strip_id_from_edge_names)
     intrinsic = _apply_rdf_types(intrinsic, type_overrides)
