@@ -104,6 +104,7 @@ class VerticalHelpers(unittest.TestCase):
         })
 
         result_frame = _expand_csv_edges(frame.copy(), csv_edges)
+        self.assertIsNotNone(result_frame)
 
         actual = expected.reset_index(drop=True).sort_index()
         output = result_frame.reset_index(drop=True).sort_index()
@@ -129,6 +130,7 @@ class VerticalHelpers(unittest.TestCase):
         })
 
         result_frame = _expand_csv_edges(frame.copy(), csv_edges, seperator=seperator)
+        self.assertIsNotNone(result_frame)
 
         actual = expected.reset_index(drop=True).sort_index()
         output = result_frame.reset_index(drop=True).sort_index()
@@ -155,7 +157,7 @@ class VerticalHelpers(unittest.TestCase):
         '''
         key = ['customer_id']
         key_seperator = '_'
-        type = 'customer'
+        dgraph_type = 'customer'
         frame = pd.DataFrame(data={
             'customer_id': [1, 2, 3],
             'predicate': ['age', 'age', 'age'],
@@ -168,7 +170,7 @@ class VerticalHelpers(unittest.TestCase):
             'object': [23, 45, 12],
         })
 
-        result_frame = _join_key_fields(frame.copy(), key, key_seperator, type)
+        result_frame = _join_key_fields(frame.copy(), key, key_seperator, dgraph_type)
         self.assertIsNotNone(result_frame)
 
         actual = expected.reset_index(drop=True)[['subject', 'predicate', 'object']]
@@ -182,7 +184,7 @@ class VerticalHelpers(unittest.TestCase):
         '''
         key = ['customer_id', 'order_id']
         key_seperator = '_'
-        type = 'order'
+        dgraph_type = 'order'
         frame = pd.DataFrame(data={
             'customer_id': [1, 2, 3],
             'order_id': [10, 22, 36],
@@ -196,7 +198,8 @@ class VerticalHelpers(unittest.TestCase):
             'object': [45.4, 76.9, 12.3],
         })
 
-        result_frame = _join_key_fields(frame.copy(), key, key_seperator, type)
+        result_frame = _join_key_fields(frame.copy(), key, key_seperator, dgraph_type)
+        self.assertIsNotNone(result_frame)
 
         actual = expected.reset_index(drop=True)[['subject', 'predicate', 'object']]
         output = result_frame.reset_index(drop=True)[['subject', 'predicate', 'object']]
@@ -349,6 +352,8 @@ class VerticalHelpers(unittest.TestCase):
         })
 
         intrinsic, edges = _break_up_intrinsic_and_edges(frame.copy(), ['location_id', 'class_id'], strip_id_from_edge_names)
+        self.assertIsNotNone(intrinsic)
+        self.assertIsNotNone(edges)
 
         expected_intrinsic = expected_intrinsic.reset_index(drop=True)[['subject', 'predicate', 'object']]
         actual_intrinsic = intrinsic.reset_index(drop=True)[['subject', 'predicate', 'object']]
@@ -468,6 +473,7 @@ class VerticalHelpers(unittest.TestCase):
         })
 
         result_frame = _format_date_fields(frame.copy())
+        self.assertIsNotNone(result_frame)
         assert_frame_equal(frame, result_frame)
 
     def test_format_date_fields_date_fields_exist(self):
@@ -630,6 +636,7 @@ class VerticalHelpers(unittest.TestCase):
         })
 
         result_frame = _remove_illegal_rdf_characters(frame.copy(), illegal_characters, field)
+        self.assertIsNotNone(result_frame)
         assert_frame_equal(expected_frame, result_frame)
 
     def test_remove_na_objects_null_parameters(self):
@@ -749,6 +756,7 @@ class VerticalHelpers(unittest.TestCase):
         })
 
         edges = _override_edge_name(edges.copy(), override_edge_name, key_seperator)
+        self.assertIsNotNone(edges)
         assert_frame_equal(expected_edges, edges)
 
     def test_override_edge_name_override_provided_no_predicate(self):
@@ -844,6 +852,7 @@ class VerticalHelpers(unittest.TestCase):
         })
 
         result = _ignore_fields(frame.copy(), ignore_fields)
+        self.assertIsNotNone(result)
 
         expected_frame = expected_frame.reset_index(drop=True).sort_index()
         result = result.reset_index(drop=True).sort_index()
@@ -952,6 +961,7 @@ class VerticalHelpers(unittest.TestCase):
         })
 
         result = _rename_fields(frame.copy(), rename_fields)
+        self.assertIsNotNone(result)
         assert_frame_equal(result, expected)
 
     def test_find_id_edges_null_frame(self):
