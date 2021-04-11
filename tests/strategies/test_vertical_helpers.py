@@ -210,19 +210,19 @@ class VerticalHelpers(unittest.TestCase):
         Ensures when add_dgraph_type_records is passed, then dgraph.type
         records are generated and appended to the DataFrame.
         '''
-        type = 'customer'
+        dgraph_type = 'customer'
         frame = pd.DataFrame(data={
             'subject': [1, 2, 3],
             'predicate': ['age', 'age', 'age'],
             'object': [23, 45, 12],
         })
 
-        result_frame = _add_dgraph_type_records(frame.copy(), add_dgraph_type_records=True, dgraph_type=type)
+        result_frame = _add_dgraph_type_records(frame.copy(), add_dgraph_type_records=True, dgraph_type=dgraph_type)
 
         expected = pd.DataFrame(data={
             'subject': [1, 2, 3, 1, 2, 3],
             'predicate': ['age']*3 + ['dgraph.type']*3,
-            'object': [23, 45, 12] + [type]*3
+            'object': [23, 45, 12] + [dgraph_type]*3
         })
 
         actual = expected.reset_index(drop=True)[['subject', 'predicate', 'object']]
@@ -496,6 +496,7 @@ class VerticalHelpers(unittest.TestCase):
         })
 
         result_frame = _format_date_fields(frame.copy())
+        self.assertIsNotNone(result_frame)
 
         result_frame = result_frame.sort_values(by='predicate').reset_index(drop=True)
         expected = expected.sort_values(by='predicate').reset_index(drop=True)
@@ -664,6 +665,7 @@ class VerticalHelpers(unittest.TestCase):
         })
 
         result_frame = _remove_na_objects(frame.copy(), drop_na=False)
+        self.assertIsNotNone(result_frame)
         assert_frame_equal(frame, result_frame)
 
     @parameterized.expand([
@@ -784,6 +786,7 @@ class VerticalHelpers(unittest.TestCase):
         })
 
         edges = _override_edge_name(edges.copy(), override_edge_name, key_seperator)
+        self.assertIsNotNone(edges)
         assert_frame_equal(expected_edges, edges)
 
     def test_ignore_fields_null_frame(self):
