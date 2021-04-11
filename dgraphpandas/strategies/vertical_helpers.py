@@ -67,7 +67,7 @@ def _join_key_fields(frame: pd.DataFrame, key: List[str], key_seperator: str, ty
     return frame
 
 
-def _add_dgraph_type_records(frame: pd.DataFrame, add_dgraph_type_records: bool, type: str) -> pd.DataFrame:
+def _add_dgraph_type_records(frame: pd.DataFrame, add_dgraph_type_records: bool, dgraph_type: str) -> pd.DataFrame:
     '''
     Dgraph has a special field called 'dgraph.type', this can be used to query via the type()
     function. If add_dgraph_type_records is enabled, then we add dgraph.type fields
@@ -76,7 +76,7 @@ def _add_dgraph_type_records(frame: pd.DataFrame, add_dgraph_type_records: bool,
     if add_dgraph_type_records:
         logger.debug('Adding dgraph.type fields')
         add_type_frame = frame.copy()
-        add_type_frame['object'] = type
+        add_type_frame['object'] = dgraph_type
         add_type_frame['predicate'] = 'dgraph.type'
         add_type_frame.drop_duplicates(keep='first', inplace=True)
         frame = pd.concat([frame, add_type_frame])
@@ -144,10 +144,10 @@ def _format_date_fields(frame: pd.DataFrame, date_formats: Dict[str, str] = {}) 
 
     if date_formats:
         logger.debug(f'Applying date_formats {date_formats}')
-        for col, format in date_formats.items():
-            logger.debug(f'Applying {format} to {col}')
+        for col, format_options in date_formats.items():
+            logger.debug(f'Applying {format_options} to {col}')
             mask = frame['predicate'] == col
-            frame.loc[mask, 'object'] = pd.to_datetime(frame.loc[mask, 'object'], **(format))
+            frame.loc[mask, 'object'] = pd.to_datetime(frame.loc[mask, 'object'], **(format_options))
             frame.loc[mask, 'type'] = '<xs:dateTime>'
 
     logger.debug('Ensuring Date Time fields are in ISO format')
@@ -157,10 +157,7 @@ def _format_date_fields(frame: pd.DataFrame, date_formats: Dict[str, str] = {}) 
     try:
         intrinsic_with_datetime['object'] = intrinsic_with_datetime['object'].apply(lambda x: x.isoformat())
     except AttributeError as e:
-        logger.error(
-            'It looks like a value being declared as a datetime is not actually a datetime',
-            e,
-            extra={'frame': intrinsic_with_datetime})
+        logger.error('It looks like a value being declared as a datetime is not actually a datetime', e)
         raise
 
     intrinsic_with_datetime = intrinsic_with_datetime.loc[intrinsic_with_datetime['object'] != 'NaT']

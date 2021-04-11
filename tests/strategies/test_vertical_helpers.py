@@ -63,7 +63,7 @@ class VerticalHelpers(unittest.TestCase):
 
     def test_expand_csv_edges_csv_edge_not_found_frame_unchanged(self):
         '''
-        Ensures when the given csv edge does not actually exist
+        Ensures when csv edge does not actually exist
         on the frame, then the frame is unchanged
         '''
         csv_edges = ['predicate_no_exist']
@@ -210,7 +210,7 @@ class VerticalHelpers(unittest.TestCase):
             'object': [23, 45, 12],
         })
 
-        result_frame = _add_dgraph_type_records(frame.copy(), add_dgraph_type_records=True, type=type)
+        result_frame = _add_dgraph_type_records(frame.copy(), add_dgraph_type_records=True, dgraph_type=type)
 
         expected = pd.DataFrame(data={
             'subject': [1, 2, 3, 1, 2, 3],
@@ -243,7 +243,7 @@ class VerticalHelpers(unittest.TestCase):
             'object': [23, 45, 12],
         })
 
-        result_frame = _add_dgraph_type_records(frame.copy(), add_dgraph_type_records=False, type=type)
+        result_frame = _add_dgraph_type_records(frame.copy(), add_dgraph_type_records=False, dgraph_type=type)
 
         actual = frame.reset_index(drop=True)[['subject', 'predicate', 'object']]
         output = result_frame.reset_index(drop=True)[['subject', 'predicate', 'object']]

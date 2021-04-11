@@ -65,15 +65,15 @@ def horizontal_transform(
     Therefore before we melt the frame, we enforce these columns have the correct form.
     '''
     logger.debug('Applying Type Overrides %s', type_overrides)
-    for col, type in type_overrides.items():
+    for col, current_type in type_overrides.items():
         try:
-            logger.debug(f'Converting {col} to {type}')
-            frame[col] = frame[col].astype(type)
+            logger.debug(f'Converting {col} to {current_type}')
+            frame[col] = frame[col].astype(current_type)
         except ValueError:
             logger.exception(
                 f'''
-                Could not convert {col} to {type}.
-                Please confirm that the values in the {col} series are convertable to {type}.
+                Could not convert {col} to {current_type}.
+                Please confirm that the values in the {col} series are convertable to {current_type}.
                 A common scenario here is when we have NA values but the target type does not support them.
                 ''')
             exit()
