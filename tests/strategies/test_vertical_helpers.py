@@ -57,6 +57,7 @@ class VerticalHelpers(unittest.TestCase):
         })
 
         result_frame = _expand_csv_edges(frame.copy(), csv_edges)
+        self.assertIsNotNone(result_frame)
 
         expected = frame.sort_index().sort_values(by='subject')
         output = result_frame.sort_index().sort_values(by='subject')
@@ -75,6 +76,7 @@ class VerticalHelpers(unittest.TestCase):
         })
 
         result_frame = _expand_csv_edges(frame.copy(), csv_edges)
+        self.assertIsNotNone(result_frame)
 
         expected = frame.sort_index().sort_values(by='subject')
         output = result_frame.sort_index().sort_values(by='subject')

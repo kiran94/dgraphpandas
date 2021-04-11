@@ -955,6 +955,9 @@ class Vertical(unittest.TestCase):
         '''
         intrinsic, edges = vertical_transform(input_frame, config, config_file_key, **kwargs)
 
+        self.assertIsNotNone(intrinsic)
+        self.assertIsNotNone(edges)
+
         intrinsic = intrinsic.reset_index(drop=True)
         expected_intrinsic = expected_intrinsic.reset_index(drop=True)
 
