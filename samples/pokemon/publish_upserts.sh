@@ -11,6 +11,6 @@ curl -sX POST localhost:8080/alter -d 'xid: string @index(exact) .' | jq .
 
 echo Applying Data Files
 for f in $OUTPUT_DIR/*.gz; do
-    echo $f
-    dgraph live --tmp $DGRAPH_TEMP_BUFFERS --files $f --upsertPredicate xid --xidmap $XIDMAP_LOCATION --format rdf
+    echo "$f"
+    dgraph live --tmp $DGRAPH_TEMP_BUFFERS --files "$f" --upsertPredicate UPSERT_PREDICATE --xidmap $XIDMAP_LOCATION --format rdf
 done

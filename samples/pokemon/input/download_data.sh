@@ -16,6 +16,6 @@ files=(
 
 for file in "${files[@]}"
 do
-   echo Downloading $file
-   curl -s $file -O
+   echo Downloading "$file"
+   curl -s "$file" -O
 done
