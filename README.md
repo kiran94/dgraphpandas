@@ -1,6 +1,8 @@
 # dgraphpandas
 
-[![Build](https://github.com/kiran94/dgraphpandas/actions/workflows/python-package.yml/badge.svg)](https://github.com/kiran94/dgraphpandas/actions/workflows/python-package.yml) ![PyPI](https://img.shields.io/pypi/v/dgraphpandas?color=blue&style=flat-square) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) [![Coverage Status](https://coveralls.io/repos/github/kiran94/dgraphpandas/badge.svg)](https://coveralls.io/github/kiran94/dgraphpandas)
+[![Build](https://github.com/kiran94/dgraphpandas/actions/workflows/python-package.yml/badge.svg)](https://github.com/kiran94/dgraphpandas/actions/workflows/python-package.yml) ![PyPI](https://img.shields.io/pypi/v/dgraphpandas?color=blue&style=flat-square) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) [![Coverage Status](https://coveralls.io/repos/github/kiran94/dgraphpandas/badge.svg)](https://coveralls.io/github/kiran94/dgraphpandas) [![Codacy Badge](https://app.codacy.com/project/badge/Grade/3484574402e0408c97849301b354be8d)](https://www.codacy.com/gh/kiran94/dgraphpandas/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=kiran94/dgraphpandas&amp;utm_campaign=Badge_Grade)
+
+
 
 A Library (with accompanying cli tool) to transform [Pandas](https://pandas.pydata.org/pandas-docs/stable/user_guide/index.html#user-guide) DataFrames into Exports ([RDF](https://en.wikipedia.org/wiki/Resource_Description_Framework)) to be sent to [DGraph Live Loader](https://dgraph.io/docs/deploy/fast-data-loading/live-loader/)
 

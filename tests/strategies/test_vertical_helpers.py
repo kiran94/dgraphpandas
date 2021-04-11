@@ -731,6 +731,7 @@ class VerticalHelpers(unittest.TestCase):
         })
 
         edges = _override_edge_name(edges.copy(), override_edge_name, key_seperator)
+        self.assertIsNotNone(edges)
         assert_frame_equal(expected_edges, edges)
 
     def test_override_edge_name_override_provided(self):
