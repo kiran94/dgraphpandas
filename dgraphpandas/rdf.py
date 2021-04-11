@@ -130,16 +130,16 @@ def to_rdf_from_frame(
 
             intrinsic_gz_path = intrinsic_base_path + '.gz'
             logger.info(f'Writing to {len(intrinsic_upserts)} upserts to {intrinsic_gz_path}')
-            with gzip.open(intrinsic_gz_path, mode='wb', compresslevel=gz_compression_level) as zip:
+            with gzip.open(intrinsic_gz_path, mode='wb', compresslevel=gz_compression_level) as zip_file:
                 s = '\n'.join(intrinsic_upserts)
                 s = s.encode(encoding=encoding)
-                zip.write(s)
+                zip_file.write(s)
 
             edges_gz_path = edges_base_path + '.gz'
             logger.info(f'Writing to {len(edges_upserts)} upserts to {edges_gz_path}')
-            with gzip.open(edges_gz_path, mode='wb', compresslevel=gz_compression_level) as zip:
+            with gzip.open(edges_gz_path, mode='wb', compresslevel=gz_compression_level) as zip_file:
                 s = '\n'.join(edges_upserts)
                 s = s.encode(encoding=encoding)
-                zip.write(s)
+                zip_file.write(s)
 
     return intrinsic_upserts, edges_upserts
