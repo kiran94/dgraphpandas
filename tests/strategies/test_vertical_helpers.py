@@ -41,6 +41,7 @@ class VerticalHelpers(unittest.TestCase):
         })
 
         result_frame = _expand_csv_edges(frame.copy(), csv_edges)
+        self.assertIsNotNone(result_frame)
         assert_frame_equal(frame, result_frame)
 
     def test_expand_csv_edges_csv_edges_provided_but_no_eligible_values(self):
@@ -137,13 +138,13 @@ class VerticalHelpers(unittest.TestCase):
         (pd.DataFrame(), ['key'], None, 'type'),
         (pd.DataFrame(), ['key'], 'key_seperator', None),
     ])
-    def test_join_key_fields_null_parameters_exception(self, frame, key, key_seperator, type):
+    def test_join_key_fields_null_parameters_exception(self, frame, key, key_seperator, dgraph_type):
         '''
         Ensures when any of the input parameters are null, then
         an error is raised.
         '''
         with self.assertRaises(ValueError):
-            _join_key_fields(frame, key, key_seperator, type)
+            _join_key_fields(frame, key, key_seperator, dgraph_type)
 
     def test_join_key_fields_one_key_subject_created(self):
         '''
@@ -166,6 +167,7 @@ class VerticalHelpers(unittest.TestCase):
         })
 
         result_frame = _join_key_fields(frame.copy(), key, key_seperator, type)
+        self.assertIsNotNone(result_frame)
 
         actual = expected.reset_index(drop=True)[['subject', 'predicate', 'object']]
         output = result_frame.reset_index(drop=True)[['subject', 'predicate', 'object']]
@@ -244,6 +246,7 @@ class VerticalHelpers(unittest.TestCase):
         })
 
         result_frame = _add_dgraph_type_records(frame.copy(), add_dgraph_type_records=False, dgraph_type=type)
+        self.assertIsNotNone(result_frame)
 
         actual = frame.reset_index(drop=True)[['subject', 'predicate', 'object']]
         output = result_frame.reset_index(drop=True)[['subject', 'predicate', 'object']]
@@ -305,6 +308,8 @@ class VerticalHelpers(unittest.TestCase):
         })
 
         intrinsic, edges = _break_up_intrinsic_and_edges(frame.copy(), ['location_id', 'class_id'])
+        self.assertIsNotNone(intrinsic)
+        self.assertIsNotNone(edges)
 
         expected_intrinsic = expected_intrinsic.reset_index(drop=True)[['subject', 'predicate', 'object']]
         actual_intrinsic = intrinsic.reset_index(drop=True)[['subject', 'predicate', 'object']]
@@ -386,6 +391,7 @@ class VerticalHelpers(unittest.TestCase):
         })
 
         result_frame = _apply_rdf_types(frame.copy(), types)
+        self.assertIsNotNone(result_frame)
         assert_frame_equal(result_frame, expected_frame)
 
     def test_apply_rdf_types_all_columns_to_map(self):
@@ -413,6 +419,7 @@ class VerticalHelpers(unittest.TestCase):
         })
 
         result_frame = _apply_rdf_types(frame.copy(), types)
+        self.assertIsNotNone(result_frame)
         assert_frame_equal(result_frame, expected_frame)
 
     def test_apply_rdf_types_no_columns_to_map(self):
@@ -436,6 +443,7 @@ class VerticalHelpers(unittest.TestCase):
         })
 
         result_frame = _apply_rdf_types(frame.copy(), types)
+        self.assertIsNotNone(result_frame)
         assert_frame_equal(result_frame, expected_frame)
 
     def test_format_date_fields_null_frame_error(self):
@@ -524,6 +532,7 @@ class VerticalHelpers(unittest.TestCase):
             'type': ['<xs:string>', '<xs:int>', '<xs:dateTime>']
         })
 
+        self.assertIsNotNone(result)
         assert_frame_equal(result.reset_index(drop=True), expected_frame.reset_index(drop=True))
 
     def test_compile_illegal_characters_regex_nonecharacters(self):
@@ -578,6 +587,7 @@ class VerticalHelpers(unittest.TestCase):
         })
 
         result_frame = _remove_illegal_rdf_characters(frame.copy(), illegal_characters, field)
+        self.assertIsNotNone(result_frame)
         assert_frame_equal(expected_frame, result_frame)
 
     def test_remove_illegal_rdf_characters_illegalcharacters_notfound(self):
@@ -594,6 +604,7 @@ class VerticalHelpers(unittest.TestCase):
         field = 'object'
 
         result_frame = _remove_illegal_rdf_characters(frame.copy(), illegal_characters, field)
+        self.assertIsNotNone(result_frame)
         assert_frame_equal(frame, result_frame)
 
     def test_remove_illegal_rdf_characters_only_one_field(self):
@@ -789,6 +800,7 @@ class VerticalHelpers(unittest.TestCase):
         })
 
         result = _ignore_fields(frame.copy(), ignore_fields)
+        self.assertIsNotNone(result)
         assert_frame_equal(result, frame)
 
     def test_ignore_fields_provided_but_not_in_frame(self):
@@ -806,6 +818,7 @@ class VerticalHelpers(unittest.TestCase):
         ignore_fields = ['dob']
 
         result = _ignore_fields(frame.copy(), ignore_fields)
+        self.assertIsNotNone(result)
         assert_frame_equal(result, frame)
 
     def test_ignore_fields_provided_and_in_frame(self):
@@ -910,6 +923,7 @@ class VerticalHelpers(unittest.TestCase):
         })
 
         result = _rename_fields(frame.copy(), rename_fields)
+        self.assertIsNotNone(result)
         assert_frame_equal(result, frame)
 
     def test_rename_fields_provided(self):
