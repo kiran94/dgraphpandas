@@ -243,14 +243,14 @@ class VerticalHelpers(unittest.TestCase):
         Ensures when add_dgraph_type_records is disabled, then
         the frame remains unchanged
         '''
-        type = 'customer'
+        dgraph_type = 'customer'
         frame = pd.DataFrame(data={
             'subject': [1, 2, 3],
             'predicate': ['age', 'age', 'age'],
             'object': [23, 45, 12],
         })
 
-        result_frame = _add_dgraph_type_records(frame.copy(), add_dgraph_type_records=False, dgraph_type=type)
+        result_frame = _add_dgraph_type_records(frame.copy(), add_dgraph_type_records=False, dgraph_type=dgraph_type)
         self.assertIsNotNone(result_frame)
 
         actual = frame.reset_index(drop=True)[['subject', 'predicate', 'object']]
@@ -691,6 +691,7 @@ class VerticalHelpers(unittest.TestCase):
         })
 
         result_frame = _remove_na_objects(frame.copy(), drop_na=True)
+        self.assertIsNotNone(result_frame)
 
         result_frame = result_frame.reset_index(drop=True).sort_index()
         expected_frame = expected_frame.reset_index(drop=True).sort_index()
