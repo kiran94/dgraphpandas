@@ -156,8 +156,8 @@ def _format_date_fields(frame: pd.DataFrame, date_formats: Dict[str, str] = None
 
     try:
         intrinsic_with_datetime['object'] = intrinsic_with_datetime['object'].apply(lambda x: x.isoformat())
-    except AttributeError as e:
-        logger.error('It looks like a value being declared as a datetime is not actually a datetime', e)
+    except AttributeError:
+        logger.error('It looks like a value being declared as a datetime is not actually a datetime')
         raise
 
     intrinsic_with_datetime = intrinsic_with_datetime.loc[intrinsic_with_datetime['object'] != 'NaT']
