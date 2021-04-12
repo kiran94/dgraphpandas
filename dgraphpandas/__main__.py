@@ -14,6 +14,7 @@ pd.set_option('mode.chained_assignment', None)
 
 def main():
     parser = argparse.ArgumentParser(description=__description__)
+    parser.add_argument('-x', '--method', choices=['upserts', 'schema'], default='upserts')
     parser.add_argument('-f', '--file', required=True, help='The Data File (CSV) to convert into RDF.')
     parser.add_argument('-c', '--config', required=True, help='The DgraphPandas Configuration. See Documentation for options/examples.')
     parser.add_argument('-ck', '--config_file_key', required=True, help='The Entry in the Configuration to use for this passed file.')
@@ -46,24 +47,25 @@ def main():
     except ImportError as e:
         logger.debug(e)
 
-    options = {
-        'key_separator': args.key_separator,
-        'add_dgraph_type_records': args.add_dgraph_type_records,
-        'drop_na_intrinsic_objects': args.drop_na_intrinsic_objects,
-        'drop_na_edge_objects': args.drop_na_edge_objects,
-        'illegal_characters': args.illegal_characters,
-        'illegal_characters_intrinsic_object': args.illegal_characters_intrinsic_object,
-        'console': args.console,
-        'export_csv': args.export_csv,
-        'chunk_size': args.chunk_size
-    }
-    options = {key: value for key, value in options.items() if value is not None and value is not False}
+    if args.method == 'upserts':
+        options = {
+            'key_separator': args.key_separator,
+            'add_dgraph_type_records': args.add_dgraph_type_records,
+            'drop_na_intrinsic_objects': args.drop_na_intrinsic_objects,
+            'drop_na_edge_objects': args.drop_na_edge_objects,
+            'illegal_characters': args.illegal_characters,
+            'illegal_characters_intrinsic_object': args.illegal_characters_intrinsic_object,
+            'console': args.console,
+            'export_csv': args.export_csv,
+            'chunk_size': args.chunk_size
+        }
+        options = {key: value for key, value in options.items() if value is not None and value is not False}
 
-    with open(args.config, 'r') as f:
-        global_config: Dict[str, Any] = json.load(f)
-        logger.debug('Global Config \n %s', pformat(global_config))
+        with open(args.config, 'r') as f:
+            global_config: Dict[str, Any] = json.load(f)
+            logger.debug('Global Config \n %s', pformat(global_config))
 
-    to_rdf(args.file, global_config, args.config_file_key, args.output_dir, export_rdf=True, **(options))
+        to_rdf(args.file, global_config, args.config_file_key, args.output_dir, export_rdf=True, **(options))
 
 
 if __name__ == '__main__':
