@@ -1,9 +1,6 @@
 import logging
 import argparse
 import os
-import json
-from typing import Any, Dict
-from pprint import pformat
 
 import pandas as pd
 
@@ -61,9 +58,7 @@ def main():
         }
         options = {key: value for key, value in options.items() if value is not None and value is not False}
 
-        with open(args.config, 'r') as f:
-            global_config: Dict[str, Any] = json.load(f)
-            logger.debug('Global Config \n %s', pformat(global_config))
+        to_rdf(args.file, args.config, args.config_file_key, args.output_dir, export_rdf=True, **(options))
 
         to_rdf(args.file, global_config, args.config_file_key, args.output_dir, export_rdf=True, **(options))
 
