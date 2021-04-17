@@ -30,7 +30,7 @@ jobs:
         flake8 . --show-source --count
     - name: Unit Test
       run: |
-        python -m unittest
+        pytest
     - name: Generate Report
       env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
