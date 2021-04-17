@@ -1,3 +1,4 @@
+import os
 import logging
 import json
 from typing import Union, Dict, Any, List, Set
@@ -20,7 +21,8 @@ def strip_id(original: Set[str]) -> Set[str]:
 
     return temp_columns
 
-def create_schema(source_config: Union[str, Dict[str, Any]], **kwargs) -> pd.DataFrame:
+
+def create_schema(source_config: Union[str, Dict[str, Any]], output_dir='.', **kwargs) -> pd.DataFrame:
     '''
     Creates a Schema DataFrame from the given Configuration.
 
@@ -41,6 +43,8 @@ def create_schema(source_config: Union[str, Dict[str, Any]], **kwargs) -> pd.Dat
     files: Dict[str, Any] = config['files']
     strip_id_from_edge_names: bool = get_from_config('strip_id_from_edge_names', config, True, **(kwargs))
     console: bool = get_from_config('console', config, False, **(kwargs))
+    export_csv: bool = get_from_config('export_csv', config, False, **(kwargs))
+    export_csv_name: str = get_from_config('export_csv_name', config, 'schema.csv', **(kwargs))
 
     for file, file_config in files.items():
         logger.debug(f'Preprocessing schema for {file}')
@@ -134,5 +138,9 @@ def create_schema(source_config: Union[str, Dict[str, Any]], **kwargs) -> pd.Dat
 
     if console:
         print(frame)
+    if export_csv:
+        path = os.path.join(output_dir, export_csv_name)
+        logger.info(f'Writing pre schema file to {path}')
+        frame.to_csv(path, index=False)
 
     return frame

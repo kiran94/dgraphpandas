@@ -403,3 +403,35 @@ def test_create_schema(name, config, expected_frame):
         print('####')
         print('Expected Frame \n', expected_frame)
         raise
+
+
+@patch('dgraphpandas.strategies.schema.pd.DataFrame.to_csv')
+def test_create_schema_export_csv(to_csv_mock: Mock):
+    '''
+    Ensures when export_csv is passed, then the schema frame
+    is passed into to_csv
+    '''
+    config = {
+        'files': {
+            "animal": {
+                'subject_fields': ['id'],
+                'edge_fields': ['habitat']
+            }
+        }
+    }
+
+    result = create_schema(config, export_csv=True)
+    assert to_csv_mock.called
+
+    args, kwargs = to_csv_mock.call_args_list[0]
+    assert ('./schema.csv',) == args
+    assert {'index': False} == kwargs
+
+    expected_frame = pd.DataFrame(
+        columns=['column', 'type', 'table', 'options'],
+        data=[
+            ('id', 'string', 'animal', None),
+            ('habitat', 'uid', 'animal', None),
+        ])
+
+    assert_frame_equal(expected_frame, result)
