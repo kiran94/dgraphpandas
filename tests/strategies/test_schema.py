@@ -361,6 +361,30 @@ def test_create_schema_missing_subject_fields(name, config, expected_error_messa
         ], columns=['column', 'type', 'table', 'options'])
     ),
 
+    ###
+    (
+        'with_list_edges',
+        {
+            'files': {
+                "animal": {
+                    'subject_fields': ['animal_id'],
+                    'type_overrides': {
+                        'legs': 'int',
+                        'weight': 'float'
+                    },
+                    'edge_fields': ['habitat_id', 'predator_id'],
+                    'list_edges': ['predator_id']
+                }
+            }
+        },
+        pd.DataFrame(data=[
+            ('animal', 'string', 'animal', None),
+            ('legs', 'int', 'animal'),
+            ('weight', 'float', 'animal', None),
+            ('habitat', 'uid', 'animal'),
+            ('predator', '[uid]', 'animal'),
+        ], columns=['column', 'type', 'table', 'options'])
+    ),
 
 ])
 def test_create_schema(name, config, expected_frame):
