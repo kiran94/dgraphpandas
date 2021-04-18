@@ -22,7 +22,11 @@
         "number_moons": "int32",
         "rings": "bool"
       },
-      "ignore_fields": ["image", "parent"]
+      "ignore_fields": ["image", "parent"],
+      "options": {
+        "id": ["@index(hash)"],
+        "type": ["@reverse"]
+      }
     }
   }
 }
