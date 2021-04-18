@@ -45,6 +45,7 @@ def create_schema(source_config: Union[str, Dict[str, Any]], output_dir='.', **k
     console: bool = get_from_config('console', config, False, **(kwargs))
     export_csv: bool = get_from_config('export_csv', config, False, **(kwargs))
     export_csv_name: str = get_from_config('export_csv_name', config, 'schema.csv', **(kwargs))
+    ensure_xid_predicate: bool = get_from_config('ensure_xid_predicate', config, False, **(kwargs))
 
     for file, file_config in files.items():
         logger.debug(f'Preprocessing schema for {file}')
@@ -133,6 +134,11 @@ def create_schema(source_config: Union[str, Dict[str, Any]], output_dir='.', **k
         return
 
     frame: pd.DataFrame = pd.concat(all_frames)
+
+    logger.debug('Appending xid declaration')
+    if ensure_xid_predicate:
+        frame = frame.append({'column': 'xid', 'type': 'string', 'table': None, 'options': '@index(exact)'}, ignore_index=True)
+
     frame.sort_values(by=['table', 'type'], inplace=True)
     frame.reset_index(inplace=True, drop=True)
 

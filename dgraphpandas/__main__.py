@@ -68,7 +68,7 @@ def main():
         to_rdf(args.file, args.config, args.config_file_key, args.output_dir, export_rdf=True, **(options))
 
     elif args.method == 'schema':
-        schema_frame = create_schema(args.config, **(options))
+        schema_frame = create_schema(args.config, ensure_xid_predicate=True, **(options))
         generate_schema(schema_frame, export_schema=True, **(options))
 
     else:

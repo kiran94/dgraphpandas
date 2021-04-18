@@ -435,3 +435,29 @@ def test_create_schema_export_csv(to_csv_mock: Mock):
         ])
 
     assert_frame_equal(expected_frame, result)
+
+
+def test_create_schema_ensure_xid():
+    '''
+    Ensures when ensure_xid_predicate is passed,
+    then an xid predicate is appended to the schema
+    '''
+    config = {
+        'files': {
+            "animal": {
+                'subject_fields': ['id'],
+                'edge_fields': ['habitat']
+            }
+        }
+    }
+
+    expected_frame = pd.DataFrame(
+        columns=['column', 'type', 'table', 'options'],
+        data=[
+            ('id', 'string', 'animal', None),
+            ('habitat', 'uid', 'animal', None),
+            ('xid', 'string', None, '@index(exact)'),
+        ])
+
+    result = create_schema(config, ensure_xid_predicate=True)
+    assert_frame_equal(expected_frame, result)

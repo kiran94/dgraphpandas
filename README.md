@@ -332,6 +332,9 @@ These options can be placed on the root of the config or passed as `kwargs` dire
 -   `illegal_characters_intrinsic_object`
     -   Same as `illegal_characters` but for the subject on intrinsic fields. These have a different set of illegal characters because subjects on intrinsic records are actual data values and are quoted. They therefore can accept many more characters then the subject.
 
+- `ensure_xid_predicate`
+  - Schema generation option to ensure that the `xid` predicate is applied to the schema. If you use the `--upsertPredicate xid` then this must be set so that the predicate is created and indexed.
+
 **File Level**
 
 -   `type_overrides`
