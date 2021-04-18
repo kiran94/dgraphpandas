@@ -11,7 +11,7 @@ from dgraphpandas.config import get_from_config
 logger = logging.getLogger(__name__)
 
 
-def strip_id(original: Set[str]) -> Set[str]:
+def _strip_id(original: Set[str]) -> Set[str]:
     temp_columns = set()
     for i in original:
         if str.endswith(i, '_id'):
@@ -89,9 +89,9 @@ def create_schema(source_config: Union[str, Dict[str, Any]], output_dir='.', **k
                 edge_fields.append(options['predicate'])
 
         if strip_id_from_edge_names:
-            columns = strip_id(columns)
-            edge_fields = strip_id(edge_fields)
-            list_edges = strip_id(list_edges)
+            columns = _strip_id(columns)
+            edge_fields = _strip_id(edge_fields)
+            list_edges = _strip_id(list_edges)
 
         if 'pre_rename' in file_config:
             pre_rename: Dict[str, str] = get_from_config('pre_rename', file_config, {}, **(kwargs))
