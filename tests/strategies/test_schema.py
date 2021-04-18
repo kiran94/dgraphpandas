@@ -461,3 +461,32 @@ def test_create_schema_ensure_xid():
 
     result = create_schema(config, ensure_xid_predicate=True)
     assert_frame_equal(expected_frame, result)
+
+
+@patch('builtins.print')
+def test_create_schema_console(mock_print):
+    '''
+    Ensures when console is passed, then the frame is written to stdout.
+    '''
+    config = {
+        'files': {
+            "animal": {
+                'subject_fields': ['id'],
+                'edge_fields': ['habitat']
+            }
+        }
+    }
+    expected_frame = pd.DataFrame(
+        columns=['column', 'type', 'table', 'options'],
+        data=[
+            ('id', 'string', 'animal', None),
+            ('habitat', 'uid', 'animal', None),
+        ])
+
+    result = create_schema(config, console=True)
+    assert_frame_equal(expected_frame, result)
+
+    assert mock_print.called
+    args, kwargs = mock_print.call_args_list[0]
+    assert_frame_equal(args[0], expected_frame)
+    assert kwargs == {}
