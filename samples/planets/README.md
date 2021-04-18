@@ -29,4 +29,4 @@ You can then query via Ratel:
 
 And should get back a result like this:
 
-![sample_planets](..\..\docs\res\sample_planets.png)
+![sample_planets](../../docs/res/sample_planets.png)
