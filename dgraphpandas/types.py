@@ -23,8 +23,8 @@ _str_to_rdf_types = {
     'datetime64': '<xs:dateTime>',
     'datetime': '<xs:dateTime>',
     '<M8[ns]': '<xs:dateTime>',
-    'bool': '<xs:bool>',
-    'boolean': '<xs:bool>'
+    'bool': '<xs:boolean>',
+    'boolean': '<xs:boolean>'
 }
 
 _str_to_dgraph_type = {

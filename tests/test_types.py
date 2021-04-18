@@ -73,11 +73,11 @@ class TypesTests(unittest.TestCase):
                 'column10': '<xs:float>',
                 'column11': '<xs:dateTime>',
                 'column12': '<xs:dateTime>',
-                'column13': '<xs:bool>',
+                'column13': '<xs:boolean>',
                 'column14': '<xs:int>',
                 'column15': '<xs:float>',
                 'column16': '<xs:string>',
-                'column17': '<xs:bool>',
+                'column17': '<xs:boolean>',
                 'column18': '<xs:dateTime>',
         }
 
