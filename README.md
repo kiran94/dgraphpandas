@@ -17,6 +17,7 @@ A Library (with accompanying cli tool) to transform [Pandas](https://pandas.pyda
     - [Edges](#edges)
   - [Configuration](#configuration)
     - [Additional Configuration](#additional-configuration)
+  - [Schema](#schema)
   - [Samples](#samples)
   - [Working with Larger Files](#working-with-larger-files)
     - [Command Line](#command-line-1)
@@ -331,6 +332,9 @@ These options can be placed on the root of the config or passed as `kwargs` dire
 -   `illegal_characters_intrinsic_object`
     -   Same as `illegal_characters` but for the subject on intrinsic fields. These have a different set of illegal characters because subjects on intrinsic records are actual data values and are quoted. They therefore can accept many more characters then the subject.
 
+- `ensure_xid_predicate`
+  - Schema generation option to ensure that the `xid` predicate is applied to the schema. If you use the `--upsertPredicate xid` then this must be set so that the predicate is created and indexed.
+
 **File Level**
 
 -   `type_overrides`
@@ -373,6 +377,68 @@ These options can be placed on the root of the config or passed as `kwargs` dire
 -   `object_field`
     -   Only applicable to vertical transforms
     -   Allows you to define your own object field name if not the default `object`
+
+- `options`
+    - Additional Options for Schema generation such as indexes or other directives.
+    - This is a key value pair between a intrinsic/edge to list of directives to apply
+    - e.g `"title": ["@index(exact, fulltext)", "@count"]`
+
+- `list_edges`
+    - Schema option to define an edge as a list. This will ensure the type is `[uid]` rather then just `uid`
+
+
+## Schema
+
+DGraph allows you to define a [schema](https://dgraph.io/docs/query-language/schema/#sidebar). This can be generated using the same configuration used above but there are also additional options you can add such as `options` and `list_edges` which are exclusively used for schema generation.
+
+```sh
+# Model the data, define types, edges and any options
+> echo '
+{
+  "transform": "horizontal",
+  "files": {
+    "animal": {
+      "subject_fields": ["species_id"],
+      "type_overrides": {
+        "name": "string",
+        "legs": "int",
+        "weight": "float",
+        "height": "float",
+        "discovered": "datetime64",
+        "aquatic": "bool"
+      },
+      "edge_fields": ["class_id", "found_in"],
+      "options": {
+        "name": ["@index(hash)"],
+        "discovered": ["@index(year)"],
+        "class": ["@reverse"],
+        "found_in": ["@reverse", "@count"]
+      },
+      "list_edges": ["found_in"]
+    }
+  }
+}
+' > dgraphpandas.json
+
+# Apply the config to the schema generation logic
+> dgraphpandas -c dgraphpandas.json -x schema
+
+# Inspect Schema
+> cat schema.txt
+
+found_in: [uid] @reverse @count .
+aquatic: bool .
+discovered: dateTime @index(year) .
+weight: float .
+height: float .
+legs: int .
+name: string @index(hash) .
+species: string .
+class: uid @reverse .
+
+# Apply to DGraph
+dgraph live -s schema.txt
+```
 
 ## Samples
 
