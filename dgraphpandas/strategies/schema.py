@@ -101,10 +101,10 @@ def create_schema(source_config: Union[str, Dict[str, Any]], output_dir='.', **k
             renamed_dgraph_types: Dict[str, str] = {}
             for original_name, new_name in pre_rename.items():
                 renamed_dgraph_types[new_name] = dgraph_types.get(original_name, default_dgraph_type)
+                if original_name in list_edges:
+                    list_edges.add(new_name)
                 if original_name in edge_fields:
                     edge_fields.add(new_name)
-                if original_name in list_edges:
-                    list_edges.append(new_name)
 
                 dgraph_types.update(renamed_dgraph_types)
 

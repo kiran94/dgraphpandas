@@ -295,6 +295,33 @@ def test_create_schema_missing_subject_fields(name, config, expected_error_messa
     ),
     ###
     (
+        'with_prename_on_list_edge',
+        {
+            'files': {
+                "animal": {
+                    'subject_fields': ['animal_id'],
+                    'type_overrides': {
+                        'legs': 'int',
+                        'weight': 'float'
+                    },
+                    'edge_fields': ['habitat_id'],
+                    'pre_rename': {
+                        'legs': 'number_of_legs',
+                        'habitat': 'habo'
+                    },
+                    'list_edges': ['habitat_id']
+                }
+            }
+        },
+        pd.DataFrame(data=[
+            ('animal', 'string', 'animal', None),
+            ('number_of_legs', 'int', 'animal', None),
+            ('weight', 'float', 'animal', None),
+            ('habo', '[uid]', 'animal', None),
+        ], columns=['column', 'type', 'table', 'options'])
+    ),
+    ###
+    (
         'with_options',
         {
             'files': {
