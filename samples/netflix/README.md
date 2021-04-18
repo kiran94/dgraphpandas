@@ -2,7 +2,6 @@
 
 - [Netflix Example](#netflix-example)
   - [Setup](#setup)
-  - [Apply to DGraph](#apply-to-dgraph)
   - [Example Queries](#example-queries)
     - [Query 1: Find all Actors related to Horror Movies in 2018](#query-1-find-all-actors-related-to-horror-movies-in-2018)
     - [Query 2: Find all the Movies that Robert Downey Jr is in and the associated Rating](#query-2-find-all-the-movies-that-robert-downey-jr-is-in-and-the-associated-rating)
@@ -15,23 +14,21 @@
 
 *This dataset requires access to [Kaggle](https://www.kaggle.com/docs/api)*.
 
-From the root of the repository
+From the `samples/netflix` folder.
 
 ```sh
-cd samples/netflix/input/
+cd input
+
 sh download_data.sh
-
 python download_cleanup.py
+
+cd ..
+
+# Applies to DGraph
+sh publish.sh
 ```
 
-## Apply to DGraph
-
-From the root of the repository
-
-```sh
-sh samples/netflix/generate_upserts.sh
-sh samples/netflix/publish_upserts.sh
-```
+This will apply data to your local DGraph instance. Then you can try an example queries below.
 
 ## Example Queries
 
@@ -42,10 +39,9 @@ sh samples/netflix/publish_upserts.sh
   q(func: type(genre)) @filter(eq(identifier, "Horror Movies"))
     {
   		name: identifier
-  		titles: ~genre @filter(type(titles) AND eq(release_year, 2018)) {
+  		titles: ~genre @filter(type(title) AND eq(release_year, 2018)) {
         name: title
         description
-
         cast {
           name: identifier
         }
@@ -54,6 +50,8 @@ sh samples/netflix/publish_upserts.sh
 }
 ```
 
+![sample_netflix_horror](../../docs/res/sample_netflix_horror.png)
+
 ### Query 2: Find all the Movies that Robert Downey Jr is in and the associated Rating
 
 ```sh
@@ -61,7 +59,7 @@ sh samples/netflix/publish_upserts.sh
   q(func: type(cast)) @filter(eq(identifier, "Robert Downey Jr."))
     {
       name: identifier
-      titles: ~cast @filter(type(titles)) @normalize {
+      titles: ~cast @filter(type(title)) @normalize {
         name: title
         rating {
           rating: identifier
@@ -78,10 +76,10 @@ sh samples/netflix/publish_upserts.sh
    mike as var(func: type(cast)) @filter(eq(identifier, "Mike Myers")) { uid }
    seth as var(func: type(cast)) @filter(eq(identifier, "Seth Green")) { uid }
 
-	title(func: type(titles), orderdesc: release_year)
+	title(func: type(title), orderdesc: release_year)
      @filter(uid_in(cast, uid(mike)) AND uid_in(cast, uid(seth)))
    {
-        title
+        name: title
         description
         release_year
    }
@@ -92,10 +90,10 @@ sh samples/netflix/publish_upserts.sh
 
 ```sh
 {
-  q(func: type(titles)) @filter(anyofterms(description, "Autobots"))
+  q(func: type(title)) @filter(anyofterms(description, "Autobots"))
 	{
       identifier
-    	title
+    	name: title
     	description
     }
 }
@@ -105,14 +103,14 @@ sh samples/netflix/publish_upserts.sh
 
 ```sh
 {
-  var(func: type(titles)) @groupby(genre)
+  var(func: type(title)) @groupby(genre)
   {
   	c as count(uid)
   }
 
   genre_counts(func: uid(c), orderdesc: val(c))
   {
-    identifier # from the genre node (grouped)
+    name: identifier # from the genre node (grouped)
     count: val(c)
   }
 }
