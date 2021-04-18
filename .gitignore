@@ -157,3 +157,4 @@ samples/**/output/*.gz
 samples/**/xidmap/*
 
 settings.json
+schema.txt
