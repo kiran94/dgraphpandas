@@ -85,7 +85,7 @@ def create_schema(source_config: Union[str, Dict[str, Any]], output_dir='.', **k
 
         if 'override_edge_name' in file_config:
             override_edge_name: Dict[str, Any] = get_from_config('override_edge_name', file_config, {}, **(kwargs))
-            for column, options in override_edge_name.items():
+            for options in override_edge_name.values():
                 columns.add(options['predicate'])
                 edge_fields.append(options['predicate'])
 
