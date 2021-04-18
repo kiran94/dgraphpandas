@@ -398,11 +398,11 @@ def test_create_schema(name, config, expected_frame):
 
     try:
         assert_frame_equal(frame, expected_frame)
-    except AssertionError:
-        print('Actual Frame \n', frame)
-        print('####')
-        print('Expected Frame \n', expected_frame)
-        raise
+    except AssertionError:  # pragma: no cover
+        print('Actual Frame \n', frame)  # pragma: no cover
+        print('####')  # pragma: no cover
+        print('Expected Frame \n', expected_frame)  # pragma: no cover
+        raise  # pragma: no cover
 
 
 @patch('dgraphpandas.strategies.schema.pd.DataFrame.to_csv')
