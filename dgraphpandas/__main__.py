@@ -6,6 +6,7 @@ import pandas as pd
 
 from dgraphpandas import __version__, __description__, to_rdf
 from dgraphpandas.strategies.schema import create_schema
+from dgraphpandas.writers.schema import generate_schema
 
 pd.set_option('mode.chained_assignment', None)
 
@@ -67,7 +68,8 @@ def main():
         to_rdf(args.file, args.config, args.config_file_key, args.output_dir, export_rdf=True, **(options))
 
     elif args.method == 'schema':
-        create_schema(args.config, **(options))
+        schema_frame = create_schema(args.config, **(options))
+        generate_schema(schema_frame, export_schema=True, **(options))
 
     else:
         raise NotImplementedError(args.method)
