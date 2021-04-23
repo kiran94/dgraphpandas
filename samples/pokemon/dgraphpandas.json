@@ -16,6 +16,15 @@
             "type_overrides": {
                 "id": "int32",
                 "region_id": "int32"
+            },
+            "override_edge_name": {
+                "evolves_from_species": {
+                    "predicate": "evolves_from",
+                    "target_node_type": "pokemon"
+                }
+            },
+            "options": {
+                "region": ["@reverse"]
             }
         },
         "version": {
@@ -101,6 +110,15 @@
                     "predicate": "evolves_from",
                     "target_node_type": "pokemon"
                 }
+            },
+            "options": {
+                "generation": ["@reverse"],
+                "evolves_from_species": ["@reverse"],
+                "evolution_chain": ["@reverse"],
+                "color": ["@reverse"],
+                "shape": ["@reverse"],
+                "habitat": ["@reverse"],
+                "growth_rate": ["@reverse"]
             }
         }
     }

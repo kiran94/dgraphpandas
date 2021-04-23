@@ -40,7 +40,19 @@
                 "description": "object"
             },
             "edge_fields": ["type", "director", "cast", "country", "rating", "genre"],
-            "csv_edges": ["director", "cast", "genre", "country"]
+            "list_edges": ["director", "cast", "genre", "country"],
+            "csv_edges": ["director", "cast", "genre", "country"],
+            "options": {
+                "title": ["@index(exact)"],
+                "description": ["@index(term)"],
+                "date_added": ["@index(year)"],
+                "year": ["@index"],
+                "director": ["@reverse"],
+                "cast": ["@reverse"],
+                "country": ["@reverse"],
+                "rating": ["@reverse"],
+                "genre": ["@reverse"]
+            }
         }
     }
 }
