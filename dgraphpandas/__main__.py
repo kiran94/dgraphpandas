@@ -1,6 +1,7 @@
+import sys
+import os
 import logging
 import argparse
-import os
 
 import pandas as pd
 
@@ -34,7 +35,7 @@ def main():
                         choices=['DEBUG', 'INFO', 'WARNING', 'ERROR', 'NOTSET'],
                         default=os.environ.get('DGRAPHPANDAS_LOG', 'INFO'))
 
-    args = parser.parse_args()
+    args = parser.parse_args(sys.argv[1:])
 
     logging.basicConfig(level=args.verbosity)
     logger = logging.getLogger(__name__)
