@@ -43,8 +43,8 @@ def main():
     try:
         import coloredlogs
         coloredlogs.install(level=args.verbosity)
-    except ImportError as e:
-        logger.debug(e)
+    except ImportError as e:  # pragma: no cover
+        logger.debug(e)  # pragma: no cover
 
     logger.debug(args)
 
@@ -72,9 +72,6 @@ def main():
         schema_frame = create_schema(args.config, ensure_xid_predicate=True, **(options))
         generate_schema(schema_frame, export_schema=True, **(options))
 
-    else:
-        raise NotImplementedError(args.method)
-
 
 if __name__ == '__main__':
-    main()
+    main()  # pragma: no cover
