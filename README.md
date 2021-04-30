@@ -36,8 +36,9 @@ python -m pip install dgraphpandas
 
 ```sh
 ❯ dgraphpandas --help
-usage: dgraphpandas [-h] -f FILE -c CONFIG -ck CONFIG_FILE_KEY [-o OUTPUT_DIR]
-                    [--console] [--export_csv] [--encoding ENCODING]
+usage: dgraphpandas [-h] [-x {upserts,schema,types}] [-f FILE] -c CONFIG
+                    [-ck CONFIG_FILE_KEY] [-o OUTPUT_DIR] [--console]
+                    [--export_csv] [--encoding ENCODING]
                     [--chunk_size CHUNK_SIZE]
                     [--gz_compression_level GZ_COMPRESSION_LEVEL]
                     [--key_separator KEY_SEPARATOR]
