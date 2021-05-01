@@ -22,5 +22,4 @@ jobs:
         if [ -f requirements-dev.txt ]; then pip install -r requirements-dev.txt; fi
     - name: Build and Deploy
       run: |
-        git pull
-        mkdocs gh-deploy
+        mkdocs gh-deploy --force
