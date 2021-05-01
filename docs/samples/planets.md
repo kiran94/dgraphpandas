@@ -1,5 +1,3 @@
-# Planets Sample
-
 [Data Source](https://github.com/sachans/Planet-connaissance/blob/master/Solar%20System.csv)
 
 
@@ -29,4 +27,4 @@ You can then query via Ratel:
 
 And should get back a result like this:
 
-![sample_planets](../../docs/res/sample_planets.png)
+![sample_planets](../res/sample_planets.png)

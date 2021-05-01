@@ -6,3 +6,6 @@ parameterized
 coverage
 coveralls
 jupyter
+mkdocs
+mkdocs-material
+mkdocs-section-index
