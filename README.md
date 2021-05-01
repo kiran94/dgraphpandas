@@ -8,9 +8,10 @@ A Library (with accompanying cli tool) to transform [Pandas](https://pandas.pyda
 python -m pip install dgraphpandas
 ```
 
-## Usage
+- [Documentation](https://kiran94.github.io/dgraphpandas/)
+- [PyPi](https://pypi.org/project/dgraphpandas/)
 
-[Documentation](https://kiran94.github.io/dgraphpandas/)
+## Usage
 
 ### Command Line
 
