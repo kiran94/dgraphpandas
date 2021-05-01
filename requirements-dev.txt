@@ -6,3 +6,8 @@ parameterized
 coverage
 coveralls
 jupyter
+mkdocs
+mkdocs-material
+mkdocs-section-index
+mkdocs-jupyter
+nbconvert==5.5

@@ -1,0 +1,27 @@
+site_name: dgraphpandas docs
+repo_url: https://github.com/kiran94/dgraphpandas
+site_description: Transform Pandas DataFrames into Exports to be sent to DGraph
+site_author: Kiran Patel
+nav:
+  - Home: 'index.md'
+  - Getting Started: 'getting_started.md'
+  - Horizontal & Vertical Formats: 'horizontal_and_vertical_formats.md'
+  - Configuration: 'configuration.md'
+  - Schema & Types: 'schema_and_types.md'
+  - Working with Larger Files: 'working_with_larger_files.md'
+  - Samples:
+    - Introduction: 'samples.md'
+    - Netflix Sample: 'samples/netflix.md'
+    - Planets Sample: 'samples/planets.md'
+    - Pokemon Sample: 'samples/pokemon.md'
+    - Notebooks:
+      - Netflix Notebook: 'notebooks/NetflixSample.ipynb'
+      - Planet Notebook: 'notebooks/PlanetSample.ipynb'
+  - Local Setup: 'local_setup.md'
+theme:
+  material
+markdown_extensions:
+  - codehilite:
+      use_pygments: true
+plugins:
+    - mkdocs-jupyter

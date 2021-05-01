@@ -1,15 +1,3 @@
-# Netflix Example
-
-- [Netflix Example](#netflix-example)
-  - [Setup](#setup)
-  - [Example Queries](#example-queries)
-    - [Query 1: Find all Actors related to Horror Movies in 2018](#query-1-find-all-actors-related-to-horror-movies-in-2018)
-    - [Query 2: Find all the Movies that Robert Downey Jr is in and the associated Rating](#query-2-find-all-the-movies-that-robert-downey-jr-is-in-and-the-associated-rating)
-    - [Query 3: Find all the Titles that both Mike Myers and Seth Green are appear in](#query-3-find-all-the-titles-that-both-mike-myers-and-seth-green-are-appear-in)
-    - [Query 4: Find all Titles where the term 'Autobots' appears in the description](#query-4-find-all-titles-where-the-term-autobots-appears-in-the-description)
-    - [Query 5: Find the total counts of titles per Genre](#query-5-find-the-total-counts-of-titles-per-genre)
-
-
 ## Setup
 
 *This dataset requires access to [Kaggle](https://www.kaggle.com/docs/api)*.
@@ -50,7 +38,7 @@ This will apply data to your local DGraph instance. Then you can try an example 
 }
 ```
 
-![sample_netflix_horror](../../docs/res/sample_netflix_horror.png)
+![sample_netflix_horror](../res/sample_netflix_horror.png)
 
 ### Query 2: Find all the Movies that Robert Downey Jr is in and the associated Rating
 

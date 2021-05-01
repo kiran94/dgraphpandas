@@ -1,0 +1,25 @@
+{
+  "$schema": "https://puremourning.github.io/vimspector/schema/vimspector.schema.json",
+  "configurations": {
+    "dgraphpandas: main": {
+      "adapter": "debugpy",
+      "configuration": {
+        "request": "launch",
+        "type": "python",
+        "cwd": "${workspaceRoot}",
+        "console": "integratedTerminal",
+        "module": "dgraphpandas",
+        "args": [
+          "-c",
+          "samples/netflix/dgraphpandas.json",
+          "-ck",
+          "genre",
+          "-f",
+          "samples/netflix/input/genre.csv",
+          "-o",
+          "samples/netflix/output"
+        ]
+      }
+    }
+  }
+}
