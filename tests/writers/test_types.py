@@ -44,7 +44,7 @@ def test_empty_valid_frame():
                 ('age', 'int', 'customer', None),
                 ('dob', 'datetime', 'customer', None),
             ]),
-        ["type customer { id age dob }\n"]
+        ["type customer { \nid\nage\ndob\n }\n"]
     ),
     ###
     (
@@ -60,7 +60,7 @@ def test_empty_valid_frame():
                 ('product_id', 'string', 'product', '@index(hash)'),
                 ('name', 'double', 'product', None),
             ]),
-        ["type customer { id age dob }\n", "type order { id value }\n", "type product { product_id name }\n"]
+        ["type customer { \nid\nage\ndob\n }\n", "type order { \nid\nvalue\n }\n", "type product { \nproduct_id\nname\n }\n"]
     ),
     ###
     (
@@ -76,14 +76,14 @@ def test_empty_valid_frame():
                 ('value', 'double', 'order', None),
                 ('invoice', 'uid', 'order', '@reverse'),
             ]),
-        ["type customer { id age <~order> <~gender> }\n", "type order { id value <~invoice> }\n"]
+        ["type customer { \nid\nage\n<~order>\n<~gender>\n }\n", "type order { \nid\nvalue\n<~invoice>\n }\n"]
     )
 ])
 def test_types_generated(name, frame, expected_result):
     '''
     Ensures types are generated when a valid frame is passed
     '''
-    assert generate_types(frame, pretty=False) == expected_result
+    assert generate_types(frame) == expected_result
 
 
 @patch('builtins.open', callable=mock_open)
@@ -104,9 +104,9 @@ def test_types_export_schema(mock_open: Mock):
             ('invoice', 'uid', 'order', '@reverse'),
         ])
 
-    expected = ["type customer { id age <~order> <~gender> }\n", "type order { id value <~invoice> }\n"]
+    expected = ["type customer { \nid\nage\n<~order>\n<~gender>\n }\n", "type order { \nid\nvalue\n<~invoice>\n }\n"]
 
-    result = generate_types(frame, pretty=False, export_schema=True)
+    result = generate_types(frame, export_schema=True)
 
     assert result == expected
 

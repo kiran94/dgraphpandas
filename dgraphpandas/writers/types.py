@@ -27,7 +27,6 @@ def generate_types(frame: pd.DataFrame, **kwargs) -> List[str]:
     export_schema = kwargs.get('export_schema', False)
     export_file = kwargs.get('export_file', 'types.txt')
     console = kwargs.get('console', False)
-    pretty = kwargs.get('pretty', True)
     encoding = kwargs.get('encoding', 'utf-8')
     line_delimeter = kwargs.get('line_delimeter ', '\n')
 
@@ -43,18 +42,11 @@ def generate_types(frame: pd.DataFrame, **kwargs) -> List[str]:
 
         type_builder = 'type ' + name
         type_builder += ' { '
-
-        if pretty:
-            type_builder += line_delimeter
-            type_builder += line_delimeter.join(current_frame['column'].unique().tolist())
-            type_builder += line_delimeter
-            type_builder += ' }'
-            type_builder += line_delimeter
-        else:
-            logger.warning('Exports are being genereated without pretty option, note that cannot be loaded into dgraph')
-            type_builder += str.join(' ', current_frame['column'].unique().tolist())
-            type_builder += ' }'
-            type_builder += line_delimeter
+        type_builder += line_delimeter
+        type_builder += line_delimeter.join(current_frame['column'].unique().tolist())
+        type_builder += line_delimeter
+        type_builder += ' }'
+        type_builder += line_delimeter
 
         # Split up types with reverse edges so we can gurantee they are applied after other types
         # This is required because if dgraph live encounters a reverse edge for a type defined later in the file
