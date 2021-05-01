@@ -15,9 +15,14 @@ nav:
     - Netflix Sample: 'samples/netflix.md'
     - Planets Sample: 'samples/planets.md'
     - Pokemon Sample: 'samples/pokemon.md'
+    - Notebooks:
+      - Netflix Notebook: 'notebooks/NetflixSample.ipynb'
+      - Planet Notebook: 'notebooks/PlanetSample.ipynb'
   - Local Setup: 'local_setup.md'
 theme:
   material
 markdown_extensions:
   - codehilite:
       use_pygments: true
+plugins:
+    - mkdocs-jupyter
