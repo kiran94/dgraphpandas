@@ -2,7 +2,6 @@ site_name: dgraphpandas docs
 repo_url: https://github.com/kiran94/dgraphpandas
 site_description: Transform Pandas DataFrames into Exports to be sent to DGraph
 site_author: Kiran Patel
-remote_branch: docs
 nav:
   - Home: 'index.md'
   - Getting Started: 'getting_started.md'
