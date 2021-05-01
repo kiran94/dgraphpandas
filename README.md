@@ -10,6 +10,8 @@ python -m pip install dgraphpandas
 
 ## Usage
 
+[Documentation](https://kiran94.github.io/dgraphpandas/)
+
 ### Command Line
 
 ```sh
@@ -40,7 +42,7 @@ dgraphpandas \
 
 ### Module
 
-This example can also be found in [Notebook](https://github.com/kiran94/dgraphpandas/blob/main/samples/notebooks/PlanetSample.ipynb) form.
+This example can also be found in [Notebook](docs/notebooks/) form.
 
 ```py
 import dgraphpandas as dpd
