@@ -248,3 +248,57 @@ def test_version(
         main()
 
     assert __version__ in capsys.readouterr().out
+
+
+@patch('dgraphpandas.__main__.logging')
+@patch('dgraphpandas.__main__.generate_types')
+@patch('dgraphpandas.__main__.create_schema')
+@patch('dgraphpandas.__main__.sys')
+def test_types(
+        argv_mock: Mock,
+        create_schema_mock: Mock,
+        generate_types_mock: Mock,
+        logger_mock: Mock,
+        capsys):
+    '''
+    Ensures when types is called, the underlying services
+    are called
+    '''
+    argv_mock.argv = [
+        'script',
+        '-x', 'types',
+        '-c', 'config.json',
+    ]
+
+    create_schema_mock.return_value = 'fake_schema'
+
+    main()
+
+    assert create_schema_mock.called
+    assert generate_types_mock.called
+
+    args, kwargs = create_schema_mock.call_args_list[0]
+
+    assert args == ('config.json',)
+    assert kwargs == {
+        'add_dgraph_type_records': True,
+        'drop_na_intrinsic_objects': True,
+        'drop_na_edge_objects': True,
+        'illegal_characters': ['%', '\\.', '\\s', '"', '\\n', '\\r\\n'],
+        'illegal_characters_intrinsic_object': ['"', '\\n', '\\r\\n'],
+        'chunk_size': 10000000,
+        'ensure_xid_predicate': True
+    }
+
+    args, kwargs = generate_types_mock.call_args_list[0]
+
+    assert args == ('fake_schema',)
+    assert kwargs == {
+        'add_dgraph_type_records': True,
+        'drop_na_intrinsic_objects': True,
+        'drop_na_edge_objects': True,
+        'illegal_characters': ['%', '\\.', '\\s', '"', '\\n', '\\r\\n'],
+        'illegal_characters_intrinsic_object': ['"', '\\n', '\\r\\n'],
+        'chunk_size': 10000000,
+        'export_schema': True
+    }

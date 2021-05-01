@@ -17,7 +17,9 @@ A Library (with accompanying cli tool) to transform [Pandas](https://pandas.pyda
     - [Edges](#edges)
   - [Configuration](#configuration)
     - [Additional Configuration](#additional-configuration)
-  - [Schema](#schema)
+  - [Schema and Types](#schema-and-types)
+    - [Generating a Schema](#generating-a-schema)
+    - [Generating Types](#generating-types)
   - [Samples](#samples)
   - [Working with Larger Files](#working-with-larger-files)
     - [Command Line](#command-line-1)
@@ -34,8 +36,9 @@ python -m pip install dgraphpandas
 
 ```sh
 ❯ dgraphpandas --help
-usage: dgraphpandas [-h] -f FILE -c CONFIG -ck CONFIG_FILE_KEY [-o OUTPUT_DIR]
-                    [--console] [--export_csv] [--encoding ENCODING]
+usage: dgraphpandas [-h] [-x {upserts,schema,types}] [-f FILE] -c CONFIG
+                    [-ck CONFIG_FILE_KEY] [-o OUTPUT_DIR] [--console]
+                    [--export_csv] [--encoding ENCODING]
                     [--chunk_size CHUNK_SIZE]
                     [--gz_compression_level GZ_COMPRESSION_LEVEL]
                     [--key_separator KEY_SEPARATOR]
@@ -387,7 +390,9 @@ These options can be placed on the root of the config or passed as `kwargs` dire
     - Schema option to define an edge as a list. This will ensure the type is `[uid]` rather then just `uid`
 
 
-## Schema
+## Schema and Types
+
+### Generating a Schema
 
 DGraph allows you to define a [schema](https://dgraph.io/docs/query-language/schema/#sidebar). This can be generated using the same configuration used above but there are also additional options you can add such as `options` and `list_edges` which are exclusively used for schema generation.
 
@@ -438,6 +443,72 @@ class: uid @reverse .
 
 # Apply to DGraph
 dgraph live -s schema.txt
+```
+
+### Generating Types
+
+DGraph also allows you to define [types](https://dgraph.io/docs/query-language/type-system/#sidebar) that can be used to categorize nodes. This can also be generated from the same configuration as data loading.
+
+
+```sh
+# Model the data, define types, edges and any options
+echo '
+{
+  "transform": "horizontal",
+  "files": {
+    "animal": {
+      "subject_fields": ["species_id"],
+      "type_overrides": {
+        "name": "string",
+        "legs": "int",
+        "weight": "float",
+        "height": "float",
+        "discovered": "datetime64",
+        "aquatic": "bool"
+      },
+      "edge_fields": ["class_id", "found_in"],
+      "class": ["@reverse"],
+      "found_in": ["@reverse", "@count"],
+      "list_edges": ["found_in"]
+    },
+    "habitat": {
+      "subject_fields": ["id"],
+      "type_overrides": {
+        "name": "string"
+      }
+    }
+  }
+}' > dgraphpandas.json
+
+# Apply the config to the schema generation logic
+> dgraphpandas -c dgraphpandas.json -x types -v DEBUG
+
+# Inspect Types
+❯ cat types.txt
+type animal {
+found_in
+aquatic
+discovered
+height
+weight
+legs
+species
+name
+class
+ }
+
+type habitat {
+id
+name
+}
+
+
+# Apply to DGraph
+# NOTE: you should always apply the schema
+# before applying types else dgraph
+# won't know what the predicates are
+dgraph live -s types.txt
+
 ```
 
 ## Samples

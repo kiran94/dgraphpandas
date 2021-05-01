@@ -8,13 +8,14 @@ import pandas as pd
 from dgraphpandas import __version__, __description__, to_rdf
 from dgraphpandas.strategies.schema import create_schema
 from dgraphpandas.writers.schema import generate_schema
+from dgraphpandas.writers.types import generate_types
 
 pd.set_option('mode.chained_assignment', None)
 
 
 def main():
     parser = argparse.ArgumentParser(description=__description__)
-    parser.add_argument('-x', '--method', choices=['upserts', 'schema'], default='upserts')
+    parser.add_argument('-x', '--method', choices=['upserts', 'schema', 'types'], default='upserts')
     parser.add_argument('-f', '--file', required=False, help='The Data File (CSV) to convert into RDF.')
     parser.add_argument('-c', '--config', required=True, help='The DgraphPandas Configuration. See Documentation for options/examples.')
     parser.add_argument('-ck', '--config_file_key', required=False, help='The Entry in the Configuration to use for this passed file.')
@@ -71,6 +72,10 @@ def main():
     elif args.method == 'schema':
         schema_frame = create_schema(args.config, ensure_xid_predicate=True, **(options))
         generate_schema(schema_frame, export_schema=True, **(options))
+
+    elif args.method == 'types':
+        schema_frame = create_schema(args.config, ensure_xid_predicate=True, **(options))
+        generate_types(schema_frame, export_schema=True, **(options))
 
 
 if __name__ == '__main__':
