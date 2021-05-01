@@ -113,3 +113,31 @@ def test_types_export_schema(mock_open: Mock):
     args, kwargs = mock_open.call_args_list[0]
     assert args == ('./types.txt', 'w')
     assert kwargs == {'encoding': 'utf-8'}
+
+
+def test_console(capsys):
+    '''
+    Ensures when console is provided, then the type builder
+    is written to stdout
+    '''
+    frame = pd.DataFrame(
+        columns=['column', 'type', 'table', 'options'],
+        data=[
+            ('id', 'string', 'customer', '@index(exact)'),
+            ('age', 'int', 'customer', None),
+            ('order', '[uid]', 'customer', '@reverse'),
+            ('gender', '[uid]', 'customer', '@reverse'),
+            ('id', 'string', 'order', '@index(hash)'),
+            ('value', 'double', 'order', None),
+            ('invoice', 'uid', 'order', '@reverse'),
+        ])
+
+    expected = ["type customer { \nid\nage\n<~order>\n<~gender>\n }\n", "type order { \nid\nvalue\n<~invoice>\n }\n"]
+
+    result = generate_types(frame, console=True)
+
+    assert result == expected
+
+    out, err = capsys.readouterr()
+    for ex in expected:
+        assert ex in out
