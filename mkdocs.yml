@@ -7,6 +7,7 @@ nav:
   - Getting Started: 'getting_started.md'
   - Horizontal & Vertical Formats: 'horizontal_and_vertical_formats.md'
   - Configuration: 'configuration.md'
+  - Logging: 'logging.md'
   - Schema & Types: 'schema_and_types.md'
   - Working with Larger Files: 'working_with_larger_files.md'
   - Samples:
