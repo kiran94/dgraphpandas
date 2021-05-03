@@ -48,3 +48,20 @@ logging.getLogger('dgraphpandas.writers.schema').setLevel(logging.DEBUG)
 # your logic
 dpd.to_rdf('input.csv', config, 'config_key')
 ```
+
+Naturally this means that you can redirect logs to any handler you would like:
+
+```py
+logging_file = 'dgraphpandas.log'
+
+logging.basicConfig()
+rdf_logger = logging.getLogger('dgraphpandas.rdf')
+rdf_logger.setLevel(logging.DEBUG)
+
+# Create and add any Handler
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+file_handler = logging.FileHandler(logging_file)
+file_handler.setFormatter(formatter)
+
+rdf_logger.addHandler(file_handler)
+```
