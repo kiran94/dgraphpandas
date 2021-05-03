@@ -11,10 +11,19 @@ dgraphpandas -v DEBUG
 
 Where the following levels are supported: `DEBUG,INFO,WARNING,ERROR,NOTSET`
 
-By default these will log to stdout with no color but you can also add coloring by installing the [`coloredlogs`](https://pypi.org/project/coloredlogs/) module.
+### Coloring Logs
+By default these will log to stdout with no color but you can also add coloring by installing the [`coloredlogs`](https://pypi.org/project/coloredlogs/) module 🌈.
 
 ```sh
 python -m pip install coloredlogs
+```
+
+### Environment Variables
+
+The logging level can also be set via environment variable:
+
+```sh
+export DGRAPHPANDAS_LOG=DEBUG
 ```
 
 ## Module
