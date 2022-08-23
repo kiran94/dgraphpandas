@@ -10,4 +10,4 @@ mkdocs
 mkdocs-material
 mkdocs-section-index
 mkdocs-jupyter
-nbconvert==5.5
+nbconvert==6.5.1
