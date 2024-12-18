@@ -9,5 +9,5 @@ jupyter
 mkdocs
 mkdocs-material
 mkdocs-section-index
-mkdocs-jupyter
-nbconvert==5.5
+mkdocs-jupyter==0.25.0
+nbconvert>=7.2.9,<8
