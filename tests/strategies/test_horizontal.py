@@ -435,7 +435,7 @@ class HorizontalTests(unittest.TestCase):
             pd.DataFrame(data={
                 'customer_id': [1, 2, 1, 2],
                 'predicate': ['dob', 'dob', 'weight', 'weight'],
-                'object':[pd.to_datetime('2021-03-02 00:00:00'), pd.to_datetime('1945-03-01 00:00:00'), 50, 32]
+                'object': [pd.to_datetime('2021-03-02 00:00:00'), pd.to_datetime('1945-03-01 00:00:00'), 50, 32]
             })
         ),
         ###
