@@ -139,6 +139,7 @@ def create_schema(source_config: Union[str, Dict[str, Any]], output_dir='.', **k
     if ensure_xid_predicate:
         # Create a new DataFrame for the row to be added
         new_row = pd.DataFrame([{'column': 'xid', 'type': 'string', 'table': None, 'options': '@index(exact)'}])
+        # Use pd.concat to add the new row
         frame = pd.concat([frame, new_row], ignore_index=True)
 
     frame.sort_values(by=['table', 'type'], inplace=True)
