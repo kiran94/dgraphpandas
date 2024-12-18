@@ -137,7 +137,9 @@ def create_schema(source_config: Union[str, Dict[str, Any]], output_dir='.', **k
 
     logger.debug('Appending xid declaration')
     if ensure_xid_predicate:
-        frame = frame.append({'column': 'xid', 'type': 'string', 'table': None, 'options': '@index(exact)'}, ignore_index=True)
+        # Create a new DataFrame for the row to be added
+        new_row = pd.DataFrame([{'column': 'xid', 'type': 'string', 'table': None, 'options': '@index(exact)'}])
+        frame = pd.concat([frame, new_row], ignore_index=True)
 
     frame.sort_values(by=['table', 'type'], inplace=True)
     frame.reset_index(inplace=True, drop=True)
