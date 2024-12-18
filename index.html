@@ -1,0 +1,829 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Transform Pandas DataFrames into Exports to be sent to DGraph">
+      
+      
+        <meta name="author" content="Kiran Patel">
+      
+      
+      
+      
+        <link rel="next" href="getting_started/">
+      
+      
+      <link rel="icon" href="assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.49">
+    
+    
+      
+        <title>dgraphpandas docs</title>
+      
+    
+    
+      <link rel="stylesheet" href="assets/stylesheets/main.6f8fc17f.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL(".",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#dgraphpandas" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="." title="dgraphpandas docs" class="md-header__button md-logo" aria-label="dgraphpandas docs" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            dgraphpandas docs
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Home
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/kiran94/dgraphpandas" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.7.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="." title="dgraphpandas docs" class="md-nav__button md-logo" aria-label="dgraphpandas docs" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    dgraphpandas docs
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/kiran94/dgraphpandas" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.7.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Home
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="." class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    Home
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#usage" class="md-nav__link">
+    <span class="md-ellipsis">
+      Usage
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Usage">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#command-line" class="md-nav__link">
+    <span class="md-ellipsis">
+      Command Line
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#module" class="md-nav__link">
+    <span class="md-ellipsis">
+      Module
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="getting_started/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Getting Started
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="horizontal_and_vertical_formats/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Horizontal & Vertical Formats
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="configuration/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Configuration
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="logging/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Logging
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="schema_and_types/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Schema & Types
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="working_with_larger_files/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Working with Larger Files
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Samples
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            Samples
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="samples/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Introduction
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="samples/netflix/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Netflix Sample
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="samples/planets/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Planets Sample
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="samples/pokemon/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Pokemon Sample
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_8_5" id="__nav_8_5_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Notebooks
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_8_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8_5">
+            <span class="md-nav__icon md-icon"></span>
+            Notebooks
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="notebooks/NetflixSample/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Netflix Notebook
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="notebooks/PlanetSample/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Planet Notebook
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="local_setup/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Local Setup
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#usage" class="md-nav__link">
+    <span class="md-ellipsis">
+      Usage
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Usage">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#command-line" class="md-nav__link">
+    <span class="md-ellipsis">
+      Command Line
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#module" class="md-nav__link">
+    <span class="md-ellipsis">
+      Module
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  
+  
+
+
+<h1 id="dgraphpandas">dgraphpandas</h1>
+<p><a href="https://github.com/kiran94/dgraphpandas/actions/workflows/python-package.yml"><img alt="Build" src="https://github.com/kiran94/dgraphpandas/actions/workflows/python-package.yml/badge.svg" /></a> <img alt="PyPI" src="https://img.shields.io/pypi/v/dgraphpandas?color=blue&amp;style=flat-square" /> <a href="https://opensource.org/licenses/MIT"><img alt="License: MIT" src="https://img.shields.io/badge/License-MIT-yellow.svg" /></a> <a href="https://coveralls.io/github/kiran94/dgraphpandas"><img alt="Coverage Status" src="https://coveralls.io/repos/github/kiran94/dgraphpandas/badge.svg" /></a> <a href="https://www.codacy.com/gh/kiran94/dgraphpandas/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=kiran94/dgraphpandas&amp;utm_campaign=Badge_Grade"><img alt="Codacy Badge" src="https://app.codacy.com/project/badge/Grade/3484574402e0408c97849301b354be8d" /></a></p>
+<p>A Library (with accompanying cli tool) to transform <a href="https://pandas.pydata.org/pandas-docs/stable/user_guide/index.html#user-guide">Pandas</a> DataFrames into Exports (<a href="https://en.wikipedia.org/wiki/Resource_Description_Framework">RDF</a>) to be sent to <a href="https://dgraph.io/docs/deploy/fast-data-loading/live-loader/">DGraph Live Loader</a></p>
+<div class="highlight"><pre><span></span><code>python<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>dgraphpandas
+</code></pre></div>
+<h2 id="usage">Usage</h2>
+<p><a href="https://kiran94.github.io/dgraphpandas/">Documentation</a></p>
+<h3 id="command-line">Command Line</h3>
+<div class="highlight"><pre><span></span><code>❯<span class="w"> </span>dgraphpandas<span class="w"> </span>--help
+usage:<span class="w"> </span>dgraphpandas<span class="w"> </span><span class="o">[</span>-h<span class="o">]</span><span class="w"> </span><span class="o">[</span>-x<span class="w"> </span><span class="o">{</span>upserts,schema,types<span class="o">}]</span><span class="w"> </span><span class="o">[</span>-f<span class="w"> </span>FILE<span class="o">]</span><span class="w"> </span>-c<span class="w"> </span>CONFIG
+<span class="w">                    </span><span class="o">[</span>-ck<span class="w"> </span>CONFIG_FILE_KEY<span class="o">]</span><span class="w"> </span><span class="o">[</span>-o<span class="w"> </span>OUTPUT_DIR<span class="o">]</span><span class="w"> </span><span class="o">[</span>--console<span class="o">]</span>
+<span class="w">                    </span><span class="o">[</span>--export_csv<span class="o">]</span><span class="w"> </span><span class="o">[</span>--encoding<span class="w"> </span>ENCODING<span class="o">]</span>
+<span class="w">                    </span><span class="o">[</span>--chunk_size<span class="w"> </span>CHUNK_SIZE<span class="o">]</span>
+<span class="w">                    </span><span class="o">[</span>--gz_compression_level<span class="w"> </span>GZ_COMPRESSION_LEVEL<span class="o">]</span>
+<span class="w">                    </span><span class="o">[</span>--key_separator<span class="w"> </span>KEY_SEPARATOR<span class="o">]</span>
+<span class="w">                    </span><span class="o">[</span>--add_dgraph_type_records<span class="w"> </span>ADD_DGRAPH_TYPE_RECORDS<span class="o">]</span>
+<span class="w">                    </span><span class="o">[</span>--drop_na_intrinsic_objects<span class="w"> </span>DROP_NA_INTRINSIC_OBJECTS<span class="o">]</span>
+<span class="w">                    </span><span class="o">[</span>--drop_na_edge_objects<span class="w"> </span>DROP_NA_EDGE_OBJECTS<span class="o">]</span>
+<span class="w">                    </span><span class="o">[</span>--illegal_characters<span class="w"> </span>ILLEGAL_CHARACTERS<span class="o">]</span>
+<span class="w">                    </span><span class="o">[</span>--illegal_characters_intrinsic_object<span class="w"> </span>ILLEGAL_CHARACTERS_INTRINSIC_OBJECT<span class="o">]</span>
+<span class="w">                    </span><span class="o">[</span>--version<span class="o">]</span><span class="w"> </span><span class="o">[</span>-v<span class="w"> </span><span class="o">{</span>DEBUG,INFO,WARNING,ERROR,NOTSET<span class="o">}]</span>
+</code></pre></div>
+<p>This is a real example which you can find in the <a href="https://github.com/kiran94/dgraphpandas/tree/main/samples">samples folder</a> and run from the root of this repository:</p>
+<div class="highlight"><pre><span></span><code>dgraphpandas<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--config<span class="w"> </span>samples/planets/dgraphpandas.json<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--config_file_key<span class="w"> </span>planet<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--file<span class="w"> </span>samples/planets/solar_system.csv<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--output<span class="w"> </span>samples/planets/output
+</code></pre></div>
+<h3 id="module">Module</h3>
+<p>This example can also be found in <a href="docs/notebooks/">Notebook</a> form.</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">dgraphpandas</span> <span class="k">as</span> <span class="nn">dpd</span>
+
+<span class="c1"># Define a Configuration for your data files(s). Explained further in the Configuration section.</span>
+<span class="n">config</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="s2">&quot;transform&quot;</span><span class="p">:</span> <span class="s2">&quot;horizontal&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;files&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">&quot;planet&quot;</span><span class="p">:</span> <span class="p">{</span>
+      <span class="s2">&quot;subject_fields&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">],</span>
+      <span class="s2">&quot;edge_fields&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">],</span>
+      <span class="s2">&quot;type_overrides&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;order_from_sun&quot;</span><span class="p">:</span> <span class="s2">&quot;int32&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;diameter_earth_relative&quot;</span><span class="p">:</span> <span class="s2">&quot;float32&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;diameter_km&quot;</span><span class="p">:</span> <span class="s2">&quot;float32&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;mass_earth_relative&quot;</span><span class="p">:</span> <span class="s2">&quot;float32&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;mean_distance_from_sun_au&quot;</span><span class="p">:</span> <span class="s2">&quot;float32&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;orbital_period_years&quot;</span><span class="p">:</span> <span class="s2">&quot;float32&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;orbital_eccentricity&quot;</span><span class="p">:</span> <span class="s2">&quot;float32&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;mean_orbital_velocity_km_sec&quot;</span><span class="p">:</span> <span class="s2">&quot;float32&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;rotation_period_days&quot;</span><span class="p">:</span> <span class="s2">&quot;float32&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;inclination_axis_degrees&quot;</span><span class="p">:</span> <span class="s2">&quot;float32&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;mean_temperature_surface_c&quot;</span><span class="p">:</span> <span class="s2">&quot;float32&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;gravity_equator_earth_relative&quot;</span><span class="p">:</span> <span class="s2">&quot;float32&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;escape_velocity_km_sec&quot;</span><span class="p">:</span> <span class="s2">&quot;float32&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;mean_density&quot;</span><span class="p">:</span> <span class="s2">&quot;float32&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;number_moons&quot;</span><span class="p">:</span> <span class="s2">&quot;int32&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;rings&quot;</span><span class="p">:</span> <span class="s2">&quot;bool&quot;</span>
+      <span class="p">},</span>
+      <span class="s2">&quot;ignore_fields&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;image&quot;</span><span class="p">,</span> <span class="s2">&quot;parent&quot;</span><span class="p">]</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1"># Perform a Horizontal Transform on the passed file using the config/key</span>
+<span class="c1"># Generate RDF Upsert statements</span>
+<span class="n">intrinsic</span><span class="p">,</span> <span class="n">edges</span> <span class="o">=</span> <span class="n">dpd</span><span class="o">.</span><span class="n">to_rdf</span><span class="p">(</span><span class="s1">&#39;solar_system.csv&#39;</span><span class="p">,</span> <span class="n">config</span><span class="p">,</span> <span class="s1">&#39;planet&#39;</span><span class="p">,</span> <span class="n">output_dir</span><span class="o">=</span><span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="n">export_rdf</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># Do something with these statements e.g write to zip and ship to DGraph</span>
+<span class="c1"># The cli will zip this output automatically</span>
+<span class="c1"># In module mode when you provide output_dir and export_rdf it will automatically zip and write to disk</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">intrinsic</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">edges</span><span class="p">)</span>
+</code></pre></div>
+<p>Alternatively, you could call the underlying methods</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Perform a Horizontal Transform on the passed file using the config/key</span>
+<span class="n">intrinsic</span><span class="p">,</span> <span class="n">edges</span> <span class="o">=</span> <span class="n">horizontal_transform</span><span class="p">(</span><span class="s1">&#39;solar_system.csv&#39;</span><span class="p">,</span> <span class="n">config</span><span class="p">,</span> <span class="s2">&quot;planet&quot;</span><span class="p">)</span>
+<span class="c1"># Generate RDF Upsert statements</span>
+<span class="n">intrinsic_upserts</span><span class="p">,</span> <span class="n">edges_upserts</span> <span class="o">=</span> <span class="n">generate_upserts</span><span class="p">(</span><span class="n">intrinsic</span><span class="p">,</span> <span class="n">edges</span><span class="p">)</span>
+</code></pre></div>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": ".", "features": [], "search": "assets/javascripts/workers/search.6ce7567c.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="assets/javascripts/bundle.88dd0f4e.min.js"></script>
+      
+    
+  </body>
+</html>

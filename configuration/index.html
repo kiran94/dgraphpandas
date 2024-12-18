@@ -1,0 +1,945 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Transform Pandas DataFrames into Exports to be sent to DGraph">
+      
+      
+        <meta name="author" content="Kiran Patel">
+      
+      
+      
+        <link rel="prev" href="../horizontal_and_vertical_formats/">
+      
+      
+        <link rel="next" href="../logging/">
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.49">
+    
+    
+      
+        <title>Configuration - dgraphpandas docs</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.6f8fc17f.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#additional-configuration" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="dgraphpandas docs" class="md-header__button md-logo" aria-label="dgraphpandas docs" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            dgraphpandas docs
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Configuration
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/kiran94/dgraphpandas" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.7.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="dgraphpandas docs" class="md-nav__button md-logo" aria-label="dgraphpandas docs" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    dgraphpandas docs
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/kiran94/dgraphpandas" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.7.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Home
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting_started/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Getting Started
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../horizontal_and_vertical_formats/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Horizontal & Vertical Formats
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Configuration
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    Configuration
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#additional-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      Additional Configuration
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Additional Configuration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#global-level" class="md-nav__link">
+    <span class="md-ellipsis">
+      Global Level
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#file-level" class="md-nav__link">
+    <span class="md-ellipsis">
+      File Level
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../logging/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Logging
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../schema_and_types/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Schema & Types
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../working_with_larger_files/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Working with Larger Files
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Samples
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            Samples
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../samples/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Introduction
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../samples/netflix/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Netflix Sample
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../samples/planets/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Planets Sample
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../samples/pokemon/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Pokemon Sample
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_8_5" id="__nav_8_5_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Notebooks
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_8_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8_5">
+            <span class="md-nav__icon md-icon"></span>
+            Notebooks
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../notebooks/NetflixSample/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Netflix Notebook
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../notebooks/PlanetSample/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Planet Notebook
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../local_setup/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Local Setup
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#additional-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      Additional Configuration
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Additional Configuration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#global-level" class="md-nav__link">
+    <span class="md-ellipsis">
+      Global Level
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#file-level" class="md-nav__link">
+    <span class="md-ellipsis">
+      File Level
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  
+  
+
+
+  <h1>Configuration</h1>
+
+<p>A Configuration file influences how we transform a DataFrame. It consists of:</p>
+<ul>
+<li>
+<p>Global configuration options</p>
+<ul>
+<li>Options which will be applied to all files</li>
+<li>These can either be defined in the configuration or as <code>kwargs</code> in the transform method or both where the <code>kwargs</code> takes priority.</li>
+<li>A collection of <code>files</code></li>
+</ul>
+</li>
+<li>
+<p>File configuration options</p>
+<ul>
+<li>Options which will be applied only to this entry</li>
+<li><code>subject_fields</code> is required so the unique identifier for a row in the DataFrame can be found</li>
+<li><code>edge_fields</code> are optional and if provided will generate edge output</li>
+<li><code>type_overrides</code> are optional but recommended to ensure the correct type is attached in RDF</li>
+</ul>
+</li>
+</ul>
+<p>If you are running this with the module and passing via <code>kwargs</code> then the above options may also be lambda callable that takes the DataFrame as an input. For example if you didn't want to hard code all your edge fields and were following a convention that all edge fields have suffix <code>_id</code> then you could set the edge_fields to <code>lambda frame: frame.loc[frame['predicate'].str.endswith('_id'), 'predicate'].unique().tolist()</code>. For this specific convention, it's common enough to have it's own built in option. See <code>edge_id_convention</code></p>
+<p>An example of the configuration for the <a href="https://github.com/kiran94/dgraphpandas/blob/main/samples/planets/solar_system.csv">planets sample</a> might look like this:</p>
+<div class="highlight"><pre><span></span><code><span class="n">config</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="s2">&quot;transform&quot;</span><span class="p">:</span> <span class="s2">&quot;horizontal&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;files&quot;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s2">&quot;planet&quot;</span><span class="p">:</span> <span class="p">{</span>
+      <span class="s2">&quot;subject_fields&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">],</span>
+      <span class="s2">&quot;edge_fields&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">],</span>
+      <span class="s2">&quot;type_overrides&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;order_from_sun&quot;</span><span class="p">:</span> <span class="s2">&quot;int32&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;diameter_earth_relative&quot;</span><span class="p">:</span> <span class="s2">&quot;float32&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;diameter_km&quot;</span><span class="p">:</span> <span class="s2">&quot;float32&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;mass_earth_relative&quot;</span><span class="p">:</span> <span class="s2">&quot;float32&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;mean_distance_from_sun_au&quot;</span><span class="p">:</span> <span class="s2">&quot;float32&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;orbital_period_years&quot;</span><span class="p">:</span> <span class="s2">&quot;float32&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;orbital_eccentricity&quot;</span><span class="p">:</span> <span class="s2">&quot;float32&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;mean_orbital_velocity_km_sec&quot;</span><span class="p">:</span> <span class="s2">&quot;float32&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;rotation_period_days&quot;</span><span class="p">:</span> <span class="s2">&quot;float32&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;inclination_axis_degrees&quot;</span><span class="p">:</span> <span class="s2">&quot;float32&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;mean_temperature_surface_c&quot;</span><span class="p">:</span> <span class="s2">&quot;float32&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;gravity_equator_earth_relative&quot;</span><span class="p">:</span> <span class="s2">&quot;float32&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;escape_velocity_km_sec&quot;</span><span class="p">:</span> <span class="s2">&quot;float32&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;mean_density&quot;</span><span class="p">:</span> <span class="s2">&quot;float32&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;number_moons&quot;</span><span class="p">:</span> <span class="s2">&quot;int32&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;rings&quot;</span><span class="p">:</span> <span class="s2">&quot;bool&quot;</span>
+      <span class="p">},</span>
+      <span class="s2">&quot;ignore_fields&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;image&quot;</span><span class="p">,</span> <span class="s2">&quot;parent&quot;</span><span class="p">]</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<h2 id="additional-configuration">Additional Configuration</h2>
+<h3 id="global-level">Global Level</h3>
+<p>These options can be placed on the root of the config or passed as <code>kwargs</code> directly.</p>
+<ul>
+<li>
+<p><code>add_dgraph_type_records</code></p>
+<ul>
+<li>DGraph has a special predicate called <a href="https://dgraph.io/docs/query-language/type-system/#setting-the-type-of-a-node"><code>dgraph.type</code></a>, this can be used to query via the <code>type()</code>
+    function. If <code>add_dgraph_type_records</code> is enabled, then we add <code>dgraph.type</code> fields
+    to the current export.</li>
+</ul>
+</li>
+<li>
+<p><code>strip_id_from_edge_names</code></p>
+<ul>
+<li>Its common for a data set to have a reference to another 'table' using <code>_id</code> convention</li>
+<li>You may not want the <code>_id</code> in your predicate name so this options strips it away</li>
+<li>For example if you had a Student &amp; School then the student might more sense to have <code>(Student) - school -&gt; (School)</code> rather then <code>(Student) - school_id -&gt; (School)</code>.</li>
+</ul>
+</li>
+<li>
+<p><code>drop_na_intrinsic_objects</code></p>
+<ul>
+<li>Automatically drop intrinsic records where the object is NA. In a relational model, you might have a column with a <code>null</code> entry however in a graph model you may want to omit the attribute altogether.</li>
+</ul>
+</li>
+<li>
+<p><code>drop_na_edge_objects</code></p>
+<ul>
+<li>Same as <code>drop_na_intrinsic_objects</code> but for edges.</li>
+</ul>
+</li>
+<li>
+<p><code>key_separator</code></p>
+<ul>
+<li>Separator used to combine key fields. For example if the key separator was <code>_</code> and we were operating on an intrinsic attribute for a customer with id 1 then the <code>xid</code> would be <code>customer_1</code> but if our seperator was <code>$</code> then it would be <code>customer$1</code>.</li>
+</ul>
+</li>
+<li>
+<p><code>illegal_characters</code></p>
+<ul>
+<li>Characters to strip from intrinsic and edge subjects. if the unique identifier has a character not supported by RDF/DGraph then strip them away or they will not be accepted by live loading.</li>
+</ul>
+</li>
+<li>
+<p><code>illegal_characters_intrinsic_object</code></p>
+<ul>
+<li>Same as <code>illegal_characters</code> but for the subject on intrinsic fields. These have a different set of illegal characters because subjects on intrinsic records are actual data values and are quoted. They therefore can accept many more characters then the subject.</li>
+</ul>
+</li>
+<li>
+<p><code>ensure_xid_predicate</code></p>
+</li>
+<li>Schema generation option to ensure that the <code>xid</code> predicate is applied to the schema. If you use the <code>--upsertPredicate xid</code> then this must be set so that the predicate is created and indexed.</li>
+</ul>
+<h3 id="file-level">File Level</h3>
+<ul>
+<li>
+<p><code>type_overrides</code></p>
+<ul>
+<li>Recommended. This ensures that data types are being treated as a type and the output RDF has the correct type mapped into it. Without this fields will go under the default rdf type <code>&lt;xs:string&gt;</code> but you may want a field to be a true int in RDF.</li>
+<li>Additionally certain data types such as <code>datetime64</code> will activate special handling to ensure the output in RDF is within the correct format to be ingested into DGraph.</li>
+<li>Supported Types can be found <a href="https://github.com/kiran94/dgraphpandas/blob/main/dgraphpandas/types.py">here</a></li>
+</ul>
+</li>
+<li>
+<p><code>csv_edges</code></p>
+<ul>
+<li>Sometimes a vendor will provide a data file where a single column is actually a csv list and each csv value should be broken into multiple RDF statements (because they relate to independent entities). Adding that column into this list will do that.</li>
+<li>For example in the <a href="https://github.com/kiran94/dgraphpandas/blob/e5b2864eeb285bcf4d41215f70c4675a0bc95075/samples/netflix/dgraphpandas.json#L43">netflix sample / title file</a> we have a <code>cast</code> column where the values are <code>actor_1, actor2</code>. Enabling <code>csv_edges</code> will ensure that the movie has 2 different relationships for each cast member.</li>
+</ul>
+</li>
+<li>
+<p><code>csv_edges_separator</code></p>
+<ul>
+<li>Alternative separator for <code>csv_edges</code></li>
+</ul>
+</li>
+<li>
+<p><code>ignore_fields</code></p>
+<ul>
+<li>Add fields in the input that we don't care about to this list so they aren't present in the output</li>
+</ul>
+</li>
+<li>
+<p><code>override_edge_name</code></p>
+<ul>
+<li>Ensure that the edge name as a different predicate and/or target_node_type to what is defined in the file.</li>
+<li>For example in the <a href="https://github.com/kiran94/dgraphpandas/blob/e5b2864eeb285bcf4d41215f70c4675a0bc95075/samples/pokemon/dgraphpandas.json#L99-L103">pokemon sample / pokemon_species</a> file you will see a column called <code>evolves_from_species</code> which tells us for a given pokemon which other pokemon does it evolve from. If we were to use the raw data here we would get a <code>evolves_from_species</code> edge with an incorrect target xid. Instead we want to override the <code>target_node_type</code> to <code>pokemon</code> so the edge correctly loops back to a node of the same type.</li>
+</ul>
+</li>
+<li>
+<p><code>pre_rename</code></p>
+<ul>
+<li>Rename intrinsic predicates or edge names to something else</li>
+</ul>
+</li>
+<li>
+<p><code>read_csv_options</code></p>
+<ul>
+<li>Applied to the <a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.read_csv.html"><code>pd.read_csv</code></a> call when a file is passed to a transform</li>
+<li>For example if the vendor file was tab separated then this could be <code>{'sep': '\t'}</code></li>
+</ul>
+</li>
+<li>
+<p><code>date_fields</code></p>
+<ul>
+<li>Apply datetime options to a field. This option can be useful when the input file has a date column with an unsual format. For each field, this object is passed into <a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.to_datetime.html"><code>pd.to_datetime</code></a>. For example if you had a column called <code>dob</code> then you could set this object to <code>{ "dob": {"format": "%Y-%m-%d"} }</code>. All the <a href="https://docs.python.org/3/library/datetime.html#strftime-and-strptime-format-codes">standard</a> format codes are supported.</li>
+</ul>
+</li>
+<li>
+<p><code>edge_id_convention</code></p>
+<ul>
+<li>Applies <code>_id</code> convention to find edges when set to <code>true</code></li>
+<li>Same as providing the edge_field <code>lambda frame: frame.loc[frame['predicate'].str.endswith('_id'), 'predicate'].unique().tolist()</code>.</li>
+</ul>
+</li>
+<li>
+<p><code>predicate_field</code></p>
+<ul>
+<li>Only applicable for vertical transforms</li>
+<li>Allows you to define your own predicate field name if not the default <code>predicate</code></li>
+</ul>
+</li>
+<li>
+<p><code>object_field</code></p>
+<ul>
+<li>Only applicable to vertical transforms</li>
+<li>Allows you to define your own object field name if not the default <code>object</code></li>
+</ul>
+</li>
+<li>
+<p><code>options</code></p>
+<ul>
+<li>Additional Options for Schema generation such as indexes or other directives.</li>
+<li>This is a key value pair between a intrinsic/edge to list of directives to apply</li>
+<li>e.g <code>"title": ["@index(exact, fulltext)", "@count"]</code></li>
+</ul>
+</li>
+<li>
+<p><code>list_edges</code></p>
+<ul>
+<li>Schema option to define an edge as a list. This will ensure the type is <code>[uid]</code> rather then just <code>uid</code></li>
+</ul>
+</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "..", "features": [], "search": "../assets/javascripts/workers/search.6ce7567c.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.88dd0f4e.min.js"></script>
+      
+    
+  </body>
+</html>
